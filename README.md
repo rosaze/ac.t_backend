@@ -1,13 +1,31 @@
 # ac.t_backend
 
-### backend 개발자들을 위한 ~^^.
+### 윤지원 윤서빈 (백엔드)
 
 > progress 1:
 
 - 폴더 구조 설치
 - npm 설치
 - 카카오 로그인 구현, 서버 실행단계까지. 아직 루트 경로 route 지정 안 함
-  > progress 2:
+
+> progress 2:
+
+- 추가한 부분 :
+  controller, services 폴더 업데이트. 유저 라우트, 즉 사용자 계정 생성 조회 뿐 만 아니라 프로필 라우트 파일들 추가했어용
+
+- 폴더 구조 설명:
+
+  - userRoutes: 사용자 CRUD 작업 처리
+  - profileRoutes: 사용자 프로필 정보 관리
+  - app.js:
+    주로 앱의 설정 및 초기화, nunjucks 템플릿 엔진을 설정하고, 기본 라우트(/, /users, /comments)를 설정 MongoDB 연결을 설정하고, 요청 로깅 및 정적 파일 제공을 담당
+  - server.js:
+    환경 변수를 로드하고, MongoDB 연결 설정,body-parser를 사용하여 JSON 요청을 처리.+ API 라우트(/api/auth, /api/survey, /api/recommendations)를 설정.
+
+  이 두 파일 통합할까 말까 고민중
+
+> 앞으로:
+
 - CRUD 정의
 - seobin DB 연결
 
