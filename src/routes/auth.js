@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const User = require("../models/user");
 const router = express.Router();
+const authMiddleware = require("../middlewares/authMiddleware");
+const authorize = require("../middlewares/authorize");
 
 const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
 const REDIRECT_URI = process.env.REDIRECT_URI;
