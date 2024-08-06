@@ -22,7 +22,10 @@
   - server.js:
     환경 변수를 로드하고, MongoDB 연결 설정,body-parser를 사용하여 JSON 요청을 처리.+ API 라우트(/api/auth, /api/survey, /api/recommendations)를 설정.
 
-  이 두 파일 통합할까 말까 고민중
+> progress 3:
+
+- 변경사항 : schema 폴더 삭제 후 models 폴더로 통합
+- 진행사항 : user에 해당하는 controller, model, routes, auth 등 완료 및 로그인 passport 완료
 
 > 앞으로:
 
