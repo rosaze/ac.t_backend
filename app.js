@@ -3,7 +3,6 @@ const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
 const passport = require("./src/passport/passport");
-
 const connect = require("./src/models");
 const indexRouter = require("./src/routes/index");
 const usersRouter = require("./src/routes/users");

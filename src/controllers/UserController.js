@@ -77,6 +77,60 @@ exports.addCertificate = async (req, res) => {
     user.certificates.push({ title, institution, date });
     await user.save();
 
+    res.status(200).json({
+      message: 'Certificate added successfully',
+      certificates: user.certificates,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// 사용자 프로필에서 자격증 삭제
+exports.removeCertificate = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.certificates.id(req.params.certificateId).remove();
+    await user.save();
+
+    res.status(200).json({
+      message: 'Certificate removed successfully',
+      certificates: user.certificates,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// 사용자 ID로 사용자 삭제
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// 사용자 프로필에 자격증 추가
+exports.addCertificate = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { title, institution, date } = req.body;
+    user.certificates.push({ title, institution, date });
+    await user.save();
+
     res
       .status(200)
       .json({
@@ -113,20 +167,18 @@ exports.removeCertificate = async (req, res) => {
 // 밸런스 게임 결과를 기반으로 취향 설정
 exports.setPreferencesFromGame = async (req, res) => {
   try {
-    const { userId, balanceGameResults } = req.body;
+    const {
+      userId,
+      location_preference,
+      environment_preference,
+      group_preference,
+      season_preference,
+    } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    // 밸런스 게임 결과를 바탕으로 취향 설정
-    const {
-      location_preference,
-      environment_preference,
-      group_preference,
-      season_preference,
-    } = balanceGameResults;
 
     user.location_preference = location_preference;
     user.environment_preference = environment_preference;

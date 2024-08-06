@@ -23,4 +23,7 @@ router.delete(
   userController.removeCertificate
 );
 
+// 사용자 밸런스 게임 결과를 기반으로 취향 설정
+router.post('/users/preferences/game', userController.setPreferencesFromGame);
+
 module.exports = router;
