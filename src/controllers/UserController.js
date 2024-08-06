@@ -52,6 +52,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+
 // 사용자 ID로 사용자 삭제
 exports.deleteUser = async (req, res) => {
   try {
@@ -118,6 +119,7 @@ exports.deleteUser = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 
 // 사용자 프로필에 자격증 추가
 exports.addCertificate = async (req, res) => {
@@ -192,3 +194,4 @@ exports.setPreferencesFromGame = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
