@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 //사용자 자격중 저장 - 임시로 적어둠
 //이후 api나 다른 기능 찾으면 대체
 const certificateSchema = new mongoose.Schema({

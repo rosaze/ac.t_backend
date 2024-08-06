@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
 
+
 // 새로운 사용자 생성
 router.post('/users', userController.createUser);
 
@@ -25,5 +26,6 @@ router.delete(
 
 // 사용자 밸런스 게임 결과를 기반으로 취향 설정
 router.post('/users/preferences/game', userController.setPreferencesFromGame);
+
 
 module.exports = router;
