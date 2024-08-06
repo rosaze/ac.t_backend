@@ -18,6 +18,38 @@ const certificateSchema = new mongoose.Schema({
   },
 });
 
+// 사용자 배지 저장
+const badgeSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  icon_url: {
+    type: String,
+  },
+});
+
+// 사용자의 활동 기록
+const activityMapSchema = new mongoose.Schema({
+  post_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Posts',
+    required: true,
+  },
+  region: {
+    type: String,
+    required: true,
+  },
+  activity_date: {
+    type: Date,
+    required: true,
+  },
+});
+
+//프로필 사진에 대해서는 추가해야함
 const userSchema = new mongoose.Schema({
   kakaoId: {
     type: String,
@@ -73,6 +105,8 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   certificates: [certificateSchema], // 자격증 필드 추가
+  badges: [badgeSchema], // 배지 필드 추가
+  activities: [activityMapSchema], // 활동 기록 필드 추가
 });
 
 const User = mongoose.model('User', userSchema);
