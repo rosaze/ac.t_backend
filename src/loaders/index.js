@@ -3,15 +3,16 @@ const path = require('path');
 const morgan = require('morgan');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
-const passport = require('../passport/passport'); // 경로 수정
-const connectDB = require('../config/database');
 
 dotenv.config();
+
+const passport = require('../passport/passport'); // 경로 수정
+const connectDB = require('../config/database');
 
 const startServer = async () => {
   const app = express();
 
-  app.set('port', process.env.PORT || 3002);
+  app.set('port', process.env.PORT || 3000);
   app.set('view engine', 'html');
   nunjucks.configure('views', {
     express: app,
