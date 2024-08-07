@@ -1,24 +1,12 @@
-// src/services/profileService.js
-const Profile = require('../schemas/profileSchema');
+const Profile = require('../models/Profile');
 
-const getProfile = async (userId) => {
-  const profile = await Profile.findOne({ user: userId }).populate('user');
-  if (!profile) {
-    throw new Error('Profile not found');
-  }
-  return profile;
+exports.getProfile = async (userId) => {
+  return await user.findById(userId).select('-kakoId'); // 비공개 필드를 제외하고 조회
 };
 
-const updateProfile = async (userId, profileData) => {
-  const profile = await Profile.findOneAndUpdate(
-    { user: userId },
-    profileData,
-    { new: true }
-  );
-  return profile;
-};
-
-module.exports = {
-  getProfile,
-  updateProfile,
+exports.updateProfile = async (userId, profileData) => {
+  return await User.findByIdAndUpdate(userId, profileData, {
+    new: true,
+    runValidators: true,
+  });
 };
