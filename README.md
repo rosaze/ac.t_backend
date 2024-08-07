@@ -22,15 +22,21 @@
   - server.js:
     환경 변수를 로드하고, MongoDB 연결 설정,body-parser를 사용하여 JSON 요청을 처리.+ API 라우트(/api/auth, /api/survey, /api/recommendations)를 설정.
 
-> progress 3:
+> progress 3 (8/6):
 
 - 변경사항 : schema 폴더 삭제 후 models 폴더로 통합
-- 진행사항 : user에 해당하는 controller, model, routes, auth 등 완료 및 로그인 passport 완료
+- 진행사항 : user에 해당하는 controller, model
+- routes, auth 등 완료 및 로그인 passport 완료
+- app.js 에 라우터 설정 추가 ( routes 폴더에 index 파일 없어서 관련 삭제)
+
+> progress 4
+
+- (NEW!): 게시판 -POST ( controller, services, routes, models 에서 post 파일 업데이트함 )
+- app.js 라우터 통합
 
 > 앞으로:
 
-- CRUD 정의
-- seobin DB 연결
+- CRUD 정의 ( 댓글,해시태그,메이트)
 
 ## commit message
 
