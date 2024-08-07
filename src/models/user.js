@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 //사용자 자격중 저장 - 임시로 적어둠
 //이후 api나 다른 기능 찾으면 대체
 const certificateSchema = new mongoose.Schema({
@@ -18,7 +17,7 @@ const certificateSchema = new mongoose.Schema({
   },
 });
 
-// 사용자 배지 저장
+// 배지 스키마
 const badgeSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -29,6 +28,19 @@ const badgeSchema = new mongoose.Schema({
   },
   icon_url: {
     type: String,
+  },
+});
+
+//사용자의 배지 스키마
+const userBadgeSchema = new mongoose.Schema({
+  badge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Badge',
+    required: true,
+  },
+  awarede_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -47,6 +59,9 @@ const activityMapSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  hashtags: [{ type: String }],
+  // 해시태그 필드 추가
+  // 해시 태그 -> 활동 기록 이 방식을 구현하려 했는데 확실하지 않음 아직.
 });
 
 //프로필 사진에 대해서는 추가해야함
@@ -81,6 +96,10 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
     required: true,
   },
+  bio: {
+    type: String,
+    maxlength: 500,
+  },
   location_preference: {
     type: String,
     enum: ['outdoor', 'indoor'],
@@ -101,11 +120,19 @@ const userSchema = new mongoose.Schema({
     enum: ['winter', 'summer'],
     required: true,
   },
-  preferred_activity_types: {
-    type: String,
+  surveyResult: {
+    seaOrLand: { type: String, enum: ['sea', 'land'], required: true },
+    indoorOrOutdoor: {
+      type: String,
+      enum: ['indoor', 'outdoor'],
+      required: true,
+    },
+    groupSize: { type: String, enum: ['small', 'large'], required: true },
+    season: { type: String, enum: ['winter', 'summer'], required: true },
+    preferred_activity_types: { type: String }, // 결과를 저장하는 필드
   },
   certificates: [certificateSchema], // 자격증 필드 추가
-  badges: [badgeSchema], // 배지 필드 추가
+  badges: [userBadgeSchema], // 사용자 배지 필드 추가
   activities: [activityMapSchema], // 활동 기록 필드 추가
 });
 
