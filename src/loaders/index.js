@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const passport = require('../passport/passport'); // 경로 수정
+const passport = require('passport'); // 경로 수정
 const connectDB = require('../config/database');
 
 const startServer = async () => {
@@ -33,7 +33,7 @@ const startServer = async () => {
 
   // 라우터 설정
   const usersRouter = require('../routes/userRoutes');
-  const commentsRouter = require('../routes/comments');
+  //const commentsRouter = require('../routes/comments');
   const postRoutes = require('../routes/postRoutes');
   const authRouter = require('../routes/auth');
   const recommendationRouter = require('../routes/recommendation');
@@ -46,14 +46,14 @@ const startServer = async () => {
   const activityMapRoutes = require('../routes/activityMapRoutes');
 
   app.use('/api/users', usersRouter);
-  app.use('/api/comments', commentsRouter);
+  //app.use('/api/comments', commentsRouter);
   app.use('/api/posts', postRoutes);
   app.use('/api/auth', authRouter);
   app.use('/mypage/recommendations', recommendationRouter);
-  app.use('/api/chats', chatRoutes);
-  app.use('/api/events', eventRoutes);
-  app.use('/api/hashtags', hashtagRoutes);
-  app.use('/api/mates', mateRoutes);
+  //app.use('/api/chats', chatRoutes);
+  //app.use('/api/events', eventRoutes);
+  //app.use('/api/hashtags', hashtagRoutes);
+  //app.use('/api/mates', mateRoutes);
   app.use('/mypage/profile', profileRoutes);
   app.use('/mypage/badges', badgeRoutes);
   app.use('/mypage/activitymap', activityMapRoutes);
