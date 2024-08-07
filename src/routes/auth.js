@@ -1,4 +1,3 @@
-
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -6,11 +5,8 @@ const axios = require('axios');
 const User = require('../models/user');
 
 const router = express.Router();
-const authMiddleware = require("../middlewares/authMiddleware");
-const authorize = require("../middlewares/authorize");
-
-const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
+const authMiddleware = require('../middlewares/authMiddleware');
+const authorize = require('../middlewares/authorize');
 
 const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -202,23 +198,23 @@ router.post('/balance-game', async (req, res) => {
 });
 
 // 카카오 로그인 페이지로 리다이렉트
-router.get("/kakao", (req, res) => {
+router.get('/kakao', (req, res) => {
   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   res.redirect(kakaoAuthUrl);
 });
 
 // 카카오 인증 후 리다이렉트 URI
-router.get("/kakao/callback", async (req, res) => {
+router.get('/kakao/callback', async (req, res) => {
   const { code } = req.query;
 
   try {
     // 토큰 요청
     const tokenResponse = await axios.post(
-      "https://kauth.kakao.com/oauth/token",
+      'https://kauth.kakao.com/oauth/token',
       null,
       {
         params: {
-          grant_type: "authorization_code",
+          grant_type: 'authorization_code',
           client_id: KAKAO_CLIENT_ID,
           redirect_uri: REDIRECT_URI,
           code,
@@ -229,7 +225,7 @@ router.get("/kakao/callback", async (req, res) => {
     const { access_token } = tokenResponse.data;
 
     // 사용자 정보 요청
-    const userResponse = await axios.get("https://kapi.kakao.com/v2/user/me", {
+    const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
@@ -249,7 +245,7 @@ router.get("/kakao/callback", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: '1h',
     });
 
     res.json({ token, user });

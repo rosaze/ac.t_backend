@@ -52,7 +52,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-
 // 사용자 ID로 사용자 삭제
 exports.deleteUser = async (req, res) => {
   try {
@@ -120,7 +119,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-
 // 사용자 프로필에 자격증 추가
 exports.addCertificate = async (req, res) => {
   try {
@@ -133,12 +131,10 @@ exports.addCertificate = async (req, res) => {
     user.certificates.push({ title, institution, date });
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        message: 'Certificate added successfully',
-        certificates: user.certificates,
-      });
+    res.status(200).json({
+      message: 'Certificate added successfully',
+      certificates: user.certificates,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -155,43 +151,33 @@ exports.removeCertificate = async (req, res) => {
     user.certificates.id(req.params.certificateId).remove();
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        message: 'Certificate removed successfully',
-        certificates: user.certificates,
-      });
+    res.status(200).json({
+      message: 'Certificate removed successfully',
+      certificates: user.certificates,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// 밸런스 게임 결과를 기반으로 취향 설정
-exports.setPreferencesFromGame = async (req, res) => {
+// 사용자 선호도 업데이트
+exports.updatePreferences = async (req, res) => {
   try {
-    const {
-      userId,
-      location_preference,
-      environment_preference,
-      group_preference,
-      season_preference,
-    } = req.body;
-
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.location_preference = location_preference;
-    user.environment_preference = environment_preference;
-    user.group_preference = group_preference;
-    user.season_preference = season_preference;
+    const { seaOrLand, indoorOrOutdoor, groupSize, season } = req.body;
+    user.surveyResult = { seaOrLand, indoorOrOutdoor, groupSize, season };
+
+    // preferred_activity_types 필드 업데이트
+    user.surveyResult.preferred_activity_types = `${seaOrLand}_${indoorOrOutdoor}_${groupSize}_${season}`;
 
     await user.save();
 
-    res.status(200).json({ message: 'Preferences set successfully', user });
+    res.status(200).json({ message: 'Preferences updated successfully', user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
