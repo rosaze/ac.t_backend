@@ -1,6 +1,8 @@
 # ac.t_backend
 
-### 윤지원 윤서빈 (백엔드)
+## 윤지원 윤서빈 (백엔드)
+
+### Progress
 
 > progress 1:
 
@@ -34,16 +36,22 @@
 - (NEW!): 게시판 -POST ( controller, services, routes, models 에서 post 파일 업데이트함 )
 - app.js 라우터 통합
 
->progress 5
+> progress 5
 
 - app.js와 loaders/index.js 가 중복 역활하는 것을 발경 -> app.js삭제 후 index.js로 수정
 - survey 관련 파일들 삭제후 user에 통합
 - mypage/ 개인정보, 맵, 취향, 배지 라우트 생성 후 연결 완료 (맵은 hashtag 반영되도록 했지만 차후에 hashtag 구현하면서 수정 필요함)
 - recommend 파일 수정 <- 취향 반영해서 완료함
 
+> progress 6
+
+- 게시물 분류, 해시태그 ( controller, service,route)
+- post 의 모델, 서비스, 컨트롤러 수정하여 게시판 분할하고 , 해시태그 기능 추가함.
+- getpost 메소드에서 별점 필드 기준으로 후기/자유 게시판 구분하여 조회할수있도록함
+
 > 앞으로:
 
-- CRUD 정의 ( 댓글,해시태그,메이트)
+- CRUD 정의 ( 댓글,메이트)
 
 ## commit message
 
