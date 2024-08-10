@@ -7,3 +7,5 @@ const userBadgeSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('UserBadge', userBadgeSchema);
+
+//사용자가 획득한 배지를 저장
