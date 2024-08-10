@@ -10,8 +10,9 @@ const PostSchema = new mongoose.Schema(
       required: true,
     },
     hashtags: [{ type: String }],
-    locationTag: { type: String },
-    activityTag: { type: String },
+    locationTag: { type: String, required: true },
+    activityTag: { type: String, required: true },
+    //해시태그 필수필드로 만듬
     likes: { type: Number, default: 0 },
     rating: { type: Number, min: 1, max: 5, required: false }, // 별점 추가 (optional)
   },
