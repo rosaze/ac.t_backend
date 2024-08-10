@@ -1,8 +1,20 @@
 const PostService = require('../services/PostService');
+const ActivityMapService = require('../services/activityMapService');
+
 class PostController {
   async createPost(req, res) {
     try {
+      //PostService를 통해 게시글 생성
       const post = await PostService.createPost(req.body);
+
+      //사용자의 활동을 기록
+      await ActivityMapService.addActivityMap({
+        user: req.body.author, // 사용자의 id
+        post: post._id,
+        region: req.body.locationTag, //지역 태그
+        activity_date: new Date(),
+        hashtags: [req.body.locationTag, req.body.activityTag], //해시태그로 지역과 활동 종류 기록
+      });
       res.status(201).json(post);
     } catch (err) {
       res.status(500).json({ message: err.message });
