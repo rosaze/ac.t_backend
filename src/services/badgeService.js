@@ -1,17 +1,23 @@
 const activity = require('../models/activity');
 const Badge = require('../models/badges');
 const User = require('../models/user');
-const UserBadge = require('../models/user');
+const userBadge = require('../models/userBadge');
+const UserBadge = require('../models/userBadge');
 
-exports.awardBadge = async (userId, badgeId) => {
+exports.awardBadge = async (userId, badgeName) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('User not found');
 
-  const badge = await Badge.findByIdId(badgeId);
+  const badge = await Badge.findByIdId(badgeName);
   if (!badge) throw new Error('Badge not found');
 
-  user.badges.push({ badge: badgeId });
-  await user.save();
+  //이미 배지를 수여받은 경우 중복 수여 방지
+  const hasBadge = await UserBadge.findOne({ user: userId, badge: badge._id });
+  if (hasBadge) return user;
+
+  const userBadge = new UserBadge({ user: userId, badge: badge._id });
+  await userBadge.save();
+
   return user;
 };
 

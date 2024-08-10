@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-//사용자 자격중 저장 - 임시로 적어둠
-//이후 api나 다른 기능 찾으면 대체
+// 사용자 자격증 스키마
 const certificateSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -31,20 +30,20 @@ const badgeSchema = new mongoose.Schema({
   },
 });
 
-//사용자의 배지 스키마
+// 사용자 배지 스키마
 const userBadgeSchema = new mongoose.Schema({
   badge: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Badge',
     required: true,
   },
-  awarede_at: {
+  awarded_at: {
     type: Date,
     default: Date.now,
   },
 });
 
-// 사용자의 활동 기록
+// 사용자 활동 기록 스키마
 const activityMapSchema = new mongoose.Schema({
   post_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -60,11 +59,9 @@ const activityMapSchema = new mongoose.Schema({
     required: true,
   },
   hashtags: [{ type: String }],
-  // 해시태그 필드 추가
-  // 해시 태그 -> 활동 기록 이 방식을 구현하려 했는데 확실하지 않음 아직.
 });
 
-//프로필 사진에 대해서는 추가해야함
+// 사용자 스키마
 const userSchema = new mongoose.Schema({
   kakaoId: {
     type: String,

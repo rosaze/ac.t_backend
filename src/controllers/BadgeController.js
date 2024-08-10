@@ -2,8 +2,8 @@ const badgeService = require('../services/badgeService');
 
 exports.awardBadge = async (req, res) => {
   try {
-    const { userId, badgeId } = req.body;
-    const user = await badgeService.awardBadge(userId, badgeId);
+    const { userId, badgeName } = req.body;
+    const user = await badgeService.awardBadge(userId, badgeName);
     res.json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
