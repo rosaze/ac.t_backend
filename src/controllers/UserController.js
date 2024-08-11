@@ -32,7 +32,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// 사용자 ID로 사용자 조회
+// 사용자 ID로 사용자 조회.데이터베이스에서 조회하여 반환
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -146,17 +146,15 @@ exports.updatePreferences = async (req, res) => {
 
     await user.save();
 
-    // 사용자 선호도 업데이트 및 추천 제공
+    // 사용자 선호도 업데이트 및 추천 제공 (확인!)
     const recommendations =
       await ActivityRecommendationService.recommendActivities(user._id);
 
-    res
-      .status(200)
-      .json({
-        message: 'Preferences updated successfully',
-        user,
-        recommendations,
-      });
+    res.status(200).json({
+      message: 'Preferences updated successfully',
+      user,
+      recommendations,
+    });
   } catch (error) {
     console.error(`Error updating preferences: ${error.message}`);
     res
@@ -193,16 +191,14 @@ exports.saveBalanceGameResult = async (req, res) => {
       .json({ message: 'Preferences set successfully', user, recommendations });
   } catch (error) {
     console.error(`Error saving balance game result: ${error.message}`);
-    res
-      .status(400)
-      .json({
-        message: 'Failed to save balance game result',
-        error: error.message,
-      });
+    res.status(400).json({
+      message: 'Failed to save balance game result',
+      error: error.message,
+    });
   }
 };
 
-// 사용자에게 활동 추천 제공
+// 사용자에게 활동 추천 제공// 사용자 찾고, 추천활동 반환
 exports.getRecommendedActivities = async (req, res) => {
   try {
     const userId = req.params.userId;
