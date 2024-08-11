@@ -3,7 +3,10 @@ const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
 const dotenv = require("dotenv"); //추가
+const http = require("http"); // 추가
+const socketIO = require("socket.io"); // 소켓 추가
 dotenv.config(); //추가
+
 const passport = require("./src/passport/passport");
 const connect = require("./src/config/database");
 
@@ -27,6 +30,9 @@ nunjucks.configure("views", {
   express: app,
   watch: true,
 });
+// 서버 인스턴스 생성
+const server = http.createServer(app); // 추가
+const io = socketIo(server); // server 객체를 socket.io와 연결
 
 connect(); //몽구스를 통해 몽고디비에 연결
 
@@ -52,6 +58,29 @@ app.use("/mypage/profile", profileRoutes);
 app.use("/mypage/badges", badgeRoutes);
 app.use("/mypage/activitymap", activityMapRoutes);
 
+//socket.io 연결
+io.on("connection", (socket) => {
+  console.log("New client connected");
+
+  socket.on("joinRoom", ({ chatRoomId, userId }) => {
+    socket.join(chatRoomId);
+    console.log(`${userId} joined room ${chatRoomId}`);
+  });
+
+  socket.on("message", async ({ chatRoomId, message }) => {
+    const savedMessage = await ChatService.sendMessage(
+      chatRoomId,
+      message.sender,
+      message.content
+    );
+    io.to(chatRoomId).emit("message", savedMessage); // 채팅방에 메시지 전송
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
 //404 핸들
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
@@ -68,6 +97,7 @@ app.use((err, req, res, next) => {
 });
 
 //서버 실행
-app.listen(app.get("port"), () => {
+//app.listen 대신 server.listen으르 사용하여 서버 실행.
+server.listen(app.get("port"), () => {
   console.log(app.get("port"), "번 포트에서 대기 중");
 });
