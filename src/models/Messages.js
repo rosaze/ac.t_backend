@@ -1,7 +1,6 @@
-// src/schemas/messageSchema.js
 const mongoose = require('mongoose');
-
-const messageSchema = new mongoose.Schema({
+//메세지
+const MessageSchema = new mongoose.Schema({
   chatRoom: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ChatRoom',
@@ -12,4 +11,4 @@ const messageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Message', messageSchema);
+module.exports = mongoose.model('Message', MessageSchema);
