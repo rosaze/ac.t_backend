@@ -1,20 +1,32 @@
-const ChatRoom = require('../models/ChatRooms');
-// 채팅방 생성, 메세지 전송
-exports.createChatRoom = async (participants) => {
-  const chatRoom = new ChatRoom({ participants });
-  await chatRoom.save();
-  return chatRoom;
-};
+const ChatRoom = require('../models/ChatRoom');
+const Message = require('../models/Message');
+//메세지 보내기, 채팅방 CRUD
+class ChatService {
+  async createChatRoom(name, participants) {
+    const chatRoom = new ChatRoom({ name, participants });
+    return await chatRoom.save();
+  }
 
-exports.getMessages = async (roomId) => {
-  const chatRoom = await ChatRoom.findById(roomId).populate('messages.sender');
-  return chatRoom.messages;
-};
+  async getChatRooms(userId) {
+    return await ChatRoom.find({ participants: userId })
+      .populate('participants')
+      .exec();
+  }
 
-exports.sendMessage = async (roomId, sender, content) => {
-  const chatRoom = await ChatRoom.findById(roomId);
-  const message = { sender, content };
-  chatRoom.messages.push(message);
-  await chatRoom.save();
-  return message;
-};
+  async sendMessage(chatRoomId, senderId, messageContent) {
+    const message = new Message({
+      chatRoom: chatRoomId,
+      sender: senderId,
+      message: messageContent,
+    });
+    return await message.save();
+  }
+
+  async getMessages(chatRoomId) {
+    return await Message.find({ chatRoom: chatRoomId })
+      .populate('sender')
+      .exec();
+  }
+}
+
+module.exports = new ChatService();

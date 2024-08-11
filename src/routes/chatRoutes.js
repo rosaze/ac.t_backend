@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const ChatController = require('../controllers/ChatController');
 
-router.post('/create', ChatController.createChatRoom);
-router.get('/:roomId/messages', ChatController.getMessages);
-router.post('/:roomId/messages', ChatController.sendMessage);
+router.post('/chatrooms', ChatController.createChatRoom);
+router.get('/chatrooms', ChatController.getChatRooms);
+router.post('/messages', ChatController.sendMessage);
+router.get('/messages/:chatRoomId', ChatController.getMessages);
 
 module.exports = router;
