@@ -9,17 +9,21 @@ class MateController {
       res.status(500).json({ message: err.message });
     }
   }
-
+  //모집게시글필터링
   async getMatePosts(req, res) {
     try {
-      const { sortBy } = req.query;
-      const matePosts = await MateService.getMatePosts(sortBy);
+      const filters = {
+        activity: req.query.activity,
+        location: req.query.location,
+        date: req.query.date,
+        sortBy: req.query.sortBy,
+      };
+      const matePosts = await MateService.getMatePosts(filters);
       res.status(200).json(matePosts);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   }
-
   async getMatePostById(req, res) {
     try {
       const matePost = await MateService.getMatePostById(req.params.id);

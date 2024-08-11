@@ -7,9 +7,25 @@ class MateService {
     return await mate.save();
   }
 
+  // 필터링 기능 추가 --> 조건으로 게시글 필터링 ( 활동/장소/날짜)
+
   async getMatePosts(sortBy) {
-    const sortCriteria = sortBy === 'date' ? { date: 1 } : { createdAt: -1 };
-    return await Mate.find()
+    const query = {};
+
+    if (filters.activity) {
+      query.activity = filters.activity;
+    }
+    if (filters.location) {
+      query.location = filters.location;
+    }
+    if (filters.date) {
+      query.date = { $gte: new Date(filters.date) }; // 선택한 날짜 이후의 활동만
+    }
+
+    const sortCriteria =
+      filters.sortBy === 'date' ? { date: 1 } : { createdAt: -1 };
+
+    return await Mate.find(query)
       .sort(sortCriteria)
       .populate('author participants')
       .exec();

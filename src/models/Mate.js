@@ -7,7 +7,7 @@ const MateSchema = new mongoose.Schema({
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   activity: { type: String, required: true },
   location: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date, required: true }, //날짜저장
   maxParticipants: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
