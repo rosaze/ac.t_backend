@@ -36,27 +36,26 @@ const startServer = async () => {
   //const commentsRouter = require('../routes/comments');
   const postRoutes = require('../routes/postRoutes');
   const authRouter = require('../routes/auth');
-  const recommendationRouter = require('../routes/recommendation');
   const chatRoutes = require('../routes/chatRoutes');
   const eventRoutes = require('../routes/eventRoutes');
   const hashtagRoutes = require('../routes/hashtagRoutes');
   const mateRoutes = require('../routes/mateRoutes');
-  const profileRoutes = require('../routes/profileRoutes');
   const badgeRoutes = require('../routes/badgeRoutes');
   const activityMapRoutes = require('../routes/activityMapRoutes');
+  const preferenceRoutes = require('../routes/preferenceRoutes');
 
   app.use('/api/users', usersRouter);
   //app.use('/api/comments', commentsRouter);
   app.use('/api/posts', postRoutes);
   app.use('/api/auth', authRouter);
-  app.use('/mypage/recommendations', recommendationRouter);
   //app.use('/api/chats', chatRoutes);
   //app.use('/api/events', eventRoutes);
   //app.use('/api/hashtags', hashtagRoutes);
   //app.use('/api/mates', mateRoutes);
-  app.use('/mypage/profile', profileRoutes);
+  app.use('/mypage/profile', usersRouter);
   app.use('/mypage/badges', badgeRoutes);
   app.use('/mypage/activitymap', activityMapRoutes);
+  app.user('/mypage/preference', preferenceRoutes);
 
   // 404 핸들링
   app.use((req, res, next) => {

@@ -63,6 +63,10 @@
 - 채팅방 입장 및 나가기 구현
 - 채팅방 메세지 전송 및 수신, 채팅방 생성 및 참여 (socket.io 로 실시간 통신 )
 
+>progress 9
+- profile 파일 제거 : user파일을 사용해서 마이페이지 내 profile 대체
+- activityAnalysis, activityRecommend, preference sercive 를 나누어 활동 추천, 선호도 변경, 활동 데이터 분석 등 기능 분리
+
 > 앞으로:
 
 - CRUD 정의 ( 댓글)
