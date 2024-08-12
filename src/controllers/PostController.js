@@ -109,6 +109,16 @@ class PostController {
       res.status(500).json({ message: err.message });
     }
   }
+  //후기 요약 엔드포인트
+  async summarizePost(req, res) {
+    try {
+      const { id } = req.params;
+      const summary = await PostService.summarizePostContent(id);
+      res.status(200).json(summary);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new PostController();
