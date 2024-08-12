@@ -140,7 +140,7 @@ exports.saveBalanceGameResult = async (req, res) => {
   }
 };
 
-// 사용자에게 활동 추천 제공
+// 사용자에게 활동 추천 제공// 사용자 찾고, 추천활동 반환
 exports.getRecommendedActivities = async (req, res) => {
   try {
     const recommendations = await PreferenceService.getRecommendedActivities(
