@@ -1,23 +1,25 @@
-// 사용자의 활동 내역을 분석 -> 추천
+//사용자의 활동 통계를 기반으로 활동을 추천
+
+const activities = require('../utils/activity');
 const ActivityMap = require('../models/activityMap');
-const activityList = require('../utils/activity');
+const User = require('../models/user');
 
 class ActivityRecommendationService {
   // 사용자가 얼마나 자주 특정 activity를 했는지 해시태그를 통해 통계 정보를 계산
   async getUserActivityStats(userId) {
     try {
-      const activities = await ActivityMap.find({ user: userId }).select(
+      const activityMaps = await ActivityMap.find({ user: userId }).select(
         'hashtags'
       );
 
       const activityCounts = {};
-      activityList.forEach((activity) => {
+      activities.forEach((activity) => {
         activityCounts[activity.name] = 0;
       });
 
-      activities.forEach((activityMap) => {
+      activityMaps.forEach((activityMap) => {
         const activityTag = activityMap.hashtags.find((tag) =>
-          activityList.some((activity) => activity.name === tag)
+          activities.some((activity) => activity.name === tag)
         );
         if (activityTag) {
           activityCounts[activityTag]++;
@@ -31,7 +33,7 @@ class ActivityRecommendationService {
     }
   }
 
-  //사용자의 선호도와 매칭되는 활동 중 아직 시도하지 않은 활동을 추천
+  // 사용자의 선호도와 매칭되는 활동 중 아직 시도하지 않은 활동을 추천
   async recommendActivities(userId) {
     try {
       const activityCounts = await this.getUserActivityStats(userId);
@@ -40,16 +42,17 @@ class ActivityRecommendationService {
       if (!user) throw new Error('User not found');
 
       // 사용자 선호도 기반 추천
-      const preferredActivities = activityList.filter((activity) => {
+      const preferredActivities = activities.filter((activity) => {
         return (
-          activity.location_preference === user.location_preference &&
-          activity.environment_preference === user.environment_preference &&
-          activity.group_preference === user.group_preference &&
-          activity.season_preference === user.season_preference
+          activity.location === user.location_preference &&
+          activity.environment === user.environment_preference &&
+          activity.group === user.group_preference &&
+          activity.season === user.season_preference
         );
       });
 
-      // 자주 하지 않은 활동 추천
+      // 사용자의 선호도와 일치하는 액티비티 중에서 사용자가 아직 수행하지 않은 활동 추천
+      //즉 수행빈도가 0인 액티비티 필터링하여 추천
       const rarelyDoneActivities = preferredActivities.filter(
         (activity) => activityCounts[activity.name] === 0
       );
