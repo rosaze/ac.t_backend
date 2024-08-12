@@ -10,9 +10,9 @@ class PostService {
   }
   //좋아요수로 내림차순
   async getTopPosts() {
-    return await Post.find()
-      .sort({ likes: -1 })
-      .limit(5)
+    return await Post.find() //모든게시물 중에서
+      .sort({ likes: -1 }) // 좋아요 수 기준으로 내림차순 정렬
+      .limit(5) //상위 5개만 반환
       .populate('author')
       .exec();
   }
