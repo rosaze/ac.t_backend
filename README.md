@@ -67,8 +67,11 @@
 
 - profile 파일 제거 : user파일을 사용해서 마이페이지 내 profile 대체
 - activityAnalysis, activityRecommend, preference service 를 나누어 활동 추천, 선호도 변경, 활동 데이터 분석 등 기능 분리
-
 - post 에서 각 후기의 요약 기능 제공 및 장소 + 활동의 전체 후기글에 대해 감정 분석 결과 제공 기능(koGPT)
+
+> progress 10
+
+- 스토어 기능 구축 (상품 목록 조회, 상품 상세 조회 , 상품 관리 -관리자용 )
 
 > 앞으로:
 
