@@ -1,5 +1,5 @@
-const ChatRoom = require('../models/ChatRoom');
-const Message = require('../models/Message');
+const ChatRoom = require('../models/ChatRooms');
+const Message = require('../models/Messages');
 // 참여버튼 누르면 이미 존재하거나 새 채팅방에 초대
 class ChatService {
   async createChatRoom(name, participants) {
