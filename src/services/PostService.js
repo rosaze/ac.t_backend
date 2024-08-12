@@ -1,5 +1,6 @@
 // 비즈니스 로직
 const Post = require('../models/Posts');
+const axios = require('axios');
 
 class PostService {
   async createPost(data) {
@@ -64,6 +65,45 @@ class PostService {
 
   async deletePost(id) {
     return await Post.findByIdAndDelete(id).exec();
+  }
+
+  // KoGPT를 사용하여 게시글 내용 요약
+  async summarizePostContent(postId) {
+    const post = await this.getPostById(postId);
+    const summary = await this.callKoGPTForSummary(post.content);
+    return {
+      original: post.content,
+      summary: summary,
+    };
+  }
+
+  // KoGPT API 호출 메소드
+  async callKoGPTForSummary(content) {
+    const REST_API_KEY = process.env.KAKAO_CLIENT_ID; // 환경 변수에서 REST API 키를 가져옴
+    const prompt = `다음 글을 요약해 주세요: ${content}`;
+
+    try {
+      const response = await axios.post(
+        'https://api.kakaobrain.com/v1/inference/kogpt/generation',
+        {
+          prompt: prompt,
+          max_tokens: 100,
+          temperature: 0.7,
+          top_p: 0.8,
+          n: 1,
+        },
+        {
+          headers: {
+            Authorization: `KakaoAK ${REST_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data.generations[0].text.trim();
+    } catch (error) {
+      console.error('Error calling KoGPT API:', error.message);
+      throw new Error('Failed to summarize content using KoGPT');
+    }
   }
 }
 
