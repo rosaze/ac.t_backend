@@ -119,6 +119,19 @@ class PostController {
       res.status(500).json({ message: err.message });
     }
   }
+  // 특정 장소와 활동에 대한 감정 분석
+  async analyzeSentiments(req, res) {
+    try {
+      const { locationTag, activityTag } = req.params;
+      const sentiments = await PostService.analyzeSentiments(
+        locationTag,
+        activityTag
+      );
+      res.status(200).json(sentiments);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new PostController();
