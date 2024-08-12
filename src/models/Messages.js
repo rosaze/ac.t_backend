@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-//메세지
+
 const MessageSchema = new mongoose.Schema({
   chatRoom: {
     type: mongoose.Schema.Types.ObjectId,

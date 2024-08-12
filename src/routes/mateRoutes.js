@@ -8,5 +8,6 @@ router.get('/mates/:id', MateController.getMatePostById);
 router.put('/mates/:id/join', MateController.joinMatePost);
 router.put('/mates/:id/leave', MateController.leaveMatePost);
 router.delete('/mates/:id', MateController.deleteMatePost);
+router.post('/mates/:id/join-chat', MateController.joinMateChatRoom); // 참여하여 채팅방으로 이동
 
 module.exports = router;
