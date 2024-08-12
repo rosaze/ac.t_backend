@@ -1,6 +1,27 @@
 const MateService = require('../services/MateService');
 
 class MateController {
+  async joinMateChatRoom(req, res) {
+    try {
+      const { mateId, userId } = req.body;
+
+      // 채팅방이 이미 있는지 확인
+      let chatRoom = await ChatService.findChatRoomByMateId(mateId);
+      if (!chatRoom) {
+        // 채팅방이 없으면 새로 생성
+        chatRoom = await ChatService.createChatRoom(`Mate 채팅방`, [userId]);
+      } else {
+        // 이미 존재하는 채팅방에 유저 추가
+        await ChatService.addUserToChatRoom(chatRoom._id, userId);
+      }
+
+      res.status(200).json({ chatRoomId: chatRoom._id });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+
+    // 추가적인 Mate 관련 메서드들...
+  }
   async createMatePost(req, res) {
     try {
       const matePost = await MateService.createMatePost(req.body);
