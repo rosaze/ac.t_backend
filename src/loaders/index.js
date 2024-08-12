@@ -1,3 +1,9 @@
+/*
+index.js : express.js 서버 설정, mongoose.js 연결 설정, 서비스 초기화
+서버 시작 등 애플리케이션 초기화 작업 관리 중앙 허브.
+index.js 와 app.js 의 기능을 완벽히 분리하는게 유지보수에 도움.
+*/
+
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
