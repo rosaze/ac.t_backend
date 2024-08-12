@@ -55,7 +55,7 @@ const startServer = async () => {
   app.use('/mypage/profile', usersRouter);
   app.use('/mypage/badges', badgeRoutes);
   app.use('/mypage/activitymap', activityMapRoutes);
-  app.user('/mypage/preference', preferenceRoutes);
+  app.use('/mypage/preference', preferenceRoutes);
 
   // 404 핸들링
   app.use((req, res, next) => {
