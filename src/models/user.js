@@ -124,8 +124,6 @@ const userSchema = new mongoose.Schema({
       enum: ['indoor', 'outdoor'],
       required: true,
     },
-    groupSize: { type: String, enum: ['small', 'large'], required: true },
-    season: { type: String, enum: ['winter', 'summer'], required: true },
     preferred_activity_types: { type: String }, // 결과를 저장하는 필드
   },
   certificates: [certificateSchema], // 자격증 필드 추가
