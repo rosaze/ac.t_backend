@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gangwon-do Activity Search</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      input {
+        margin: 5px 0;
+        padding: 5px;
+        width: 300px;
+      }
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      .result {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+      .result img {
+        max-width: 100px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Search Activities in Gangwon-do</h1>
+
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Search for activities..."
+    />
+    <button onclick="searchActivities()">Search</button>
+
+    <div id="results"></div>
+
+    <script>
+      function searchActivities() {
+        const keyword = document.getElementById("search-input").value;
+
+        fetch(`/api/search-activities?keyword=${encodeURIComponent(keyword)}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            data.forEach((item) => {
+              const resultDiv = document.createElement("div");
+              resultDiv.className = "result";
+
+              const img = item.firstimage
+                ? `<img src="${item.firstimage}" alt="${item.title}">`
+                : "";
+
+              resultDiv.innerHTML = `
+                            ${img}
+                            <h2>${item.title}</h2>
+                            <p>${item.addr1}</p>
+                            <p>Category: ${item.cat1}</p>
+                            <p>${
+                              item.overview || "No description available."
+                            }</p>
+                        `;
+              resultsDiv.appendChild(resultDiv);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching activities:", error);
+            alert("Failed to fetch activities. Please try again later.");
+          });
+      }
+    </script>
+  </body>
+</html>
