@@ -9,10 +9,11 @@ class HashtagService {
       {
         $group: {
           _id: {
-            location: '$hashtags.location', // 두 개 필드로 나눔
-            activity: '$hashtags.activity',
+            location: '$hashtags.location', // 장소
+            activity: '$hashtags.activity', //액티비티
+            vendor: '$hashtags.vendor', //추가된 업체명 해시태그
           },
-          count: { $sum: 1 },
+          count: { $sum: 1 }, //해시태그 조합 개수 세기
         },
       },
       { $sort: { count: -1 } }, // 빈도수 count 기준으로 내림차순 정렬.
