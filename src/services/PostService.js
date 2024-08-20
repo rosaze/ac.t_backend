@@ -60,6 +60,34 @@ class PostService {
     return await Post.find().sort(sortCriteria).populate('author').exec();
   }
 
+  //후기 게시판 필터 기능- 필터링 옵션: 장소, 액티비티, 업체 해시태그 선택
+  //해당 필터에 맞는 게시물만 표시 . !!!일단 업체는 뺄 수도 있음!!
+  async getFilteredPosts(filters) {
+    const query = {};
+    if (filters.location) query['hashtags.location'] = filters.location;
+    if (filters.activity) query['hashtags.activity'] = filters.activity;
+    if (filters.vendor) query['hashtags.vendor'] = filters.vendor;
+
+    const filteredPosts = await Post.find(query).exec();
+    return filteredPosts;
+  }
+
+  //후기 검색 기능 - 사용자가 키워드 입력하면 일치하는 게시물 반환
+  //후기 게시판에서만 검색 기능이 있는데 이거 따로 정해줘야 하는지 ?
+  async searchPosts(keyword) {
+    const searchResults = await Post.find({
+      $or: [
+        //해시태그, 본문, 제목 모두 검색
+        { 'hashtags.location': new RegExp(keyword, 'i') },
+        { 'hashtags.activity': new RegExp(keyword, 'i') },
+        { 'hashtags.vendor': new RegExp(keyword, 'i') },
+        { title: new RegExp(keyword, 'i') },
+        { content: new RegExp(keyword, 'i') },
+      ],
+    }).exec();
+    return searchResults;
+  }
+
   async getPosts() {
     const query =
       type == 'review'
