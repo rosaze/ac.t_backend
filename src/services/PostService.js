@@ -18,11 +18,11 @@ class PostService {
   }
 
   async getPostsByType(type) {
-    //게시판 분류
+    //후기글과 일반 게시글 분류
     return await Post.find({ type }).populate('author').exec();
   }
   async getPostsByCategory(category) {
-    // 태그 분류 ?
+    // 태그 분류 ? 카테고리가 뭐지???ㅅㅂ일단 나중에 확인
     return await Post.find({ category }).populate('author').exec();
   }
   async getPostsByTag(tag) {
@@ -73,7 +73,8 @@ class PostService {
   }
 
   //후기 검색 기능 - 사용자가 키워드 입력하면 일치하는 게시물 반환
-  //후기 게시판에서만 검색 기능이 있는데 이거 따로 정해줘야 하는지 ?
+  //후기 게시판에서만 있는 기능
+  //자유 게시판: 후기 게시판과 동일하게 구현. 필터링 기능은 없음
   async searchPosts(keyword) {
     const searchResults = await Post.find({
       $or: [
