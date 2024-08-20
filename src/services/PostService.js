@@ -9,12 +9,12 @@ class PostService {
     return await post.save();
   }
   //좋아요수로 내림차순
-  async getTopPosts() {
-    return await Post.find() //모든게시물 중에서
+  async getTrendingPosts() {
+    const trendingPosts = await Post.find() //모든게시물 중에서
       .sort({ likes: -1 }) // 좋아요 수 기준으로 내림차순 정렬
-      .limit(5) //상위 5개만 반환
-      .populate('author')
-      .exec();
+      .limit(10)
+      .populate('author'); //?
+    return trendingPosts;
   }
 
   async getPostsByType(type) {
@@ -109,7 +109,7 @@ class PostService {
 
   // 장소, 활동 해시태그를 통해 후기 데이터베이스 가져와 각 게시물의 내용을 analyzeSentiment 메서드로 전달하여 감정을 분석
   // 분석 결과에 따라 긍정/부정 게시물의 수 집계
-  async analyzeSentiments(locationTag, activityTag) {
+  async analyzeSentiments(locationTag, activityTag, vendorTag) {
     const posts = await Post.find({ locationTag, activityTag }).exec();
 
     if (posts.length === 0) {
