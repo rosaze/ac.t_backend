@@ -23,7 +23,7 @@ const mateRoutes = require("./src/routes/mateRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
 const badgeRoutes = require("./src/routes/badgeRoutes");
 const activityMapRoutes = require("./src/routes/activityMapRoutes");
-
+const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
@@ -59,6 +59,7 @@ app.use("/api/mates", mateRoutes);
 app.use("/mypage/profile", profileRoutes);
 app.use("/mypage/badges", badgeRoutes);
 app.use("/mypage/activitymap", activityMapRoutes);
+app.use("/api", vendorRoutes); // 업체명 라우트 추가
 
 //socket.io 연결
 io.on("connection", (socket) => {
