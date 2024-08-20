@@ -1,9 +1,14 @@
 const MateService = require('../services/MateService');
+const ChatService = require('../services/MateService');
 
 class MateController {
   async joinMateChatRoom(req, res) {
     try {
       const { mateId, userId } = req.body;
+
+      //메이트 게시글 가져오기
+      const matePost = await MateService.getMatePostById(mateId);
+      const creatorId = matePost.author; // 메이트 게시글 작상자를 채팅방 생성자로 지정
 
       // 채팅방이 이미 있는지 확인
       let chatRoom = await ChatService.findChatRoomByMateId(mateId);

@@ -9,24 +9,32 @@ exports.addActivityMap = async (activityMapData) => {
   const user = await User.findById(activityMapData.user);
   if (!user) throw new Error('User not found');
 
-  // 시군 방문 횟수 추적 (location hashtag를 통해)
+  // 시군 방문 횟수 추적
   const visitCount = await ActivityMap.countDocuments({
     user: activityMapData.user,
     region: activityMapData.region,
   });
 
-  // 색상 결정 (방문 횟수에 따라)
-  let color;
-  if (visitCount >= 5) {
-    color = 'darkColor'; // 5번 이상 방문한 경우
-  } else if (visitCount === 4) {
-    color = 'slightlyLighterColor';
-  } else if (visitCount === 3) {
-    color = 'mediumColor';
-  } else if (visitCount === 2) {
-    color = 'lightColor';
-  } else {
-    color = 'veryLightColor';
+  // 특정 활동에 따른 활동 횟수 추적
+  const activityCount = await ActivityMap.countDocuments({
+    user: activityMapData.user,
+    activityTag: activityMapData.activityTag,
+  });
+
+  // 시군 방문에 따른 배지 지급
+  if (visitCount + 1 >= 5) {
+    await BadgeService.awardBadge(
+      activityMapData.user,
+      `${activityMapData.region} 매니아`
+    );
+  }
+
+  // 활동 횟수에 따른 배지 지급
+  if (activityCount + 1 >= 5) {
+    await BadgeService.awardBadge(
+      activityMapData.user,
+      `${activityMapData.activityTag} 매니아`
+    );
   }
 
   // 활동 기록 추가
@@ -35,22 +43,21 @@ exports.addActivityMap = async (activityMapData) => {
     post: activityMapData.post,
     region: activityMapData.region,
     activity_date: activityMapData.activity_date,
-    color, // 색상 저장
+    color: determineColor(visitCount + 1), // 방문 횟수에 따라 색상 결정
+    activityTag: activityMapData.activityTag, // 활동 태그 추가
   });
 
   await activityMap.save();
-
-  // 배지 지급 조건 확인 (5번 이상 방문 시)
-  if (visitCount + 1 >= 5) {
-    await BadgeService.awardBadge(
-      activityMapData.user,
-      `${activityMapData.region} Master`
-    );
-    // 예: 춘천시 마스터
-  }
-
   return activityMap;
 };
+
+function determineColor(visitCount) {
+  if (visitCount >= 5) return 'darkColor';
+  if (visitCount === 4) return 'slightlyLighterColor';
+  if (visitCount === 3) return 'mediumColor';
+  if (visitCount === 2) return 'lightColor';
+  return 'veryLightColor';
+}
 
 //특정 사용자의 활동 이력 조회
 exports.getActivityHistory = async (userId) => {

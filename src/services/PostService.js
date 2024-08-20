@@ -1,12 +1,21 @@
 // 비즈니스 로직
 const Post = require('../models/Posts');
+const BadgeService = require('../models/Posts');
 const axios = require('axios');
 require('dotenv').config();
 
 class PostService {
   async createPost(data) {
     const post = new Post(data);
-    return await post.save();
+    await post.save();
+
+    //게시글 작성 횟수 추적 및 배지 지급
+    const postCount = await Post.countDocuments({ author: data.author });
+    if (postCount >= 5) {
+      await BadgeService.awardBadge(data.author, '아낌없이 주는 나무');
+    }
+
+    return post;
   }
   //좋아요수로 내림차순
   async getTrendingPosts() {
