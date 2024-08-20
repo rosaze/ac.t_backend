@@ -13,7 +13,11 @@ class PostController {
         post: post._id,
         region: req.body.locationTag, //지역 태그
         activity_date: new Date(),
-        hashtags: [req.body.locationTag, req.body.activityTag], //해시태그로 지역과 활동 종류 기록
+        hashtags: [
+          req.body.locationTag,
+          req.body.activityTag,
+          req.body.vendorTag,
+        ], //해시태그
       });
       res.status(201).json(post);
     } catch (err) {
@@ -21,9 +25,9 @@ class PostController {
     }
   }
   //인기 급상승 게시물
-  async getTopPosts(req, res) {
+  async getTrendingPosts(req, res) {
     try {
-      const posts = await PostService.getTopPosts();
+      const posts = await PostService.getTrendingPosts();
       res.status(200).json(posts);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -60,11 +64,47 @@ class PostController {
       res.status(500).json({ message: err.message });
     }
   }
+  // 좋아요순/최신순 드롭다운
+  async getPostsSortedBy(req, res) {
+    try {
+      const sortOption = req.query.sort; // 'latest' or 'likes'
+      const posts = await PostService.getPostsSortedBy(sortOption);
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   //정렬 기능 (시군별, 액티비티, 좋아요수)
   async getSortedPosts(req, res) {
     try {
       const { sortBy } = req.params; // "city", "activity", "likes"
       const posts = await PostService.getSortedPosts(sortBy);
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+  //후기게시판 필터 기능
+  async getFilteredPosts(req, res) {
+    try {
+      const filters = {
+        location: req.query.location,
+        activity: req.query.activity,
+        vendor: req.query.vendor,
+      };
+      const posts = await PostService.getFilteredPosts(filters);
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  //후기 검색 기능
+  async searchPosts(req, res) {
+    try {
+      const keyword = req.query.q; // 검색 키워드
+      const posts = await PostService.searchPosts(keyword);
       res.status(200).json(posts);
     } catch (err) {
       res.status(500).json({ message: err.message });

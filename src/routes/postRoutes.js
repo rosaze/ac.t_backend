@@ -20,4 +20,11 @@ router.get(
   PostController.analyzeSentiments
 ); // 특정 장소와 활동에 대한 감정 분석
 
+//추가된 라우터들 (검색,필터,정렬)
+router.get('/posts/trending', PostController.getTrendingPosts); // 인기 급상승 게시물
+router.get('/posts/popular-tags', PostController.getPopularTagCombinations); // 인기 해시태그 조합
+router.get('/posts/sorted', PostController.getPostsSortedBy); // 정렬 기능
+router.get('/posts/filtered', PostController.getFilteredPosts); // 필터링 기능
+router.get('/posts/search', PostController.searchPosts); // 검색 기능
+
 module.exports = router;
