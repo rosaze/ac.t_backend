@@ -1,7 +1,5 @@
-const activity = require('../models/activity');
 const Badge = require('../models/badges');
 const User = require('../models/user');
-const userBadge = require('../models/userBadge');
 const UserBadge = require('../models/userBadge');
 
 exports.awardBadge = async (userId, badgeName) => {

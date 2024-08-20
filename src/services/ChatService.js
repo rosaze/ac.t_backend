@@ -1,10 +1,23 @@
 const ChatRoom = require('../models/ChatRooms');
 const Message = require('../models/Messages');
+const BadgeService = require('./badgeService');
 // 참여버튼 누르면 이미 존재하거나 새 채팅방에 초대
 class ChatService {
-  async createChatRoom(name, participants) {
-    const chatRoom = new ChatRoom({ name, participants });
-    return await chatRoom.save();
+  async createChatRoom(name, participants, creatorId, mateId = null) {
+    const chatRoom = new ChatRoom({
+      name,
+      participants,
+      mateId,
+      creator: creatorId,
+    });
+    const saveChatRoom = await chatRoom.save();
+
+    //메이트 채팅방이 새로 생성된 경우 배지 지급
+    if (mateId) {
+      const badgeName = `${name} 리더`; // 채팅방 제목 + 리더로 배지 이름
+      await BadgeService.awardBadge(creatorId, badgeName);
+    }
+    return saveChatRoom;
   }
 
   async findChatRoomByMateId(mateId) {
