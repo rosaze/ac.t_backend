@@ -4,8 +4,7 @@ class HashtagService {
   async getTopHashtags() {
     const hashtags = await Post.aggregate([
       //집계
-      { $unwind: '$hashtags' }, //하나의 문서가 여러 개의 해시태그를 갖고 있으면
-      //unwind-> 여러 개의 문서로 분해, 각 문서에는 하나의 해시태그만 포함~
+      { $unwind: '$hashtags' }, //해시태그 배열 분리
       {
         $group: {
           _id: {
@@ -14,10 +13,11 @@ class HashtagService {
             vendor: '$hashtags.vendor', //추가된 업체명 해시태그
           },
           count: { $sum: 1 }, //해시태그 조합 개수 세기
+          likes: { $sum: '$likes' }, //해당 해시태그 조합의 Like 총합
         },
       },
-      { $sort: { count: -1 } }, // 빈도수 count 기준으로 내림차순 정렬.
-      { $limit: 5 }, //상위 다섯개 해시태그만 서택
+      { $sort: { likes: -1 } }, //좋아요 수 기준 내림차순
+      { $limit: 10 }, //상위 10개 조합 선택
     ]);
     return hashtags;
   }
