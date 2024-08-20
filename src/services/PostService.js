@@ -22,12 +22,24 @@ class PostService {
     return await Post.find({ type }).populate('author').exec();
   }
   async getPostsByCategory(category) {
-    // 태그 분류
+    // 태그 분류 ?
     return await Post.find({ category }).populate('author').exec();
   }
   async getPostsByTag(tag) {
-    // 특정 태그 가진 게시물 가져옴
+    // 특정 태그 가진 게시물 가져옴?
     return await Post.find({ hashtags: tag }).populate('author').exec();
+  }
+  //좋아요순 아님 최신순 드롭다운 (New!)
+  async getPostsSortedBy(option) {
+    let sortOption;
+    if (option === 'latest') {
+      sortOption = { createdAt: -1 }; // 최신순
+    } else if (option === 'likes') {
+      sortOption = { likes: -1 }; // 좋아요 순
+    }
+
+    const posts = await Post.find({}).sort(sortOption).exec();
+    return posts;
   }
   async getSortedPosts(sortBy) {
     // 게시물 정렬
