@@ -1,7 +1,6 @@
-// services/UserService.js
-
 // UserService 클래스는 사용자의 데이터 처리와 관련된 비즈니스 로직을 담당합니다.
 const User = require('../models/user');
+const BadgeService = require('./badgeService');
 
 class UserService {
   // 새로운 사용자를 생성하는 메서드입니다.
@@ -55,6 +54,10 @@ class UserService {
 
     user.certificates.push(certificateData);
     await user.save();
+
+    //자격증 등록에 따른 배지 지급
+    await BadgeService.awardBadge(userId, `${certificateData.title} 마스터`);
+
     return user.certificates;
   }
 
