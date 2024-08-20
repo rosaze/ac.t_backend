@@ -7,6 +7,18 @@ const mongoose = require('mongoose');
 
 const VendorSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
+  category: { type: String, required: true }, // 카테고리 추가
+  location: {
+    //위치 정보 ( 필터링 위해)
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+  },
+  description: { type: String, required: false }, // 짧은 소개글
+  tags: [{ type: String }], //태그 ( 선호도 반영해서 나중에 수정 )
+  imageUrl: { type: String, required: false }, // 로고나 이미지
   createdAt: { type: Date, default: Date.now },
 });
 
