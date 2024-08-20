@@ -1,6 +1,19 @@
 const Post = require('../models/Posts'); //post 몽구스 모델
+const BadgeService = require('./badgeService');
+const Hashtag = require('../models/Hashtags');
 
 class HashtagService {
+  async registerHashtag(userId, hashtagData) {
+    //새로운 해시태그 등록 로직
+    const hashtag = new Hashtag(hashtagData);
+    await hashtag.save();
+
+    //해시태그 최초 등록에 따른 배지 지급
+    await BadgeService.awardBadge(userId, '해시태그 개척자');
+
+    return hashtag;
+  }
+
   async getTopHashtags() {
     const hashtags = await Post.aggregate([
       //집계
