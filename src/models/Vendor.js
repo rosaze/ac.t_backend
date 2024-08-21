@@ -11,10 +11,7 @@ const VendorSchema = new mongoose.Schema({
   location: {
     //위치 정보 ( 필터링 위해)
     address: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
+    sigungu: { type: String, required: true },
   },
   description: { type: String, required: false }, // 짧은 소개글
   tags: [{ type: String }], //태그 ( 선호도 반영해서 나중에 수정 )
