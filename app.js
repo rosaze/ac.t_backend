@@ -16,7 +16,9 @@ const authRouter = require("./src/routes/auth");
 const chatRoutes = require("./src/routes/chatRoutes");
 const eventRoutes = require("./src/routes/eventRoutes");
 const productRoutes = require("./src/routes/productRoutes"); // 스토어 라우트 추가
-const paymentRoutes = require("./src/routes/paymentRoutes");
+const cartRoutes = require("./src/routes/cartRoutes");
+const rentalRoutes = require("./src/routes/rentalRoutes");
+const paymentRoutes = require("./src/routes/paymenetRoutes");
 const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
 const badgeRoutes = require("./src/routes/badgeRoutes");
@@ -54,7 +56,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/chats", chatRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/store", productRoutes); // 스토어 라우트 설정
-app.user("api/store/payments", paymentRoutes);
+app.use("api/store/payments", paymentRoutes);
+app.use("api/store/rental", rentalRoutes);
+app.use("api/store/cart", cartRoutes);
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
 app.use("/mypage/badges", badgeRoutes);
