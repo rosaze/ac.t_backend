@@ -11,6 +11,7 @@
   "author": "JWY, SBY",
   "license": "MIT",
   "dependencies": {
+    "@tosspayments/tosspayments-sdk": "^2.2.4",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -23,9 +24,9 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nunjucks": "^3.2.4",
-    "typedi": "^0.10.0",
     "passport": "^0.7.0",
-    "passport-kakao": "^1.0.1"
+    "passport-kakao": "^1.0.1",
+    "typedi": "^0.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
