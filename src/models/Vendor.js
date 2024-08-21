@@ -1,25 +1,24 @@
-//일단 이름은 지피티한테 추천받아서 vendor (업체)로 지정했는데 바꿀수도 ㅋㅋ
-//데이터베이스에 일단 vendor 이라는 컬렉션 추가ㅐ서 업체명들이랑 데이터 저장할건데, 뭔가 activity에 들어가야할것같긴함.
-//근데 이미 activity 에 선호도 정보가 들어가 있어서....
-
-//등록된 업체 데이터 관리, 향후 해시태그 자동 완성 기능에 사용
 const mongoose = require('mongoose');
 
 const VendorSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  category: { type: String, required: true }, // 카테고리 추가
-  location: {
-    //위치 정보 ( 필터링 위해)
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
-  },
-  description: { type: String, required: false }, // 짧은 소개글
-  tags: [{ type: String }], //태그 ( 선호도 반영해서 나중에 수정 )
-  imageUrl: { type: String, required: false }, // 로고나 이미지
-  createdAt: { type: Date, default: Date.now },
+  contentid: { type: String, required: true, unique: true },
+  title: { type: String, required: true }, // 업체명 or 장소명
+  addr1: { type: String, required: true }, // 기본 주소
+  addr2: { type: String }, // 상세 주소
+  areaname: { type: String, required: true }, // 도 이름 (강원도)
+  sigunguname: { type: String, required: true }, // 시군구 이름
+  category1: { type: String }, // 대분류 (레포츠, 관광지 등)
+  category2: { type: String }, // 중분류
+  category3: { type: String }, // 소분류
+  contenttype: { type: String, required: true }, // 콘텐츠 타입 (관광지, 문화시설 등)
+  createdtime: { type: Date, default: Date.now }, // 생성 시간
+  firstimage: { type: String }, // 이미지 URL
+  mapx: { type: Number }, // 지도 X좌표
+  mapy: { type: Number }, // 지도 Y좌표
+  mlevel: { type: Number }, // 지도 레벨
+  modifiedtime: { type: Date }, // 수정 시간
+  tel: { type: String }, // 전화번호
+  zipcode: { type: String }, // 우편번호
 });
 
 module.exports = mongoose.model('Vendor', VendorSchema);
