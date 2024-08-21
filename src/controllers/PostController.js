@@ -162,10 +162,11 @@ class PostController {
   // 특정 장소와 활동에 대한 감정 분석
   async analyzeSentiments(req, res) {
     try {
-      const { locationTag, activityTag } = req.params;
+      const { locationTag, activityTag, vendorTag } = req.params;
       const sentiments = await PostService.analyzeSentiments(
         locationTag,
-        activityTag
+        activityTag,
+        vendorTag
       );
       res.status(200).json(sentiments);
     } catch (err) {
