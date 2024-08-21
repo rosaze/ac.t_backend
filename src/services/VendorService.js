@@ -18,6 +18,20 @@ class VendorService {
     }
     return existingVendor; // 이미 있는 경우 해당 업체명 반환
   }
+  // 시군별 숙박시설 검색 + 숙박 유형 필터링
+  async getAccommodationsByRegion(region, category = null) {
+    const query = {
+      sigunguname: region, // 시군구 필드로 필터링
+      contenttype: '숙박', // 숙박시설로 한정
+    };
+    if (category) {
+      query['category3'] = category; // 특정 숙박 유형으로 필터링 (모텔, 펜션 등)
+    }
+
+    return await Vendor.find(query)
+      .select('title addr1 firstimage description tel category3')
+      .exec();
+  }
 }
 
 module.exports = new VendorService();
