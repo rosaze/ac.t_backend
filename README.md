@@ -74,7 +74,11 @@
 - 스토어 기능 구축 (상품 목록 조회, 상품 상세 조회 , 상품 관리 -관리자용 )
 
 > progress 11
+
 - 뱃지 지급 구현 완료(ai 이미지 생성 관련 제외, ai 구현 완료 후 구현할 예정)
+- <숙박검색>
+  - VendorService.js: getAccommodationsByRegion 메서드 추가. 숙박시설을 시군구별, 숙박유형으로 필터링.
+  - AccomodationController.js: 숙박 카테고리 필터링
 
 > 앞으로:
 

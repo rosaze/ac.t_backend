@@ -25,6 +25,7 @@ const badgeRoutes = require("./src/routes/badgeRoutes");
 const activityMapRoutes = require("./src/routes/activityMapRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
+const accommodationRoutes = require("./routes/accommodationRoutes");
 
 const app = express();
 app.set("port", process.env.PORT || 3002);
@@ -65,6 +66,7 @@ app.use("/mypage/activitymap", activityMapRoutes);
 app.use("/mypage/profile", usersRouter);
 app.use("/mypage/preference", preferenceRoutes);
 app.use("/api", vendorRoutes); // 업체명 라우트 추가
+app.use("/api", accommodationRoutes); //숙박 라우트
 
 //socket.io 연결
 io.on("connection", (socket) => {
