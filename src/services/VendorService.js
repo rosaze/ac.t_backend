@@ -6,12 +6,12 @@ const Vendor = require('../models/Vendor');
 class VendorService {
   async searchVendors(query) {
     // 업체명 검색 (부분 일치)
-    return await Vendor.find({ name: new RegExp(query, 'i') }).exec();
-  }
+    return await Vendor.find({ title: new RegExp(query, 'i') }).exec();
+  } //vendor 컬렉션에서는 업체명이 title로 표시됨
 
   async addVendor(name) {
     // 새로운 업체명 추가
-    const existingVendor = await Vendor.findOne({ name }).exec();
+    const existingVendor = await Vendor.findOne({ title }).exec();
     if (!existingVendor) {
       const vendor = new Vendor({ name });
       return await vendor.save();
