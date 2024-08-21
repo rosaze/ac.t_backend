@@ -79,6 +79,10 @@
 - <숙박검색>
   - VendorService.js: getAccommodationsByRegion 메서드 추가. 숙박시설을 시군구별, 숙박유형으로 필터링.
   - AccomodationController.js: 숙박 카테고리 필터링
+- 스토어 랜탈 / 상품, 티켓 구매 파일 분리
+  - activity.json 파일 통해서 카테고리 분류
+- 장바구니 기능 추가
+- 토스페이 적용 but 추후 사업자 등록 후 수정 예정
 
 > 앞으로:
 
