@@ -2,7 +2,9 @@
 //-> 존재하면 자동완성 리스트에 보여주고, 존재하지 않으면 새로운 업체명 DB에 추가
 
 const Vendor = require('../models/Vendor');
+const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
 
+//검색 기능 추가
 class VendorService {
   async searchVendors(query) {
     // 업체명 검색 (부분 일치)
@@ -31,6 +33,33 @@ class VendorService {
     return await Vendor.find(query)
       .select('title addr1 firstimage description tel category3')
       .exec();
+  }
+  // 키워드를 통해 장소 검색
+  async searchActivitiesByKeyword(keyword) {
+    return await Vendor.find({
+      $or: [
+        { title: { $regex: keyword, $options: 'i' } },
+        { addr1: { $regex: keyword, $options: 'i' } },
+        { sigunguname: { $regex: keyword, $options: 'i' } },
+        { contentype: { $regex: keyword, $options: 'i' } },
+        { category1: { $regex: keyword, $options: 'i' } },
+        { category2: { $regex: keyword, $options: 'i' } },
+        { category3: { $regex: keyword, $options: 'i' } },
+      ],
+    }).exec();
+  }
+  // 특정 장소에 대한 감정 분석 결과를 가져옴
+  async getVendorDetailsAndSentiments(vendorId) {
+    const vendor = await Vendor.findById(vendorId).exec();
+    if (!vendor) {
+      throw new Error('Vendor not found');
+    }
+    // PostService를 이용하여 감정 분석을 수행
+    const sentimentAnalysis = await PostService.analyzeSentiments(vendor.title);
+    return {
+      vendor,
+      sentimentAnalysis,
+    };
   }
 }
 
