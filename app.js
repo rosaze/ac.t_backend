@@ -5,7 +5,7 @@ const nunjucks = require("nunjucks");
 const dotenv = require("dotenv"); //추가
 const http = require("http"); // 추가
 const socketIO = require("socket.io"); // 소켓 추가
-dotenv.config(); //추가
+require("dotenv").config(); //에러 수정
 
 const passport = require("./src/passport/passport");
 const connect = require("./src/config/database");
