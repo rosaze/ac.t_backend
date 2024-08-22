@@ -1,5 +1,5 @@
 const MateService = require('../services/MateService');
-const ChatService = require('../services/MateService');
+const ChatService = require('../services/ChatService');
 
 class MateController {
   async joinMateChatRoom(req, res) {
@@ -29,7 +29,10 @@ class MateController {
   }
   async createMatePost(req, res) {
     try {
-      const matePost = await MateService.createMatePost(req.body);
+      const matePost = await MateService.createMatePost({
+        ...req.body,
+        author: req.user._id, //현재 로그인된 사용자의 ID를 포함
+      });
       res.status(201).json(matePost);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -39,10 +42,11 @@ class MateController {
   async getMatePosts(req, res) {
     try {
       const filters = {
-        activity: req.query.activity,
-        location: req.query.location,
+        activityTag: req.query.activityTag,
+        locationTag: req.query.locationTag,
         date: req.query.date,
         sortBy: req.query.sortBy,
+        personal_preferences: req.query.personal_preferences,
       };
       const matePosts = await MateService.getMatePosts(filters);
       res.status(200).json(matePosts);
@@ -50,6 +54,46 @@ class MateController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  async filterMatePostsByActivity(req, res) {
+    try {
+      const activityTag = req.query.activityTag;
+      const matePosts = await MateService.filterMatePostsByActivity(
+        activityTag
+      );
+      res.status(200).json(matePosts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async filterMatePostsByLocation(req, res) {
+    try {
+      const locationTag = req.query.locationTag;
+      const matePosts = await MateService.filterMatePostsByLocation(
+        locationTag
+      );
+      res.status(200).json(matePosts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async filterMatePostsByPreferences(req, res) {
+    try {
+      const preferences = {
+        personal_preferences: req.query.personal_preferences,
+      };
+
+      const matePosts = await MateService.filterMatePostsByPreferences(
+        preferences
+      );
+      res.status(200).json(matePosts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   async getMatePostById(req, res) {
     try {
       const matePost = await MateService.getMatePostById(req.params.id);
