@@ -21,6 +21,7 @@ const rentalRoutes = require("./src/routes/rentalRoutes");
 const paymentRoutes = require("./src/routes/paymenetRoutes");
 const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
+const mentorRoutes = require("./src/routes/MentorRoutes");
 const badgeRoutes = require("./src/routes/badgeRoutes");
 const activityMapRoutes = require("./src/routes/activityMapRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
@@ -61,6 +62,7 @@ app.use("api/store/rental", rentalRoutes);
 app.use("api/store/cart", cartRoutes);
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
+app.use("/api/mentor", mentorRoutes);
 app.use("/mypage/badges", badgeRoutes);
 app.use("/mypage/activitymap", activityMapRoutes);
 app.use("/mypage/profile", usersRouter);

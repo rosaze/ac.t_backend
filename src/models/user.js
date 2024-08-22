@@ -117,18 +117,32 @@ const userSchema = new mongoose.Schema({
     enum: ['winter', 'summer'],
     required: true,
   },
-  surveyResult: {
-    seaOrLand: { type: String, enum: ['sea', 'land'], required: true },
-    indoorOrOutdoor: {
-      type: String,
-      enum: ['indoor', 'outdoor'],
-      required: true,
-    },
-    preferred_activity_types: { type: String }, // 결과를 저장하는 필드
-  },
   certificates: [certificateSchema], // 자격증 필드 추가
   badges: [userBadgeSchema], // 사용자 배지 필드 추가
   activities: [activityMapSchema], // 활동 기록 필드 추가
+  isMentor: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// 동적으로 personal_preferences 생성
+userSchema.virtual('personal_preferences').get(function () {
+  return `${this.location_preference}_${this.environment_preference}_${this.group_preference}_${this.season_preference}`;
+});
+
+//멘토 자격 부여 로직
+userSchema.methods.checkMentorEligibility = function () {
+  if (this.certificates && this.certificates.length > 0) {
+    this.isMentor = true;
+  } else {
+    this.isMentor = false;
+  }
+};
+
+userSchema.pre('save', function (next) {
+  this.checkMentorEligibility();
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
