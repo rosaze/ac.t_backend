@@ -78,9 +78,6 @@
 - 뱃지 지급 구현 완료(ai 이미지 생성 관련 제외, ai 구현 완료 후 구현할 예정)
 - <숙박검색>
   - VendorService.js: getAccommodationsByRegion 메서드 추가. 숙박시설을 시군구별, 숙박유형으로 필터링.
-  - AccommodationController.js: 숙박 카테고리 필터링
-- <액티비티 검색>
-  - 숙박은 서비스 코드는 vendor 에 넣었지만, 액티비티 검색 기능은 전부 VendorController/VendorRoutes에 추가.
 
 > 앞으로:
 
