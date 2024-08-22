@@ -1,6 +1,6 @@
 const PostService = require('../services/PostService');
 const ActivityMapService = require('../services/activityMapService');
-
+const SearchHistoryService = require('../services/SearchHistoryService');
 class PostController {
   async createPost(req, res) {
     try {
@@ -103,8 +103,13 @@ class PostController {
   //후기 검색 기능
   async searchPosts(req, res) {
     try {
-      const keyword = req.query.q; // 검색 키워드
+      const userId = req.user._id; // Assume user is authenticated
+      const keyword = req.query.q;
+      const searchType = 'post'; // 검색 유형 지정
+
       const posts = await PostService.searchPosts(keyword);
+      // 검색 기록 저장
+      await SearchHistoryService.logSearch(userId, keyword, searchType);
       res.status(200).json(posts);
     } catch (err) {
       res.status(500).json({ message: err.message });
