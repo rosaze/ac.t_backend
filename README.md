@@ -80,11 +80,16 @@
   - VendorService.js: getAccommodationsByRegion 메서드 추가. 숙박시설을 시군구별, 숙박유형으로 필터링.
 - AccomodationController.js: 숙박 카테고리 필터링
 - <액티비티 검색>
+
   - vendorController,vendorservice 에서 확인
-- 스토어 랜탈 / 상품, 티켓 구매 파일 분리
+  - 장소 검색 시 감정 분석 결과: 사용자가 특정 장소를 검색하면, 그 장소와 연관된 후기 게시물의 해시태그(특히 업체명 해시태그)를 통해 PostService에서 감정 분석을 수행하고 결과를 반환
+  - 검색기록 : SearchHistory.js , vendorService에서 검색기록 모델 불러와서 사용자 추천 로직과 검색 기록을 관리하는 메서드 추가.
+
+- <스토어&결제>
   - activity.json 파일 통해서 카테고리 분류
-- 장바구니 기능 추가
-- 토스페이 적용 but 추후 사업자 등록 후 수정 예정
+  - 스토어 랜탈 / 상품, 티켓 구매 파일 분리
+  - 장바구니 기능 추가
+  - 토스페이 적용 but 추후 사업자 등록 후 수정 예정
 
 > 앞으로:
 

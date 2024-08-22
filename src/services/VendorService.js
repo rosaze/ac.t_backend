@@ -3,6 +3,7 @@
 
 const Vendor = require('../models/Vendor');
 const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
+const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 
 //검색 기능 추가
 class VendorService {
@@ -60,6 +61,27 @@ class VendorService {
       vendor,
       sentimentAnalysis,
     };
+  }
+  //<액티비티 검색창> : 장소추천, 검색기록
+  // 사용자 기반 추천 장소 제공
+  async getRecommendedVendors(userId) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+  }
+  // 사용자의 최근 검색 기록 가져오기
+  async getSearchHistory(userId) {
+    return await SearchHistory.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .exec();
+  }
+  // 검색 기록 저장
+  async saveSearchHistory(userId, keyword, searchType) {
+    const history = new SearchHistory({ user: userId, keyword, searchType });
+    await history.save();
   }
 }
 
