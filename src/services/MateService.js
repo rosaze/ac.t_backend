@@ -1,6 +1,8 @@
 //메이트 게시글 CRUD 처리
 const Mate = require('../models/Mate');
+const User = require('../models/user');
 
+//새로운 메이트 게시글 생성할 떄, User모델에서 해당 사용자의 선호도 정보를 가져와 이를 Mate모델에 포함시킴
 class MateService {
   async createMatePost(data) {
     const mate = new Mate(data);
@@ -8,18 +10,20 @@ class MateService {
   }
 
   // 필터링 기능 추가 --> 조건으로 게시글 필터링 ( 활동/장소/날짜)
-
-  async getMatePosts(sortBy) {
+  async getMatePosts(filters) {
     const query = {};
 
-    if (filters.activity) {
-      query.activity = filters.activity;
+    if (filters.activityTag) {
+      query.activityTag = filters.activityTag;
     }
-    if (filters.location) {
-      query.location = filters.location;
+    if (filters.locationTag) {
+      query.locationTag = filters.locationTag;
     }
     if (filters.date) {
       query.date = { $gte: new Date(filters.date) }; // 선택한 날짜 이후의 활동만
+    }
+    if (filters.personal_preferences) {
+      query.personal_preferences = filters.personal_preferences;
     }
 
     const sortCriteria =
@@ -29,6 +33,16 @@ class MateService {
       .sort(sortCriteria)
       .populate('author participants')
       .exec();
+  }
+
+  async filterMatePostsByPreferences(preferences) {
+    const query = {};
+
+    if (preferences.personal_preferences) {
+      query.personal_preferences = preferences.personal_preferences;
+    }
+
+    return await Mate.find(query).populate('author participants').exec();
   }
 
   async getMatePostById(id) {

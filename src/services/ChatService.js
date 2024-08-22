@@ -1,29 +1,45 @@
 const ChatRoom = require('../models/ChatRooms');
 const Message = require('../models/Messages');
-const BadgeService = require('./badgeService');
-// 참여버튼 누르면 이미 존재하거나 새 채팅방에 초대
+const BadgeService = require('./badgeService'); // 배지 서비스를 가져옵니다.
+
 class ChatService {
-  async createChatRoom(name, participants, creatorId, mateId = null) {
+  // 채팅방 생성
+  async createChatRoom(
+    name,
+    participants,
+    creatorId,
+    mateId = null,
+    mentorId = null
+  ) {
     const chatRoom = new ChatRoom({
       name,
       participants,
       mateId,
+      mentorId,
       creator: creatorId,
     });
     const saveChatRoom = await chatRoom.save();
 
-    //메이트 채팅방이 새로 생성된 경우 배지 지급
+    // 메이트 채팅방이 새로 생성된 경우 배지 지급
     if (mateId) {
       const badgeName = `${name} 리더`; // 채팅방 제목 + 리더로 배지 이름
       await BadgeService.awardBadge(creatorId, badgeName);
     }
+
     return saveChatRoom;
   }
 
+  // 특정 Mate 게시글 ID로 채팅방 찾기
   async findChatRoomByMateId(mateId) {
     return await ChatRoom.findOne({ mateId }).exec();
   }
 
+  // 특정 Mentor 게시글 ID로 채팅방 찾기
+  async findChatRoomByMentorId(mentorId) {
+    return await ChatRoom.findOne({ mentorId }).exec();
+  }
+
+  // 사용자 채팅방에 추가
   async addUserToChatRoom(chatRoomId, userId) {
     return await ChatRoom.findByIdAndUpdate(
       chatRoomId,
@@ -32,24 +48,29 @@ class ChatService {
     ).exec();
   }
 
-  async sendMessage(chatRoomId, senderId, messageContent) {
+  // 메시지 보내기
+  async sendMessage(chatRoomId, senderId, messageText) {
     const message = new Message({
       chatRoom: chatRoomId,
       sender: senderId,
-      message: messageContent,
+      text: messageText,
     });
     return await message.save();
   }
 
+  // 채팅방의 모든 메시지 가져오기
   async getMessages(chatRoomId) {
     return await Message.find({ chatRoom: chatRoomId })
-      .populate('sender')
+      .populate('sender', 'name')
+      .sort({ createdAt: 1 }) // 메시지 생성 순서대로 정렬
       .exec();
   }
 
-  async getChatRooms(userId) {
+  // 사용자가 속한 모든 채팅방 가져오기
+  async getChatRoomsByUser(userId) {
     return await ChatRoom.find({ participants: userId })
-      .populate('participants')
+      .populate('creator', 'name')
+      .sort({ createdAt: -1 }) // 최신 채팅방부터 정렬
       .exec();
   }
 }
