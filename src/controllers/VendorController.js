@@ -1,5 +1,6 @@
 //사용자가 해시태그 입력시 해당 입력에 따라 자동으로 업체명 검색, 새롭게 추가
 const VendorService = require('../services/VendorService');
+const ActivityRecommendationService = require('./ActivityRecommendationService'); // 활동 추천 서비스
 
 class VendorController {
   async searchVendors(req, res) {
@@ -67,8 +68,12 @@ class VendorController {
         userId
       );
       const searchHistory = await VendorService.getSearchHistory(userId);
+      const recommendedActivities =
+        await VendorService.getRecommendedActivities(userId);
 
-      res.status(200).json({ recommendedVendors, searchHistory });
+      res
+        .status(200)
+        .json({ recommendedVendors, searchHistory, recommendedActivities });
     } catch (error) {
       res
         .status(500)

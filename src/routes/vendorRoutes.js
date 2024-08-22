@@ -14,3 +14,4 @@ router.get('/activities/:id', VendorController.getVendorDetails);
 module.exports = router;
 // 검색 화면 로드 시 사용자 추천 장소와 최근 검색 기록 제공
 router.get('/initial-search-data', VendorController.getInitialSearchData);
+module.exports = router;
