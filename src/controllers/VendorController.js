@@ -21,6 +21,42 @@ class VendorController {
       res.status(500).json({ message: err.message });
     }
   }
+  // 장소 검색 기능
+  async searchActivities(req, res) {
+    const { keyword } = req.query;
+
+    try {
+      const vendors = await VendorService.searchActivitiesByKeyword(keyword);
+
+      if (vendors.length === 0) {
+        return res
+          .status(404)
+          .json({ message: '해당 키워드로 검색된 결과가 없습니다.' });
+      }
+
+      res.status(200).json(vendors);
+    } catch (error) {
+      res.status(500).json({
+        message: '검색 중 오류가 발생했습니다.',
+        error: error.message,
+      });
+    }
+  }
+  // 특정 장소의 상세 정보 및 감정 분석 결과 제공
+  async getVendorDetails(req, res) {
+    const { id } = req.params;
+
+    try {
+      const result = await VendorService.getVendorDetailsAndSentiments(id);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({
+        message: '업체 정보를 불러오는 중 오류가 발생했습니다.',
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new VendorController();
