@@ -27,7 +27,7 @@ const activityMapRoutes = require("./src/routes/activityMapRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./routes/accommodationRoutes");
-
+const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
@@ -69,6 +69,7 @@ app.use("/mypage/profile", usersRouter);
 app.use("/mypage/preference", preferenceRoutes);
 app.use("/api", vendorRoutes); // 업체명 라우트 추가
 app.use("/api", accommodationRoutes); //숙박 라우트
+app.use("/api/images", imageRoutes); // 이미지 관련 라우트
 
 //socket.io 연결
 io.on("connection", (socket) => {

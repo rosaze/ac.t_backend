@@ -11,6 +11,7 @@
   "author": "JWY, SBY",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/vision": "^4.3.2",
     "@tosspayments/tosspayments-sdk": "^2.2.4",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
@@ -26,6 +27,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-kakao": "^1.0.1",
+    "sharp": "^0.33.5",
     "typedi": "^0.10.0"
   },
   "devDependencies": {
