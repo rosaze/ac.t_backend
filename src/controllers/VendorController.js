@@ -57,6 +57,44 @@ class VendorController {
       });
     }
   }
+  // 사용자 추천과 검색 기록을 처리하는 메서드
+  // 검색 화면 로드 시 사용자 추천 장소와 최근 검색 기록 제공
+  async getInitialSearchData(req, res) {
+    const userId = req.user._id; // 사용자의 ID (로그인된 사용자 기준)
+
+    try {
+      const recommendedVendors = await VendorService.getRecommendedVendors(
+        userId
+      );
+      const searchHistory = await VendorService.getSearchHistory(userId);
+
+      res.status(200).json({ recommendedVendors, searchHistory });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: 'Failed to load search data', error: error.message });
+    }
+  }
+  //검색 결과 저장
+  async searchVendors(req, res) {
+    const { keyword } = req.query;
+    const userId = req.user._id;
+
+    try {
+      await VendorService.saveSearchHistory(userId, keyword, 'activity'); // 검색 기록 저장
+      const vendors = await VendorService.searchActivitiesByKeyword(keyword);
+
+      if (vendors.length === 0) {
+        return res
+          .status(404)
+          .json({ message: 'No results found for your search' });
+      }
+
+      res.status(200).json(vendors);
+    } catch (error) {
+      res.status(500).json({ message: 'Search failed', error: error.message });
+    }
+  }
 }
 
 module.exports = new VendorController();
