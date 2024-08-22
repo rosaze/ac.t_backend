@@ -72,6 +72,26 @@ class UserService {
     await user.save();
     return user.certificates;
   }
+  //사용자 프로필 정보를 가져오는 메서드
+  static async getUserProfile(userId) {
+    const user = await User.findById(userId)
+      .populate('badges')
+      .populate('preferences')
+      .exec();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return {
+      profilleImage: user.profilleImage,
+      name: user.name,
+      badges: user.badges,
+      preferences: user.preferences,
+      gender: user.gender,
+      age: user.age,
+    };
+  }
 }
 
 module.exports = UserService;

@@ -18,4 +18,7 @@ router.delete(
   userController.removeCertificate
 );
 
+//사용자 프로필 정보 반환
+router.get('/profile/:id', userController.getUserProfile);
+
 module.exports = router;

@@ -191,3 +191,17 @@ exports.getActivitySummaryAndPreferenceRecommendation = async (req, res) => {
     });
   }
 };
+
+//사용자 프로필 조회
+exports.getUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const profile = await UserService.getUserProfile(userId);
+    res.status(200).json(profile);
+  } catch (error) {
+    console.error(`Error fetching user profile: ${error.message}`);
+    res
+      .status(500)
+      .json({ message: 'Failed to fetch user profile', error: error.message });
+  }
+};
