@@ -1,30 +1,66 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const User = require('../models/user');
+const { sendAuthNumber } = require('../passport/EmailService');
+const axios = require('axios');
 
 const router = express.Router();
-const authMiddleware = require('../middlewares/authMiddleware');
-const authorize = require('../middlewares/authorize');
 
-const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-
-// 회원가입
+// 이메일 회원가입 - 인증번호 발송
 router.post('/register', async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, phone, name } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword, name });
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
+    // 인증 코드 생성 및 이메일 발송
+    const authCode = sendAuthNumber(email, res);
+
+    // 임시 사용자 정보와 인증 코드를 세션에 저장
+    req.session.tempUser = { email, password, phone, name };
+    req.session.authCode = authCode;
+
+    res.status(200).json({ message: 'Verification code sent to email' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 로그인
+// 이메일 인증번호 확인 및 최종 회원가입
+router.post('/verify', async (req, res) => {
+  const { authCode } = req.body;
+
+  if (authCode === req.session.authCode) {
+    const { email, password, phone, name } = req.session.tempUser;
+
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        phone,
+        name,
+      });
+
+      await newUser.save();
+
+      // 세션에서 임시 데이터 삭제
+      req.session.tempUser = null;
+      req.session.authCode = null;
+
+      res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  } else {
+    res.status(400).json({ message: 'Invalid verification code' });
+  }
+});
+
+// 이메일 로그인
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -32,6 +68,13 @@ router.post('/login', async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    if (!user.gender || !user.age) {
+      return res
+        .status(200)
+        .json({ message: 'Additional info required', userId: user._id });
+    }
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
@@ -41,43 +84,67 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// 카카오 로그인 페이지로 리다이렉트
+// 이메일 추가 정보 입력
+router.post('/email/register', async (req, res) => {
+  const { userId, name, gender, age, bio } = req.body;
+
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.name = name;
+    user.gender = gender;
+    user.age = age;
+    user.bio = bio;
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: 'Additional info saved', userId: user._id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 카카오 회원가입 및 로그인
 router.get('/kakao', (req, res) => {
-  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code`;
   res.redirect(kakaoAuthUrl);
 });
 
-// 카카오 인증 후 리다이렉트 URI
 router.get('/kakao/callback', async (req, res) => {
   const { code } = req.query;
 
   try {
-    // 토큰 요청
     const tokenResponse = await axios.post(
       'https://kauth.kakao.com/oauth/token',
       null,
       {
         params: {
           grant_type: 'authorization_code',
-          client_id: KAKAO_CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
+          client_id: process.env.KAKAO_CLIENT_ID,
+          redirect_uri: process.env.REDIRECT_URI,
           code,
         },
       }
     );
 
     const { access_token } = tokenResponse.data;
-
-    // 사용자 정보 요청
     const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
     });
 
-    const { id } = userResponse.data;
+    const {
+      id,
+      properties: { nickname },
+      kakao_account: { email },
+    } = userResponse.data;
 
-    // 기존 사용자 확인
     let user = await User.findOne({ kakaoId: id });
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -86,85 +153,36 @@ router.get('/kakao/callback', async (req, res) => {
       return res.json({ token, user });
     }
 
-    // 신규 사용자일 경우 성별과 나이를 입력받는 페이지로 리다이렉트
-    res.redirect(`/api/auth/kakao/register?kakaoId=${id}`);
+    res.status(200).json({
+      message: 'Additional info required',
+      kakaoId: id,
+      name: nickname,
+      email,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 성별과 나이를 입력받는 페이지
-router.get('/kakao/register', (req, res) => {
-  const { kakaoId } = req.query;
-  res.send(`
-    <form action="/api/auth/kakao/register" method="POST">
-      <input type="hidden" name="kakaoId" value="${kakaoId}" />
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required /><br/>
-      <label for="gender">Gender:</label>
-      <select id="gender" name="gender" required>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select><br/>
-      <label for="age">Age:</label>
-      <input type="number" id="age" name="age" required /><br/>
-      <button type="submit">Register</button>
-    </form>
-  `);
-});
-
-// 카카오 로그인 후 성별과 나이를 저장하고 밸런스 게임 페이지로 이동
 router.post('/kakao/register', async (req, res) => {
-  const { kakaoId, name, gender, age } = req.body;
+  const { kakaoId, email, name, gender, age, bio } = req.body;
 
   try {
     let user = await User.findOne({ kakaoId });
     if (!user) {
-      user = new User({ kakaoId, name, gender, age });
+      user = new User({ kakaoId, email, name, gender, age, bio });
       await user.save();
     }
 
-    // 성별과 나이를 저장한 후 밸런스 게임 페이지로 리다이렉트
-    res.redirect(`/balance-game?userId=${user._id}`);
+    res
+      .status(200)
+      .json({ message: 'Additional info saved', userId: user._id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 밸런스 게임 페이지
-router.get('/balance-game', (req, res) => {
-  const { userId } = req.query;
-  // 여기서 실제 밸런스 게임 페이지를 제공해야 합니다.
-  res.send(`
-    <form action="/api/auth/balance-game" method="POST">
-      <input type="hidden" name="userId" value="${userId}" />
-      <h3>Choose your preferences:</h3>
-      <label for="location_preference">Location Preference:</label>
-      <select id="location_preference" name="location_preference" required>
-        <option value="outdoor">Outdoor</option>
-        <option value="indoor">Indoor</option>
-      </select><br/>
-      <label for="environment_preference">Environment Preference:</label>
-      <select id="environment_preference" name="environment_preference" required>
-        <option value="sea">Sea</option>
-        <option value="mountain">Mountain</option>
-      </select><br/>
-      <label for="group_preference">Group Preference:</label>
-      <select id="group_preference" name="group_preference" required>
-        <option value="group">Group</option>
-        <option value="individual">Individual</option>
-      </select><br/>
-      <label for="season_preference">Season Preference:</label>
-      <select id="season_preference" name="season_preference" required>
-        <option value="winter">Winter</option>
-        <option value="summer">Summer</option>
-      </select><br/>
-      <button type="submit">Set Preferences</button>
-    </form>
-  `);
-});
-
-// 밸런스 게임 결과를 처리하여 취향 설정
 router.post('/balance-game', async (req, res) => {
   const {
     userId,
@@ -191,64 +209,7 @@ router.post('/balance-game', async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.json({ token, user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// 카카오 로그인 페이지로 리다이렉트
-router.get('/kakao', (req, res) => {
-  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-  res.redirect(kakaoAuthUrl);
-});
-
-// 카카오 인증 후 리다이렉트 URI
-router.get('/kakao/callback', async (req, res) => {
-  const { code } = req.query;
-
-  try {
-    // 토큰 요청
-    const tokenResponse = await axios.post(
-      'https://kauth.kakao.com/oauth/token',
-      null,
-      {
-        params: {
-          grant_type: 'authorization_code',
-          client_id: KAKAO_CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
-          code,
-        },
-      }
-    );
-
-    const { access_token } = tokenResponse.data;
-
-    // 사용자 정보 요청
-    const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-
-    const {
-      id,
-      properties: { nickname },
-      kakao_account: { email },
-    } = userResponse.data;
-
-    // 기존 사용자 확인 또는 신규 사용자 생성
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = new User({ email, name: nickname, kakaoId: id });
-      await user.save();
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-
-    res.json({ token, user });
+    res.status(200).json({ token, user });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
