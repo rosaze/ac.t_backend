@@ -24,10 +24,12 @@ router.post('/register', async (req, res) => {
     req.session.authCode = authCode;
 
     res.status(200).json({ message: 'Verification code sent to email' });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // 이메일 인증번호 확인 및 최종 회원가입
 router.post('/verify', async (req, res) => {
@@ -61,6 +63,7 @@ router.post('/verify', async (req, res) => {
 });
 
 // 이메일 로그인
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -75,6 +78,7 @@ router.post('/login', async (req, res) => {
         .json({ message: 'Additional info required', userId: user._id });
     }
 
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
@@ -83,6 +87,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // 이메일 추가 정보 입력
 router.post('/email/register', async (req, res) => {
@@ -119,31 +124,37 @@ router.get('/kakao/callback', async (req, res) => {
   const { code } = req.query;
 
   try {
+
     const tokenResponse = await axios.post(
       'https://kauth.kakao.com/oauth/token',
       null,
       {
         params: {
           grant_type: 'authorization_code',
+
           client_id: process.env.KAKAO_CLIENT_ID,
           redirect_uri: process.env.REDIRECT_URI,
+
           code,
         },
       }
     );
 
     const { access_token } = tokenResponse.data;
+
     const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
     });
 
+
     const {
       id,
       properties: { nickname },
       kakao_account: { email },
     } = userResponse.data;
+
 
     let user = await User.findOne({ kakaoId: id });
     if (user) {
@@ -159,17 +170,21 @@ router.get('/kakao/callback', async (req, res) => {
       name: nickname,
       email,
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+
 router.post('/kakao/register', async (req, res) => {
   const { kakaoId, email, name, gender, age, bio } = req.body;
+
 
   try {
     let user = await User.findOne({ kakaoId });
     if (!user) {
+
       user = new User({ kakaoId, email, name, gender, age, bio });
       await user.save();
     }
@@ -177,12 +192,14 @@ router.post('/kakao/register', async (req, res) => {
     res
       .status(200)
       .json({ message: 'Additional info saved', userId: user._id });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // 밸런스 게임 페이지
+
 router.post('/balance-game', async (req, res) => {
   const {
     userId,
@@ -209,7 +226,9 @@ router.post('/balance-game', async (req, res) => {
       expiresIn: '1h',
     });
 
+
     res.status(200).json({ token, user });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
