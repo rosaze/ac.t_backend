@@ -99,7 +99,12 @@
 
 - <이미지 처리>
 
-> 앞으로:
+> progress 13
+
+- 찜 기능: wishlist -> controller,services,model 파일에 추가. 라우트는 vendorRoutes에 추가.( 분리 고려)
+- 마이페이지 통합
+
+  > 앞으로:
 
 - 논의 : loaders 폴더에서 초기화 작업 관리하고 ( socket.js , mongoose.js 해서 연결파일 추가) app.js는 서버 실행에만 집중. app.js 를 간결히 하는게 맞는지 , 아니면 이대로 분리. 이대로 간다면 loaders/index,js 는 app.js 와 상당히 많은 부분 겹침
 
