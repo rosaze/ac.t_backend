@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
@@ -8,6 +9,7 @@ const socketIO = require("socket.io"); // 소켓 추가
 require("dotenv").config(); //에러 수정
 
 const passport = require("./src/passport/passport");
+const EmailService = require("./src/passport/EmailService");
 const connect = require("./src/config/database");
 
 const usersRouter = require("./src/routes/userRoutes");
@@ -28,6 +30,7 @@ const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./routes/accommodationRoutes");
 const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
+
 const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
@@ -36,6 +39,7 @@ nunjucks.configure("views", {
   express: app,
   watch: true,
 });
+
 // 서버 인스턴스 생성
 const server = http.createServer(app); // 추가
 const io = socketIo(server); // server 객체를 socket.io와 연결
@@ -46,6 +50,16 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// 세션 설정
+app.use(
+  session({
+    secret: "yourSecretKey",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // HTTPS 환경에서만 true로 설정
+  })
+);
 
 //인증 미들웨어 설정
 app.use(passport.initialize());

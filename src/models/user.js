@@ -65,37 +65,39 @@ const activityMapSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   kakaoId: {
     type: String,
-    required: true,
     unique: true,
-    maxlength: 255,
+    sparse: true, // 이메일 회원가입 사용자를 위해 null 허용
   },
   email: {
     type: String,
-    required: false,
-    maxlength: 255,
+    unique: true,
+    sparse: true, // 카카오 회원가입 사용자를 위해 null 허용
+  },
+  password: {
+    type: String,
+  },
+  phone: {
+    type: String,
   },
   name: {
     type: String,
     required: true,
+  },
+  bio: {
+    type: String,
     maxlength: 255,
   },
   gender: {
     type: String,
     enum: ['male', 'female'],
-    required: true,
   },
   age: {
     type: Number,
-    required: true,
   },
   createdAT: {
     type: Date,
     default: Date.now,
     required: true,
-  },
-  bio: {
-    type: String,
-    maxlength: 500,
   },
   location_preference: {
     type: String,
