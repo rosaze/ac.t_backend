@@ -1,14 +1,23 @@
-const vision = require('@google-cloud/vision');
+const express = require('express');
 const sharp = require('sharp');
 const { Storage } = require('@google-cloud/storage');
+const vision = require('@google-cloud/vision');
 
-const client = new vision.ImageAnnotatorClient();
+const app = express();
+app.use(express.json());
+
 const storage = new Storage();
+const client = new vision.ImageAnnotatorClient();
 
-const bucketName = 'your-bucket-name'; // Cloud Storage 버킷 이름
+const bucketName = 'your-bucket-name';
 
-// 사용자 이미지와 업체 이미지를 합성하는 함수
-async function mergeImages(userImagePath, providerImagePath, outputImagePath) {
+// 이미지 합성 및 스타일 적용 함수
+async function mergeAndStyleImages(
+  userImagePath,
+  providerImagePath,
+  outputImagePath,
+  style
+) {
   try {
     // 사용자 이미지에서 얼굴 감지
     const [result] = await client.faceDetection(userImagePath);
@@ -22,28 +31,45 @@ async function mergeImages(userImagePath, providerImagePath, outputImagePath) {
     const boundingPoly = face.boundingPoly;
     const faceBounds = boundingPoly.vertices;
 
-    // 얼굴 위치 계산 (예: 왼쪽 상단 기준)
     const faceX = faceBounds[0].x;
     const faceY = faceBounds[0].y;
     const faceWidth = faceBounds[2].x - faceX;
     const faceHeight = faceBounds[2].y - faceY;
 
-    // 업체 이미지 불러오기
-    const background = sharp(providerImagePath);
-
-    // 사용자 얼굴 이미지 크기 조정 및 위치 설정
-    const faceBuffer = await sharp(userImagePath)
+    // 사용자 얼굴 이미지를 처리하고 스타일 적용
+    let faceBuffer = await sharp(userImagePath)
       .extract({
         left: faceX,
         top: faceY,
         width: faceWidth,
         height: faceHeight,
       })
-      .resize({ width: faceWidth, height: faceHeight })
-      .toBuffer();
+      .resize({ width: faceWidth, height: faceHeight });
 
-    // 업체 이미지에 얼굴 합성
-    await background
+    // 스타일 적용
+    switch (style) {
+      case 'grayscale':
+        faceBuffer = faceBuffer.grayscale();
+        break;
+      case 'sepia':
+        faceBuffer = faceBuffer.modulate({
+          brightness: 1,
+          saturation: 0.3,
+          hue: 30,
+        });
+        break;
+      case 'blur':
+        faceBuffer = faceBuffer.blur(5);
+        break;
+      default:
+        // 기본 스타일 적용하지 않음
+        break;
+    }
+
+    faceBuffer = await faceBuffer.toBuffer();
+
+    // 업체 이미지 불러오기 및 합성
+    await sharp(providerImagePath)
       .composite([{ input: faceBuffer, top: faceY, left: faceX }])
       .toFile(outputImagePath);
 
@@ -52,12 +78,9 @@ async function mergeImages(userImagePath, providerImagePath, outputImagePath) {
       destination: outputImagePath,
     });
 
-    console.log(`Image uploaded to ${bucketName}/${outputImagePath}`);
+    return `https://storage.googleapis.com/${bucketName}/${outputImagePath}`;
   } catch (error) {
     console.error('Error during image processing:', error);
+    throw error;
   }
 }
-
-module.exports = {
-  mergeImages,
-};
