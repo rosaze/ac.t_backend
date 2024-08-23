@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
+const MyPageController = require('../controllers/MypageController');
+
 //사용자 등록
 router.post('/users', userController.createUser);
 //사용자 조회
@@ -20,5 +22,8 @@ router.delete(
 
 //사용자 프로필 정보 반환
 router.get('/profile/:id', userController.getUserProfile);
+
+//마이페이지 데이터 가져오기
+router.get('/mypage', MyPageController.getMyPageData);
 
 module.exports = router;
