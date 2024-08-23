@@ -103,6 +103,10 @@
 
 - 찜 기능: wishlist -> controller,services,model 파일에 추가. 라우트는 vendorRoutes에 추가.( 분리 고려)
 - 마이페이지 통합
+- 이메일 로그인 추가
+  - 이메일 인증 : nodemailer 사용
+  - 카카오로그인과 유저 정보 일치시킴
+- git history 에서 env파일 지움
 
   > 앞으로:
 
