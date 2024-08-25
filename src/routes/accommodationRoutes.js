@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const AccommodationController = require('../controllers/AccommodationController');
+const authorize = require('../middleware/authorize');
 
 // 특정 시군에 있는 숙박시설을 가져오는 엔드포인트, 숙박 유형 필터링 추가
 router.get(

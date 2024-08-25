@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const imageService = require('../services/imageService');
+const authorize = require('../middleware/authorize');
 
 // 이미지 합성 엔드포인트
-router.post('/merge', async (req, res) => {
+router.post('/merge', authorize, async (req, res) => {
   const { userImage, providerImage } = req.body;
 
   try {
