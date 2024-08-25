@@ -161,7 +161,11 @@ class PostService {
   // 장소, 활동 해시태그를 통해 후기 데이터베이스 가져와 각 게시물의 내용을 analyzeSentiment 메서드로 전달하여 감정을 분석
   // 분석 결과에 따라 긍정/부정 게시물의 수 집계
   async analyzeSentiments(locationTag, activityTag, vendorTag) {
-    const posts = await Post.find({ locationTag, activityTag }).exec();
+    const posts = await Post.find({
+      locationTag,
+      activityTag,
+      vendorTag,
+    }).exec();
 
     if (posts.length === 0) {
       return { message: '해당 장소와 활동에 대한 게시물이 없습니다.' };
