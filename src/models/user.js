@@ -60,7 +60,15 @@ const activityMapSchema = new mongoose.Schema({
   },
   hashtags: [{ type: String }],
 });
-
+// 마커에 할당한 카테고리 정보 저장
+const MarkerCategorySchema = new mongoose.Schema({
+  color: {
+    type: String,
+    enum: ['red', 'yellow', 'green', 'blue', 'purple'],
+    required: true,
+  },
+  categoryName: { type: String, required: true },
+});
 // 사용자 스키마
 const userSchema = new mongoose.Schema({
   kakaoId: {
@@ -79,12 +87,10 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-
   },
   name: {
     type: String,
     required: true,
-
   },
   bio: {
     type: String,
@@ -94,11 +100,9 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ['male', 'female'],
-
   },
   age: {
     type: Number,
-
   },
   createdAT: {
     type: Date,
@@ -126,13 +130,15 @@ const userSchema = new mongoose.Schema({
     enum: ['winter', 'summer'],
     required: true,
   },
-  certificates: [certificateSchema], // 자격증 필드 추가
-  badges: [userBadgeSchema], // 사용자 배지 필드 추가
-  activities: [activityMapSchema], // 활동 기록 필드 추가
   isMentor: {
     type: Boolean,
     default: false,
   },
+
+  certificates: [certificateSchema], // 자격증 필드 추가
+  badges: [userBadgeSchema], // 사용자 배지 필드 추가
+  activities: [activityMapSchema], // 활동 기록 필드 추가
+  markerCategories: [MarkerCategorySchema], // 사용자 마커 카테고리 설정
 });
 
 // 동적으로 personal_preferences 생성

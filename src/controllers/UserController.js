@@ -205,3 +205,55 @@ exports.getUserProfile = async (req, res) => {
       .json({ message: 'Failed to fetch user profile', error: error.message });
   }
 };
+
+// **마커 카테고리 설정**
+exports.setMarkerCategory = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { color, categoryName } = req.body;
+
+    // 색상과 카테고리 이름이 제공되었는지 확인
+    if (!color || !categoryName) {
+      return res.status(400).json({
+        message: 'Color and categoryName are required fields.',
+      });
+    }
+
+    // 마커 카테고리 설정 로직 호출
+    const markerCategories = await UserService.setMarkerCategory(
+      userId,
+      color,
+      categoryName
+    ); // 요청 본문에서 color와 categoryName을 가져옴
+
+    res.status(200).json({
+      message: 'Marker category set successfully',
+      markerCategories,
+    });
+  } catch (error) {
+    console.error(`Error setting marker category: ${error.message}`);
+    res
+      .status(500)
+      .json({ message: 'Failed to set marker category', error: error.message });
+  }
+};
+
+// **마커 카테고리 조회**
+exports.getMarkerCategories = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // 마커 카테고리 조회 로직 호출
+    const markerCategories = await UserService.getMarkerCategories(userId);
+
+    res.status(200).json({
+      markerCategories,
+    });
+  } catch (error) {
+    console.error(`Error fetching marker categories: ${error.message}`);
+    res.status(500).json({
+      message: 'Failed to fetch marker categories',
+      error: error.message,
+    });
+  }
+};

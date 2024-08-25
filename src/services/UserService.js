@@ -26,6 +26,35 @@ class UserService {
 
     return user;
   }
+  // 마커 카테고리를 설정
+  static async setMarkerCategory(userId, color, categoryName) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const marker = user.markerCategories.find((m) => m.color === color);
+
+    if (marker) {
+      marker.categoryName = categoryName;
+    } else {
+      user.markerCategories.push({ color, categoryName });
+    }
+
+    await user.save();
+    return user.markerCategories;
+  }
+  // 사용자 마커 카테고리 정보를 가져오는 메서드입니다.
+  static async getMarkerCategories(userId) {
+    const user = await User.findById(userId).select('markerCategories');
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.markerCategories;
+  }
 
   // 사용자 ID로 사용자를 조회하는 메서드입니다.
   static async getUserById(userId) {
