@@ -35,16 +35,16 @@ const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
 
-nunjucks.configure("src/views", {
+nunjucks.configure(path.join(__dirname, "src/views"), {
   autoescape: true,
   express: app,
 });
 
 // 에러 처리 미들웨어
-aapp.use((req, res, next) => {
+app.use((req, res, next) => {
   res
     .status(404)
-    .render("views/error.html", { error: { message: "Page Not Found" } });
+    .render("src/views/error.html", { error: { message: "Page Not Found" } });
 });
 
 app.set("view engine", "html");
