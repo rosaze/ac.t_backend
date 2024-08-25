@@ -1,6 +1,6 @@
 //사용자의 활동 통계를 기반으로 활동을 추천
 
-const activities = require('../utils/activity');
+const activities = require('../utils/activity.json');
 const ActivityMap = require('../models/activityMap');
 const User = require('../models/user');
 

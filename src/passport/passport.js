@@ -2,40 +2,45 @@ const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
 const User = require('../models/user');
 
-module.exports = () => {
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+// 카카오 인증 전략 설정
+passport.use(
+  new KakaoStrategy(
+    {
+      clientID: process.env.KAKAO_CLIENT_ID,
+      clientSecret: process.env.KAKAO_CLIENT_SECRET,
+      callbackURL: process.env.REDIRECT_URI,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ kakaoId: profile.id });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id)
-      .then((user) => done(null, user))
-      .catch((err) => done(err));
-  });
-
-  passport.use(
-    new KakaoStrategy(
-      {
-        clientID: process.env.KAKAO_CLIENT_ID,
-        callbackURL: process.env.REDIRECT_URI,
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        try {
-          const exUser = await User.findOne({ kakaoId: profile.id });
-          if (exUser) {
-            return done(null, exUser);
-          }
-          const newUser = await User.create({
+        if (!user) {
+          // 신규 유저일 경우 DB에 저장
+          user = new User({
             kakaoId: profile.id,
-            name: profile.displayName,
             email: profile._json.kakao_account.email,
+            name: profile.displayName,
           });
-          return done(null, newUser);
-        } catch (error) {
-          console.error(error);
-          return done(error);
+          await user.save();
         }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
       }
-    )
-  );
-};
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id)
+    .then((user) => done(null, user))
+    .catch((err) => done(err));
+});
+
+// passport 모듈 내보내기
+module.exports = passport;

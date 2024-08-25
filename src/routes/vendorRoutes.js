@@ -23,6 +23,8 @@ router.get(
 module.exports = router;
 
 // 찜 기능 라우트
-router.post('/wishlist', authorize, VendorController.addToWishlist); // 찜 추가
-router.get('/wishlist', authorize, VendorController.getWishlist); // 찜 목록 조회
-router.delete('/wishlist', authorize, VendorController.removeFromWishlist); // 찜 제거
+
+router.post('/wishlist', authorize, WishlistController.addToWishlist); // 찜 추가
+router.get('/wishlist', authorize, WishlistController.getWishlist); // 찜 목록 조회
+router.delete('/wishlist', authorize, WishlistController.removeFromWishlist); // 찜 제거
+
