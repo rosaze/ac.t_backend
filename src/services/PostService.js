@@ -2,6 +2,7 @@
 const Post = require('../models/Posts');
 const BadgeService = require('../models/Posts');
 const axios = require('axios');
+
 require('dotenv').config();
 
 class PostService {

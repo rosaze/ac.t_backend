@@ -16,7 +16,23 @@ class WishlistService {
   }
 
   // 찜 목록에 추가하기
-  async addToWishlist(userId, vendorId) {
+  async addToWishlist(userId, vendorId, markerColor) {
+    // 유효한 마커 색상 확인 및 카테고리 가져오기
+    const markerCategories = await UserService.getMarkerCategories(userId);
+    const marker = markerCategories.find((m) => m.color === markerColor);
+
+    if (!marker) {
+      throw new Error('Invalid marker color');
+    }
+    const wishlistItem = new Wishlist({
+      user: userId,
+      vendor: vendorId,
+      marker: {
+        color: markerColor,
+        categoryName: marker.categoryName,
+      },
+    });
+
     try {
       // 이미 찜 목록에 있는지 확인
       const existingItem = await Wishlist.findOne({
@@ -32,9 +48,9 @@ class WishlistService {
       return newWishlistItem;
     } catch (error) {
       throw new Error(error.message || 'Failed to add item to wishlist');
+      //return await wishlistItem.save();
     }
   }
-
   // 찜 목록에서 제거하기 (선택 사항)
   async removeFromWishlist(userId, vendorId) {
     try {
