@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
@@ -10,7 +11,7 @@ require("dotenv").config(); //에러 수정
 
 const passport = require("./src/passport/passport");
 const EmailService = require("./src/passport/EmailService");
-const connect = require("./src/config/database");
+const DbConnection = require("./src/config/database");
 
 const usersRouter = require("./src/routes/userRoutes");
 const postRoutes = require("./src/routes/postRoutes");
@@ -41,23 +42,26 @@ nunjucks.configure(path.join(__dirname, "src/views"), {
 });
 
 // 에러 처리 미들웨어
-app.use((req, res, next) => {
-  res
-    .status(404)
-    .render("src/views/error.html", { error: { message: "Page Not Found" } });
-});
+
+//app.use((req, res, next) => {
+//  res
+//    .status(404)
+//    .render("views/error.html", { error: { message: "Page Not Found" } });
+//});
 
 app.set("view engine", "html");
+
 // 서버 인스턴스 생성
 const server = http.createServer(app); // 추가
 const io = socketIO(server); // server 객체를 socket.io와 연결
 
-connect(); //몽구스를 통해 몽고디비에 연결
+new DbConnection(); //몽구스를 통해 몽고디비에 연결
 
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // 세션 설정
 app.use(
@@ -80,9 +84,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/chats", chatRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/store", productRoutes); // 스토어 라우트 설정
-app.use("api/store/payments", paymentRoutes);
-app.use("api/store/rental", rentalRoutes);
-app.use("api/store/cart", cartRoutes);
+app.use("/api/store/payments", paymentRoutes);
+app.use("/api/store/rental", rentalRoutes);
+app.use("/api/store/cart", cartRoutes);
 
 //지원
 app.use("/api/hashtags", hashtagRoutes);
