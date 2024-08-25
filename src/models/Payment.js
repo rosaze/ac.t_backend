@@ -1,4 +1,3 @@
-//결제 정보 저장 (결제 ID, 결제 상태, 결제 금액, 결제 수단)
 const mongoose = require('mongoose');
 
 const CashReceiptSchema = new mongoose.Schema(
@@ -58,8 +57,13 @@ const PaymentSchema = new mongoose.Schema({
   }, // 현금영수증 정보 (nullable)
   cashReceipts: [CashReceiptSchema], // 현금영수증 발급 및 취소 이력
   failure: {
-    code: String,
-    message: String,
+    type: new mongoose.Schema(
+      {
+        code: String,
+        message: String,
+      },
+      { _id: false }
+    ),
     default: null,
   }, // 결제 실패 정보 (nullable)
 });

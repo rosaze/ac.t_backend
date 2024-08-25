@@ -113,6 +113,9 @@
   > progress 14:
 
 - User파일: 마커 카테고리 설정과 마커 카테고리 정보 가져오기 추가
+- 로그인 과정에서 token 추가
+  - midware/authorize -> 모든 route에 적용하여 인증된 사용자만이 사용가능하도록 수정
+- app.js 만 남겨두고 다른 server실행 파일 삭제
 
   > 앞으로:
 

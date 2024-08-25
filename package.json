@@ -11,6 +11,7 @@
   "author": "JWY, SBY",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^7.12.1",
     "@google-cloud/vision": "^4.3.2",
     "@tosspayments/tosspayments-sdk": "^2.2.4",
     "axios": "^1.7.2",
