@@ -20,7 +20,7 @@ const eventRoutes = require("./src/routes/eventRoutes");
 const productRoutes = require("./src/routes/productRoutes"); // 스토어 라우트 추가
 const cartRoutes = require("./src/routes/cartRoutes");
 const rentalRoutes = require("./src/routes/rentalRoutes");
-const paymentRoutes = require("./src/routes/paymenetRoutes");
+const paymentRoutes = require("./src/routes/paymentRoutes");
 const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
 const mentorRoutes = require("./src/routes/MentorRoutes");
@@ -35,7 +35,7 @@ const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
 
-nunjucks.configure("views", {
+nunjucks.configure("src/views", {
   autoescape: true,
   express: app,
 });
