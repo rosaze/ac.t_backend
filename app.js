@@ -36,10 +36,17 @@ app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
 
 nunjucks.configure("views", {
+  autoescape: true,
   express: app,
-  watch: true,
 });
 
+// 에러 처리 미들웨어
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render("error.html", { error: err });
+});
+
+app.set("view engine", "html");
 // 서버 인스턴스 생성
 const server = http.createServer(app); // 추가
 const io = socketIo(server); // server 객체를 socket.io와 연결
