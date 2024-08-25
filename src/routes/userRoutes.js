@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
-const MyPageController = require('../controllers/MypageController');
+const MyPageController = require('../controllers/MyPageController');
 
 //사용자 등록
 router.post('/users', userController.createUser);
