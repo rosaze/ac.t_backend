@@ -4,7 +4,6 @@ const userController = require('../controllers/UserController');
 
 const MyPageController = require('../controllers/MypageController');
 const authorize = require('../middleware/authorize');
-const authorize = require('../middleware/authorize');
 
 //사용자 등록
 router.post('/users', userController.createUser);

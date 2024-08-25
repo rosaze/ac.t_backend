@@ -2,15 +2,16 @@
   "name": "ac.t_backend",
   "version": "1.0.0",
   "description": "### backend 개발자들을 위한 ~^^.",
-  "main": "src/server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "JWY, SBY",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^7.12.1",
     "@google-cloud/vision": "^4.3.2",
     "@tosspayments/tosspayments-sdk": "^2.2.4",
     "axios": "^1.7.2",
@@ -20,6 +21,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
     "morgan": "^1.10.0",
@@ -29,6 +31,7 @@
     "passport": "^0.7.0",
     "passport-kakao": "^1.0.1",
     "sharp": "^0.33.5",
+    "socket.io": "^4.7.5",
     "typedi": "^0.10.0"
   },
   "devDependencies": {

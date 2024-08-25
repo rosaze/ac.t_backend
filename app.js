@@ -28,7 +28,7 @@ const badgeRoutes = require("./src/routes/badgeRoutes");
 const activityMapRoutes = require("./src/routes/activityMapRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
-const accommodationRoutes = require("./routes/accommodationRoutes");
+const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 
 const app = express();
@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
 app.set("view engine", "html");
 // 서버 인스턴스 생성
 const server = http.createServer(app); // 추가
-const io = socketIo(server); // server 객체를 socket.io와 연결
+const io = socketIO(server); // server 객체를 socket.io와 연결
 
 connect(); //몽구스를 통해 몽고디비에 연결
 
@@ -70,6 +70,7 @@ app.use(
 
 //인증 미들웨어 설정
 app.use(passport.initialize());
+app.use(passport.session());
 
 //라우터설정 (추가)
 app.use("/api/users", usersRouter);

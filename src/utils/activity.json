@@ -1,0 +1,28 @@
+{
+  "activities": [
+    {
+      "id": 1,
+      "name": "Surfing",
+      "region": "Gangwon-do",
+      "categories": ["equipment", "rental"]
+    },
+    {
+      "id": 2,
+      "name": "Freediving",
+      "region": "Gangwon-do",
+      "categories": ["equipment", "rental", "ticket"]
+    },
+    {
+      "id": 3,
+      "name": "Ski",
+      "region": "Gangwon-do",
+      "categories": ["equipment", "rental"]
+    },
+    {
+      "id": 4,
+      "name": "Board",
+      "region": "Gangwon-do",
+      "categories": ["equipment", "rental"]
+    }
+  ]
+}
