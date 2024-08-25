@@ -4,34 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Error</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        text-align: center;
-        padding: 50px;
-      }
-      h1 {
-        font-size: 48px;
-        margin-bottom: 10px;
-      }
-      p {
-        font-size: 18px;
-      }
-      .error-details {
-        margin-top: 20px;
-        font-size: 14px;
-        color: #666;
-      }
-    </style>
   </head>
   <body>
-    <h1>Something went wrong!</h1>
-    <p>We encountered an error while processing your request.</p>
-    <p class="error-details">Error: {{ error.message }}</p>
-    <p>
-      <a href="/">Go back to the homepage</a>
-    </p>
+    <h1>Error</h1>
+    <p>{{ error.message }}</p>
   </body>
 </html>

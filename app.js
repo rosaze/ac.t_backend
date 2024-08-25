@@ -41,9 +41,10 @@ nunjucks.configure("src/views", {
 });
 
 // 에러 처리 미들웨어
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render("error.html", { error: err });
+aapp.use((req, res, next) => {
+  res
+    .status(404)
+    .render("views/error.html", { error: { message: "Page Not Found" } });
 });
 
 app.set("view engine", "html");
@@ -81,6 +82,8 @@ app.use("/api/store", productRoutes); // 스토어 라우트 설정
 app.use("api/store/payments", paymentRoutes);
 app.use("api/store/rental", rentalRoutes);
 app.use("api/store/cart", cartRoutes);
+
+//지원
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
 app.use("/api/mentor", mentorRoutes);

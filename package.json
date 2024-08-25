@@ -2,10 +2,10 @@
   "name": "ac.t_backend",
   "version": "1.0.0",
   "description": "### backend 개발자들을 위한 ~^^.",
-  "main": "src/server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "JWY, SBY",
@@ -30,6 +30,7 @@
     "passport": "^0.7.0",
     "passport-kakao": "^1.0.1",
     "sharp": "^0.33.5",
+    "socket.io": "^4.7.5",
     "typedi": "^0.10.0"
   },
   "devDependencies": {
