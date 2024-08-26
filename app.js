@@ -37,12 +37,13 @@ const app = express();
 app.set("port", process.env.PORT || 3002);
 app.set("view engine", "html");
 
-nunjucks.configure("src/views", {
+nunjucks.configure(path.join(__dirname, "src/views"), {
   autoescape: true,
   express: app,
 });
 
 // 에러 처리 미들웨어
+
 //app.use((req, res, next) => {
 //  res
 //    .status(404)
@@ -92,6 +93,7 @@ app.use("/api/store/cart", cartRoutes);
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
 app.use("/api/mentor", mentorRoutes);
+
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합
 app.use("/api", vendorRoutes); // 업체명 라우트 추가
 app.use("/api", accommodationRoutes); //숙박 라우트
