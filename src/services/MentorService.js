@@ -61,7 +61,11 @@ class MentorService {
   }
 
   async getMentorPostById(id) {
-    return await Mentor.findById(id).populate('mentor').exec();
+    const mentorPost = await Mentor.findById(id);
+    if (!mentorPost) {
+      throw new Error('Mentor post not found');
+    }
+    return mentorPost;
   }
 
   async deleteMentorPost(id) {

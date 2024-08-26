@@ -92,7 +92,7 @@ app.use("/api/store/cart", cartRoutes);
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
 app.use("/api/mentor", mentorRoutes);
-app.use("/api/mypage/badges", badgeRoutes);
+app.use("/api/mypage/badges", badgeRoutes); //에러
 app.use("/api/mypage/activitymap", activityMapRoutes);
 app.use("/api/mypage/profile", usersRouter);
 app.use("/api/mypage/preference", preferenceRoutes);
