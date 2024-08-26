@@ -31,6 +31,7 @@ const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
+const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 
 const app = express();
 app.set("port", process.env.PORT || 3002);
@@ -77,7 +78,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //라우터설정 (추가)
-app.use("/api/users", usersRouter);
+app.use("/api/users", usersRouter); //테스트 완료
 app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRouter);
 app.use("/api/chats", chatRoutes);
@@ -91,10 +92,7 @@ app.use("/api/store/cart", cartRoutes);
 app.use("/api/hashtags", hashtagRoutes);
 app.use("/api/mates", mateRoutes);
 app.use("/api/mentor", mentorRoutes);
-app.use("/api/mypage/badges", badgeRoutes);
-app.use("/api/mypage/activitymap", activityMapRoutes);
-app.use("/api/mypage/profile", usersRouter);
-app.use("/api/mypage/preference", preferenceRoutes);
+app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합
 app.use("/api", vendorRoutes); // 업체명 라우트 추가
 app.use("/api", accommodationRoutes); //숙박 라우트
 app.use("/api/images", imageRoutes); // 이미지 관련 라우트
