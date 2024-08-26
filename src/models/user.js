@@ -99,9 +99,9 @@ const preferenceSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   kakaoId: {
     type: String,
-
-    unique: true,
+    //unique: true,
     sparse: true, // 이메일 회원가입 사용자를 위해 null 허용
+    //default: undefined,
   },
   email: {
     type: String,
@@ -148,10 +148,9 @@ const userSchema = new mongoose.Schema({
   markerCategories: [MarkerCategorySchema], // 사용자 마커 카테고리 설정
 });
 
-// pre-save 훅 추가
 userSchema.pre('save', function (next) {
   if (!this.kakaoId) {
-    this.kakaoId = undefined; // kakaoId가 없을 경우 필드를 제거
+    this.kakaoId = undefined; // kakaoId가 없는 경우 해당 필드를 아예 undefined로 설정합니다.
   }
   next();
 });

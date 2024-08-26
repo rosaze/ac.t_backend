@@ -34,7 +34,7 @@ const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 
 const app = express();
-app.set("port", process.env.PORT || 3002);
+app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
 nunjucks.configure(path.join(__dirname, "src/views"), {
