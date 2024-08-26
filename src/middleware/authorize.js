@@ -1,10 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 const authorize = (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
+  const authHeader = req.header('Authorization'); // Authorization 헤더 추출
+  if (!authHeader) {
+    return res.status(401).json({ message: 'No token, authorization denied' });
+  }
+
+  const token = authHeader.replace('Bearer ', ''); // Bearer 문자열 제거
 
   if (!token) {
-    return res.status(401).json({ message: 'No token, authorization denied' });
+    return res
+      .status(401)
+      .json({ message: 'Token is missing after Bearer keyword' });
   }
 
   try {
