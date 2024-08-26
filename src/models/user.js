@@ -60,6 +60,7 @@ const activityMapSchema = new mongoose.Schema({
   },
   hashtags: [{ type: String }],
 });
+
 // 마커에 할당한 카테고리 정보 저장
 const MarkerCategorySchema = new mongoose.Schema({
   color: {
@@ -69,6 +70,31 @@ const MarkerCategorySchema = new mongoose.Schema({
   },
   categoryName: { type: String, required: true },
 });
+
+// 선호도 스키마
+const preferenceSchema = new mongoose.Schema({
+  location: {
+    type: String,
+    enum: ['outdoor', 'indoor'],
+    required: true,
+  },
+  environment: {
+    type: String,
+    enum: ['sea', 'mountain'],
+    required: true,
+  },
+  group: {
+    type: String,
+    enum: ['group', 'individual'],
+    required: true,
+  },
+  season: {
+    type: String,
+    enum: ['winter', 'summer'],
+    required: true,
+  },
+});
+
 // 사용자 스키마
 const userSchema = new mongoose.Schema({
   kakaoId: {
@@ -110,40 +136,24 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  location_preference: {
-    type: String,
-    enum: ['outdoor', 'indoor'],
-    required: true,
-  },
-  environment_preference: {
-    type: String,
-    enum: ['sea', 'mountain'],
-    required: true,
-  },
-  group_preference: {
-    type: String,
-    enum: ['group', 'individual'],
-    required: true,
-  },
-  season_preference: {
-    type: String,
-    enum: ['winter', 'summer'],
-    required: true,
-  },
   isMentor: {
     type: Boolean,
     default: false,
   },
 
+  preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가
   badges: [userBadgeSchema], // 사용자 배지 필드 추가
   activities: [activityMapSchema], // 활동 기록 필드 추가
   markerCategories: [MarkerCategorySchema], // 사용자 마커 카테고리 설정
 });
 
-// 동적으로 personal_preferences 생성
-userSchema.virtual('personal_preferences').get(function () {
-  return `${this.location_preference}_${this.environment_preference}_${this.group_preference}_${this.season_preference}`;
+// pre-save 훅 추가
+userSchema.pre('save', function (next) {
+  if (!this.kakaoId) {
+    this.kakaoId = undefined; // kakaoId가 없을 경우 필드를 제거
+  }
+  next();
 });
 
 //멘토 자격 부여 로직

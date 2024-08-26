@@ -1,259 +1,301 @@
 const UserService = require('../services/UserService');
 const PreferenceService = require('../services/preferenceService');
 const ActivityAnalysisService = require('../services/ActivityAnalysisService');
+const mongoose = require('mongoose');
 
-//사용자 생성
-exports.createUser = async (req, res) => {
-  try {
-    const user = await UserService.createUser(req.body);
-    res.status(201).send(user);
-  } catch (error) {
-    console.error(`Error creating user: ${error.message}`);
-    res
-      .status(400)
-      .json({ message: 'Failed to create user', error: error.message });
-  }
-};
-
-//사용자 조회 및 프로필 조회
-exports.getUserById = async (req, res) => {
-  try {
-    const user = await UserService.getUserById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+class UserController {
+  // 사용자 생성
+  async createUser(req, res) {
+    try {
+      const user = await UserService.createUser(req.body);
+      res.status(201).send(user);
+    } catch (error) {
+      console.error(`Error creating user: ${error.message}`);
+      res
+        .status(400)
+        .json({ message: 'Failed to create user', error: error.message });
     }
-    res.send(user);
-  } catch (error) {
-    console.error(`Error getting user by ID: ${error.message}`);
-    res
-      .status(500)
-      .json({ message: 'Failed to get user', error: error.message });
   }
-};
 
-//사용자 업데이트 및 프로필 수정
-exports.updateUser = async (req, res) => {
-  try {
-    const user = await UserService.updateUser(req.params.id, req.body);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+  // 사용자 조회 및 프로필 조회
+  async getUserById(req, res) {
+    try {
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+      const user = await UserService.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.send(user);
+    } catch (error) {
+      console.error(`Error getting user by ID: ${error.message}`);
+      res
+        .status(500)
+        .json({ message: 'Failed to get user', error: error.message });
     }
-    res.send(user);
-  } catch (error) {
-    console.error(`Error updating user: ${error.message}`);
-    res
-      .status(400)
-      .json({ message: 'Failed to update user', error: error.message });
   }
-};
 
-//사용자 삭제
-exports.deleteUser = async (req, res) => {
-  try {
-    const user = await UserService.deleteUser(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+  // 사용자 업데이트 및 프로필 수정
+  async updateUser(req, res) {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json({ message: 'User ID is required' });
+      }
+
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ message: 'Update data is required' });
+      }
+
+      const user = await UserService.updateUser(userId, req.body);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      console.error(`Error updating user: ${error.message}`);
+      res
+        .status(500)
+        .json({ message: 'Failed to update user', error: error.message });
     }
-    res.send(user);
-  } catch (error) {
-    console.error(`Error deleting user: ${error.message}`);
-    res
-      .status(500)
-      .json({ message: 'Failed to delete user', error: error.message });
   }
-};
 
-//사용자 자격증 추가
-exports.addCertificate = async (req, res) => {
-  try {
-    const certificates = await UserService.addCertificate(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      message: 'Certificate added successfully',
-      certificates,
-    });
-  } catch (error) {
-    console.error(`Error adding certificate: ${error.message}`);
-    res
-      .status(400)
-      .json({ message: 'Failed to add certificate', error: error.message });
+  // 사용자 삭제
+  async deleteUser(req, res) {
+    try {
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+      const user = await UserService.deleteUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.send(user);
+    } catch (error) {
+      console.error(`Error deleting user: ${error.message}`);
+      res
+        .status(500)
+        .json({ message: 'Failed to delete user', error: error.message });
+    }
   }
-};
 
-//사용자 자격증 삭제
-exports.removeCertificate = async (req, res) => {
-  try {
-    const certificates = await UserService.removeCertificate(
-      req.params.id,
-      req.params.certificateId
-    );
-    res.status(200).json({
-      message: 'Certificate removed successfully',
-      certificates,
-    });
-  } catch (error) {
-    console.error(`Error removing certificate: ${error.message}`);
-    res
-      .status(400)
-      .json({ message: 'Failed to remove certificate', error: error.message });
+  // 사용자 자격증 추가
+  // 인증서 추가 함수
+  async addCertificate(req, res) {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      const user = await UserService.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const newCertificate = {
+        date: req.body.date,
+        institution: req.body.institution,
+        title: req.body.title,
+      };
+
+      const certificates = await UserService.addCertificate(id, newCertificate);
+      res.status(201).json(certificates);
+    } catch (error) {
+      console.error(`Error adding certificate: ${error.message}`);
+      res
+        .status(500)
+        .json({ message: 'Failed to add certificate', error: error.message });
+    }
   }
-};
 
-// 사용자 선호도 업데이트 및 추천 제공
-exports.updatePreferences = async (req, res) => {
-  try {
-    const recommendations = await PreferenceService.updatePreferences(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      message: 'Preferences updated successfully',
-      recommendations,
-    });
-  } catch (error) {
-    console.error(`Error updating preferences: ${error.message}`);
-    res
-      .status(400)
-      .json({ message: 'Failed to update preferences', error: error.message });
-  }
-};
+  //사용자 자격증 삭제
+  async removeCertificate(req, res) {
+    try {
+      const { id, certificateId } = req.params;
 
-// 밸런스 게임 결과 저장 및 선호도 설정
-exports.saveBalanceGameResult = async (req, res) => {
-  try {
-    const recommendations = await PreferenceService.saveBalanceGameResult(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      message: 'Preferences set successfully',
-      recommendations,
-    });
-  } catch (error) {
-    console.error(`Error saving balance game result: ${error.message}`);
-    res.status(400).json({
-      message: 'Failed to save balance game result',
-      error: error.message,
-    });
-  }
-};
+      if (
+        !mongoose.Types.ObjectId.isValid(id) ||
+        !mongoose.Types.ObjectId.isValid(certificateId)
+      ) {
+        return res.status(400).json({
+          message: 'Invalid user ID or certificate ID',
+        });
+      }
 
-// 사용자에게 활동 추천 제공// 사용자 찾고, 추천활동 반환
-exports.getRecommendedActivities = async (req, res) => {
-  try {
-    const recommendations = await PreferenceService.getRecommendedActivities(
-      req.params.id
-    );
-    res.status(200).json(recommendations);
-  } catch (error) {
-    console.error(`Error fetching recommendations: ${error.message}`);
-    res.status(500).json({
-      message: 'Failed to fetch activity recommendations',
-      error: error.message,
-    });
-  }
-};
+      const userId = new mongoose.Types.ObjectId(id);
+      const certificateIdObj = new mongoose.Types.ObjectId(certificateId);
 
-// 사용자 활동 요약 및 선호도 변경 추천, 선호도 업데이트 제공
-exports.getActivitySummaryAndPreferenceRecommendation = async (req, res) => {
-  try {
-    // 활동 요약 데이터 가져오기
-    const activitySummary = await ActivityAnalysisService.getActivitySummary(
-      req.params.id
-    );
-
-    // 선호도 변경 추천 데이터 가져오기
-    const recommendation = await PreferenceService.recommendPreferenceUpdate(
-      req.params.id
-    );
-
-    // 사용자의 선호도를 업데이트하고, 새로운 추천 활동 목록 가져오기
-    const recommendations = await PreferenceService.updatePreferences(
-      req.params.id,
-      req.body
-    );
-
-    res.status(200).json({
-      activitySummary, // 활동 요약 데이터
-      recommendation, // 선호도 변경 추천 데이터
-      message: 'Preferences updated successfully',
-      recommendations, // 업데이트된 선호도에 따른 추천 활동 목록
-    });
-  } catch (error) {
-    console.error(
-      `Error fetching activity summary, preference recommendation, and updating preferences: ${error.message}`
-    );
-    res.status(500).json({
-      message: 'Failed to process request',
-      error: error.message,
-    });
-  }
-};
-
-//사용자 프로필 조회
-exports.getUserProfile = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const profile = await UserService.getUserProfile(userId);
-    res.status(200).json(profile);
-  } catch (error) {
-    console.error(`Error fetching user profile: ${error.message}`);
-    res
-      .status(500)
-      .json({ message: 'Failed to fetch user profile', error: error.message });
-  }
-};
-
-// **마커 카테고리 설정**
-exports.setMarkerCategory = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const { color, categoryName } = req.body;
-
-    // 색상과 카테고리 이름이 제공되었는지 확인
-    if (!color || !categoryName) {
-      return res.status(400).json({
-        message: 'Color and categoryName are required fields.',
+      const certificates = await UserService.removeCertificate(
+        userId,
+        certificateIdObj
+      );
+      res.status(200).json({
+        message: 'Certificate removed successfully',
+        certificates,
+      });
+    } catch (error) {
+      console.error(`Error removing certificate: ${error.message}`);
+      res.status(400).json({
+        message: 'Failed to remove certificate',
+        error: error.message,
       });
     }
-
-    // 마커 카테고리 설정 로직 호출
-    const markerCategories = await UserService.setMarkerCategory(
-      userId,
-      color,
-      categoryName
-    ); // 요청 본문에서 color와 categoryName을 가져옴
-
-    res.status(200).json({
-      message: 'Marker category set successfully',
-      markerCategories,
-    });
-  } catch (error) {
-    console.error(`Error setting marker category: ${error.message}`);
-    res
-      .status(500)
-      .json({ message: 'Failed to set marker category', error: error.message });
   }
-};
 
-// **마커 카테고리 조회**
-exports.getMarkerCategories = async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    // 마커 카테고리 조회 로직 호출
-    const markerCategories = await UserService.getMarkerCategories(userId);
-
-    res.status(200).json({
-      markerCategories,
-    });
-  } catch (error) {
-    console.error(`Error fetching marker categories: ${error.message}`);
-    res.status(500).json({
-      message: 'Failed to fetch marker categories',
-      error: error.message,
-    });
+  // 사용자 선호도 업데이트 및 추천 제공
+  async updatePreferences(req, res) {
+    try {
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const recommendations = await PreferenceService.updatePreferences(
+        userId,
+        req.body
+      );
+      res.status(200).json({
+        message: 'Preferences updated successfully',
+        recommendations,
+      });
+    } catch (error) {
+      console.error(`Error updating preferences: ${error.message}`);
+      res.status(400).json({
+        message: 'Failed to update preferences',
+        error: error.message,
+      });
+    }
   }
-};
+
+  // 밸런스 게임 결과 저장 및 선호도 설정
+  async saveBalanceGameResult(req, res) {
+    try {
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const recommendations = await PreferenceService.saveBalanceGameResult(
+        userId,
+        req.body
+      );
+      res.status(200).json({
+        message: 'Preferences set successfully',
+        recommendations,
+      });
+    } catch (error) {
+      console.error(`Error saving balance game result: ${error.message}`);
+      res.status(400).json({
+        message: 'Failed to save balance game result',
+        error: error.message,
+      });
+    }
+  }
+
+  // 사용자에게 활동 추천 제공
+  async getRecommendedActivities(req, res) {
+    try {
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const recommendations = await PreferenceService.getRecommendedActivities(
+        userId
+      );
+      res.status(200).json(recommendations);
+    } catch (error) {
+      console.error(`Error fetching recommendations: ${error.message}`);
+      res.status(500).json({
+        message: 'Failed to fetch activity recommendations',
+        error: error.message,
+      });
+    }
+  }
+
+  // 사용자 활동 요약 및 선호도 변경 추천, 선호도 업데이트 제공
+  async getActivitySummaryAndPreferenceRecommendation(req, res) {
+    try {
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const activitySummary = await ActivityAnalysisService.getActivitySummary(
+        userId
+      );
+      const recommendation = await PreferenceService.recommendPreferenceUpdate(
+        userId
+      );
+      const recommendations = await PreferenceService.updatePreferences(
+        userId,
+        req.body
+      );
+
+      res.status(200).json({
+        activitySummary,
+        recommendation,
+        message: 'Preferences updated successfully',
+        recommendations,
+      });
+    } catch (error) {
+      console.error(
+        `Error fetching activity summary, preference recommendation, and updating preferences: ${error.message}`
+      );
+      res.status(500).json({
+        message: 'Failed to process request',
+        error: error.message,
+      });
+    }
+  }
+
+  // 사용자 프로필 조회
+  async getUserProfile(req, res) {
+    try {
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+      const profile = await UserService.getUserProfile(userId);
+      res.status(200).json(profile);
+    } catch (error) {
+      console.error(`Error fetching user profile: ${error.message}`);
+      res.status(500).json({
+        message: 'Failed to fetch user profile',
+        error: error.message,
+      });
+    }
+  }
+
+  // 마커 카테고리 설정
+  async setMarkerCategory(req, res) {
+    try {
+      const userId = mongoose.Types.ObjectId(req.params.id);
+      const { color, categoryName } = req.body;
+
+      if (!color || !categoryName) {
+        return res.status(400).json({
+          message: 'Color and categoryName are required fields.',
+        });
+      }
+
+      const markerCategories = await UserService.setMarkerCategory(
+        userId,
+        color,
+        categoryName
+      );
+
+      res.status(200).json({
+        message: 'Marker category set successfully',
+        markerCategories,
+      });
+    } catch (error) {
+      console.error(`Error setting marker category: ${error.message}`);
+      res.status(500).json({
+        message: 'Failed to set marker category',
+        error: error.message,
+      });
+    }
+  }
+
+  // 마커 카테고리 조회
+  async getMarkerCategories(req, res) {
+    try {
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+      const markerCategories = await UserService.getMarkerCategories(userId);
+
+      res.status(200).json({
+        markerCategories,
+      });
+    } catch (error) {
+      console.error(`Error fetching marker categories: ${error.message}`);
+      res.status(500).json({
+        message: 'Failed to fetch marker categories',
+        error: error.message,
+      });
+    }
+  }
+}
+
+module.exports = new UserController();

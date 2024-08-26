@@ -33,7 +33,6 @@ const generateRefreshToken = (user) => {
   return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 };
 
-// 이메일 회원가입 - 인증번호 발송
 router.post('/register', async (req, res) => {
   const { email, password, phone, name } = req.body;
   try {
@@ -43,11 +42,14 @@ router.post('/register', async (req, res) => {
     }
 
     // 인증 코드 생성 및 이메일 발송
-    const authCode = sendAuthNumber(email, res);
+    const authCode = await sendAuthNumber(email);
+
+    // 로그 추가: authCode 확인
+    console.log('Generated authCode:', authCode);
 
     // 임시 사용자 정보와 인증 코드를 세션에 저장
     req.session.tempUser = { email, password, phone, name };
-    req.session.authCode = authCode;
+    req.session.authCode = authCode.toString(); // 문자열로 변환하여 저장
 
     res.status(200).json({ message: 'Verification code sent to email' });
   } catch (error) {
@@ -55,9 +57,10 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// 이메일 인증번호 확인 및 최종 회원가입
 router.post('/verify', async (req, res) => {
   const { authCode } = req.body;
+  console.log('Received authCode:', authCode);
+  console.log('Session authCode:', req.session.authCode);
 
   if (authCode === req.session.authCode) {
     const { email, password, phone, name } = req.session.tempUser;
@@ -68,24 +71,24 @@ router.post('/verify', async (req, res) => {
         email,
         password: hashedPassword,
         phone,
-        name, // 이메일 회원가입 시 입력된 name 저장
+        name,
+        // kakaoId 필드를 아예 설정하지 않습니다.
       });
 
       await newUser.save();
 
-      // 세션에서 임시 데이터 삭제
       req.session.tempUser = null;
       req.session.authCode = null;
 
-      // 회원가입 후 추가 정보 입력 페이지로 이동
-      res
+      return res
         .status(201)
         .json({ message: 'User registered successfully', userId: newUser._id });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error('Error creating user:', error.message);
+      return res.status(500).json({ error: error.message });
     }
   } else {
-    res.status(400).json({ message: 'Invalid verification code' });
+    return res.status(400).json({ message: 'Invalid verification code' });
   }
 });
 
