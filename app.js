@@ -33,7 +33,7 @@ const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 
 const app = express();
-app.set("port", process.env.PORT || 3002);
+app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
 nunjucks.configure(path.join(__dirname, "src/views"), {
