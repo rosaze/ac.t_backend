@@ -119,7 +119,7 @@ const userSchema = new mongoose.Schema({
 
   nickname: {
     type: String,
-    required: true,
+    required: false,
   },
 
   bio: {
@@ -143,11 +143,9 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
 
-
   refreshToken: {
     type: String, // refreshToken을 저장할 필드 추가
   },
-
 
   preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가

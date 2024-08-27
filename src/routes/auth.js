@@ -98,41 +98,175 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// 로그인
+// 로그인 라우트
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'User not found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-    };
-
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    // refresh token을 콘솔에 출력
+    console.log('로그인 - 생성된 refreshToken:', refreshToken);
+
+    // DB에 refresh token 저장
     user.refreshToken = refreshToken;
     await user.save();
 
+    // 쿠키로 refresh token을 설정하고 응답
     res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
-    res.status(200).json({ accessToken });
+    res.status(200).json({ accessToken, userId: user._id });
   } catch (error) {
     console.error('Error during login:', error.message);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// 카카오 회원가입 및 로그인
+router.get('/kakao', (req, res) => {
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.KAKAO_CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code`;
+  res.redirect(kakaoAuthUrl);
+});
+
+// 카카오 인증 후 콜백 처리
+router.get('/kakao/callback', async (req, res) => {
+  const { code } = req.query;
+
+  try {
+    const tokenResponse = await axios.post(
+      'https://kauth.kakao.com/oauth/token',
+      null,
+      {
+        params: {
+          grant_type: 'authorization_code',
+          client_id: process.env.KAKAO_CLIENT_ID,
+          redirect_uri: process.env.REDIRECT_URI,
+          code,
+        },
+      }
+    );
+
+    const { access_token } = tokenResponse.data;
+
+    const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+
+    const {
+      id,
+      properties: { nickname },
+      kakao_account: { email },
+    } = userResponse.data;
+
+    let user = await User.findOne({ kakaoId: id });
+    if (user) {
+      // 기존 사용자라면 JWT 토큰 발급
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+      return res.json({ token, user });
+    } else {
+      // 새로운 사용자라면 추가 정보 입력 페이지로 이동
+      return res.status(200).json({
+        message: 'Additional info required',
+        kakaoId: id,
+        name: nickname, // 카카오에서 가져온 닉네임 저장
+        email,
+      });
+    }
+  } catch (error) {
+    console.error('카카오 인증 중 오류:', error.message);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// 회원가입 후 추가 정보 입력 라우트 (이메일, 카카오 공통)
+router.post('/additional-info', async (req, res) => {
+  const { userId, nickname, bio, gender, age } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.nickname = nickname;
+    user.bio = bio;
+    user.gender = gender;
+    user.age = age;
+
+    await user.save();
+
+    const token = generateAccessToken(user);
+
+    res.status(200).json({ token, user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 카카오 회원가입 후 추가 정보 입력 처리
+router.post('/kakao/register', async (req, res) => {
+  const { kakaoId, email, nickname, gender, age, bio } = req.body;
+
+  try {
+    let user = await User.findOne({ kakaoId });
+    if (!user) {
+      user = new User({ kakaoId, email, nickname, gender, age, bio });
+      await user.save();
+    }
+
+    const token = generateAccessToken(user);
+
+    res.status(200).json({ token, user });
+  } catch (error) {
+    console.error('Error during Kakao registration:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 밸런스 게임 페이지
+router.post('/balance-game', async (req, res) => {
+  const {
+    userId,
+    location_preference,
+    environment_preference,
+    group_preference,
+    season_preference,
+  } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.preference = {
+      location: location_preference,
+      environment: environment_preference,
+      group: group_preference,
+      season: season_preference,
+    };
+
+    await user.save();
+
+    const token = generateAccessToken(user);
+
+    res.status(200).json({ token, user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -141,6 +275,7 @@ router.post('/token', async (req, res) => {
   const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
+    console.log('No refresh token provided');
     return res.status(403).json({ message: 'Refresh token is required' });
   }
 
@@ -150,6 +285,7 @@ router.post('/token', async (req, res) => {
     const user = await User.findOne({ refreshToken });
 
     if (!user) {
+      console.log('No user found with the provided refresh token');
       return res.status(403).json({ message: 'Invalid refresh token' });
     }
 
@@ -159,9 +295,14 @@ router.post('/token', async (req, res) => {
         return res.status(403).json({ message: 'Invalid refresh token' });
       }
 
+      console.log('JWT verification successful, decoded:', decoded);
+
       const newAccessToken = generateAccessToken(user);
 
-      res.status(200).json({ accessToken: newAccessToken });
+      res.status(200).json({
+        accessToken: newAccessToken,
+        userId: user._id, // userId 추가 반환
+      });
     });
   } catch (error) {
     console.error('Error during token processing:', error.message);
