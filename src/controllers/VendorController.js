@@ -1,6 +1,5 @@
 //사용자가 해시태그 입력시 해당 입력에 따라 자동으로 업체명 검색, 새롭게 추가
 const VendorService = require('../services/VendorService');
-
 const ActivityRecommendationService = require('../services/activityRecommendationService'); // 활동 추천 서비스
 
 const WishlistService = require('../services/WishlistService'); //찜
@@ -9,19 +8,19 @@ const SearchHistoryService = require('../services/SearchHistoryService');
 exports.searchVendors = async (req, res) => {
   try {
     // 쿼리 파라미터를 통해 값 가져오기
-    const { name, userId, searchType } = req.query;
+    const { keyword, searchType } = req.query;
+
     // 로그 추가: 요청 파라미터 확인
     console.log('searchVendors endpoint called with:', {
-      query,
-      userId,
+      keyword,
       searchType,
     });
 
     // userId가 존재하는지 확인
-    if (!query || !userId || !searchType) {
+    if (!keyword || !searchType) {
       return res
         .status(400)
-        .json({ message: 'Keyword, userId, and searchType are required' });
+        .json({ message: 'Keyword, and searchType are required' });
     }
 
     // 업체명 검색

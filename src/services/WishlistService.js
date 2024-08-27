@@ -1,4 +1,5 @@
 // services/WishlistService.js
+const User = require('../models/User'); // User 모델 임포트
 
 const Wishlist = require('../models/Wishlist');
 

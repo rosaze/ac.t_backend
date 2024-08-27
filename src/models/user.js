@@ -99,9 +99,7 @@ const preferenceSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   kakaoId: {
     type: String,
-    //unique: true,
     sparse: true, // 이메일 회원가입 사용자를 위해 null 허용
-    //default: undefined,
   },
   email: {
     type: String,
@@ -126,7 +124,6 @@ const userSchema = new mongoose.Schema({
 
   bio: {
     type: String,
-
     maxlength: 255,
   },
   gender: {
@@ -136,20 +133,21 @@ const userSchema = new mongoose.Schema({
   age: {
     type: Number,
   },
-  createdAT: {
+  createdAt: {
     type: Date,
     default: Date.now,
     required: true,
   },
-
   isMentor: {
     type: Boolean,
     default: false,
   },
 
+
   refreshToken: {
     type: String, // refreshToken을 저장할 필드 추가
   },
+
 
   preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가
@@ -179,6 +177,7 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-const User = mongoose.model('User', userSchema);
+// 모델 정의
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 module.exports = User;
