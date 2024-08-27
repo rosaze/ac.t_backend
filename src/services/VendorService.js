@@ -7,17 +7,15 @@ const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모�
 
 //검색 기능 추가
 class VendorService {
-  async searchVendors(query, userId, searchType) {
+  // 업체명 검색 (부분 일치)
+  async searchVendors(query) {
     try {
-      // 로그 추가: 입력 값 확인
-      console.log('searchVendors called with:', { query, userId, searchType });
-      // 업체명 검색 (부분 일치)
-      // 업체명 검색
+      console.log('searchVendors called with:', { query });
+
       const vendors = await Vendor.find({
         title: new RegExp(query, 'i'),
       }).exec();
-      // 검색 기록 저장
-      await this.saveSearchHistory(userId, query, searchType);
+
       return vendors;
     } catch (error) {
       console.error('Error in searchVendors:', error);
@@ -112,8 +110,6 @@ class VendorService {
         keyword,
         searchType,
       });
-
-      // userId를 ObjectId로 변환
       const userObjectId = new mongoose.Types.ObjectId(userId);
 
       const history = new SearchHistory({
