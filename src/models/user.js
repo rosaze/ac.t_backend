@@ -116,8 +116,14 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
+    required: false,
+  },
+
+  nickname: {
+    type: String,
     required: true,
   },
+
   bio: {
     type: String,
 
@@ -139,6 +145,10 @@ const userSchema = new mongoose.Schema({
   isMentor: {
     type: Boolean,
     default: false,
+  },
+
+  refreshToken: {
+    type: String, // refreshToken을 저장할 필드 추가
   },
 
   preference: preferenceSchema, // 선호도 필드 추가

@@ -24,8 +24,8 @@ const generateRefreshToken = (user) => {
   });
 };
 
+// 이메일 인증 코드 요청
 router.post('/register', async (req, res) => {
-  //테스트 완료
   const { email, password, phone, name } = req.body;
   try {
     const existingUser = await User.findOne({ email });
@@ -48,8 +48,8 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// 이메일 인증 코드 확인 및 회원가입 완료
 router.post('/verify', async (req, res) => {
-  //테스트 완료
   const { authCode } = req.body;
   console.log('Received authCode:', authCode);
   console.log('Session authCode:', req.session.authCode);
@@ -68,7 +68,6 @@ router.post('/verify', async (req, res) => {
         name,
       };
 
-      // kakaoId 필드가 존재하면 userData에 추가
       if (req.session.tempUser.kakaoId) {
         userData.kakaoId = req.session.tempUser.kakaoId;
       }
@@ -86,7 +85,6 @@ router.post('/verify', async (req, res) => {
         .json({ message: 'User registered successfully', userId: newUser._id });
     } catch (error) {
       console.error('Error creating user:', error.message);
-      console.error('Detailed error:', error);
       return res.status(500).json({ error: error.message });
     }
   } else {
@@ -96,7 +94,6 @@ router.post('/verify', async (req, res) => {
 
 // 로그인 라우트
 router.post('/login', async (req, res) => {
-  //테스트 완료
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -112,7 +109,6 @@ router.post('/login', async (req, res) => {
 
     console.log('로그인 - 생성된 refreshToken:', refreshToken);
 
-    // 저장 직후 데이터베이스에서 사용자 정보 재조회
     const updatedUser = await User.findById(user._id);
     console.log('저장 후 DB의 refreshToken:', updatedUser.refreshToken);
 
@@ -120,7 +116,7 @@ router.post('/login', async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ success: true, accessToken });
@@ -130,6 +126,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// 카카오 로그인 라우트
 router.post('/kakao/register', async (req, res) => {
   const { kakaoId, email, name, gender, age, bio } = req.body;
   try {
@@ -137,7 +134,6 @@ router.post('/kakao/register', async (req, res) => {
     let user = await User.findOne({ kakaoId });
     if (!user) {
       user = new User({ kakaoId, email, name, gender, age, bio });
-      console.log('New user data for Kakao:', user);
       await user.save();
     }
     res
@@ -145,37 +141,31 @@ router.post('/kakao/register', async (req, res) => {
       .json({ message: 'User registered successfully', userId: user._id });
   } catch (error) {
     console.error('Error during Kakao registration:', error.message);
-    console.error('Detailed error:', error); // MongoDB 에러에 대한 자세한 로그 출력
     res.status(500).json({ error: error.message });
   }
 });
 
-// 회원가입 후 추가 정보 입력 라우터 (닉네임, 한줄소개, 성별, 나이)
+// 회원가입 후 추가 정보 입력 라우트
 router.post('/additional-info', async (req, res) => {
-  // 테스트 완료
   const { userId, nickname, bio, gender, age } = req.body;
 
   try {
-    // 유저 정보 찾기
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // 유저 정보 업데이트
-    user.nickname = nickname; // nickname 별도로 저장
+    user.nickname = nickname;
     user.bio = bio;
     user.gender = gender;
     user.age = age;
 
     await user.save();
 
-    // 새로운 Access Token 생성
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
-    // 밸런스 게임 페이지로 이동
     res.status(200).json({ token, user });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -184,7 +174,6 @@ router.post('/additional-info', async (req, res) => {
 
 // 밸런스 게임 페이지
 router.post('/balance-game', async (req, res) => {
-  //테스트 완료
   const {
     userId,
     location_preference,
@@ -199,7 +188,6 @@ router.post('/balance-game', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user preferences
     user.preference = {
       location: location_preference,
       environment: environment_preference,
@@ -221,7 +209,7 @@ router.post('/balance-game', async (req, res) => {
 
 // Refresh Token으로 새로운 Access Token 발급
 router.post('/token', async (req, res) => {
-  const { refreshToken } = req.cookies; // 쿠키에서 Refresh Token 가져오기
+  const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
     return res.status(403).json({ message: 'Refresh token is required' });
@@ -230,18 +218,15 @@ router.post('/token', async (req, res) => {
   try {
     console.log('Received refreshToken:', refreshToken);
 
-    // Mongoose를 사용하여 refresh token으로 사용자를 찾음
     const user = await User.findOne({ refreshToken });
 
     if (!user) {
-      console.log('No user found with provided refresh token');
       return res.status(403).json({ message: 'Invalid refresh token' });
     }
 
     jwt.verify(refreshToken, JWT_REFRESH_SECRET, async (err, decoded) => {
       if (err) {
         console.log('JWT verification failed:', err.message);
-
         return res.status(403).json({ message: 'Invalid refresh token' });
       }
 
@@ -274,15 +259,25 @@ router.post('/logout', async (req, res) => {
         return res.status(403).json({ message: 'Invalid refresh token' });
       }
 
+      // DB에서 해당 리프레시 토큰을 가진 사용자 찾기
       const user = await User.findOne({ refreshToken });
 
       if (!user) {
         console.log('해당 refreshToken을 가진 사용자 없음');
+        console.log(
+          '데이터베이스에 저장된 refreshToken:',
+          user ? user.refreshToken : '사용자 없음'
+        );
         return res.status(403).json({ message: 'Invalid refresh token' });
       }
 
       console.log('찾은 사용자의 refreshToken:', user.refreshToken);
+      console.log(
+        '요청된 refreshToken과 일치 여부:',
+        user.refreshToken === refreshToken
+      );
 
+      // 로그아웃 처리: refreshToken 삭제
       user.refreshToken = null;
       await user.save();
 
