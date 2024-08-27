@@ -1,25 +1,51 @@
 //입력한 업체명이 데이터베이스에 있는지 확인.
 //-> 존재하면 자동완성 리스트에 보여주고, 존재하지 않으면 새로운 업체명 DB에 추가
-
+const mongoose = require('mongoose'); // mongoose 모듈 가져오기
 const Vendor = require('../models/Vendor');
 const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 
 //검색 기능 추가
 class VendorService {
-  async searchVendors(query) {
-    // 업체명 검색 (부분 일치)
-    return await Vendor.find({ title: new RegExp(query, 'i') }).exec();
-  } //vendor 컬렉션에서는 업체명이 title로 표시됨
+  async searchVendors(query, userId, searchType) {
+    try {
+      // 로그 추가: 입력 값 확인
+      console.log('searchVendors called with:', { query, userId, searchType });
+      // 업체명 검색 (부분 일치)
+      // 업체명 검색
+      const vendors = await Vendor.find({
+        title: new RegExp(query, 'i'),
+      }).exec();
+      // 검색 기록 저장
+      await this.saveSearchHistory(userId, query, searchType);
+      return vendors;
+    } catch (error) {
+      console.error('Error in searchVendors:', error);
+      throw error;
+    }
+  }
 
   async addVendor(name) {
-    // 새로운 업체명 추가
-    const existingVendor = await Vendor.findOne({ title }).exec();
-    if (!existingVendor) {
-      const vendor = new Vendor({ name });
-      return await vendor.save();
+    try {
+      // 로그 추가: 입력 값 확인
+      console.log('addVendor called with name:', name);
+
+      const existingVendor = await Vendor.findOne({ title: name }).exec();
+
+      if (existingVendor) {
+        console.log('Vendor already exists:', existingVendor);
+        return existingVendor;
+      }
+
+      const vendor = new Vendor({ title: name });
+      const savedVendor = await vendor.save();
+
+      console.log('New vendor added:', savedVendor);
+      return savedVendor;
+    } catch (error) {
+      console.error('Error in addVendor:', error);
+      throw error;
     }
-    return existingVendor; // 이미 있는 경우 해당 업체명 반환
   }
   // 시군별 숙박시설 검색 + 숙박 유형 필터링
   async getAccommodationsByRegion(region, category = null) {
@@ -80,8 +106,32 @@ class VendorService {
   }
   // 검색 기록 저장
   async saveSearchHistory(userId, keyword, searchType) {
-    const history = new SearchHistory({ user: userId, keyword, searchType });
-    await history.save();
+    try {
+      console.log('saveSearchHistory called with:', {
+        userId,
+        keyword,
+        searchType,
+      });
+
+      // userId를 ObjectId로 변환
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+
+      const history = new SearchHistory({
+        user: userObjectId,
+        keyword,
+        searchType,
+        createdAt: new Date(),
+      });
+
+      const savedHistory = await history.save();
+
+      console.log('Search history saved:', savedHistory);
+
+      return savedHistory;
+    } catch (error) {
+      console.error('Error in saveSearchHistory:', error);
+      throw error;
+    }
   }
 }
 

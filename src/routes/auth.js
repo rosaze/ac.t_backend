@@ -96,6 +96,7 @@ router.post('/verify', async (req, res) => {
 
 // 로그인 라우트
 router.post('/login', async (req, res) => {
+  //테스트 완료
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -240,6 +241,7 @@ router.post('/token', async (req, res) => {
     jwt.verify(refreshToken, JWT_REFRESH_SECRET, async (err, decoded) => {
       if (err) {
         console.log('JWT verification failed:', err.message);
+
         return res.status(403).json({ message: 'Invalid refresh token' });
       }
 

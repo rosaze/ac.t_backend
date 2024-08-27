@@ -4,18 +4,69 @@ const VendorService = require('../services/VendorService');
 const ActivityRecommendationService = require('../services/activityRecommendationService'); // 활동 추천 서비스
 
 const WishlistService = require('../services/WishlistService'); //찜
+const SearchHistoryService = require('../services/SearchHistoryService');
 
-class VendorController {
+exports.searchVendors = async (req, res) => {
+  try {
+    // 쿼리 파라미터를 통해 값 가져오기
+    const { name, userId, searchType } = req.query;
+    // 로그 추가: 요청 파라미터 확인
+    console.log('searchVendors endpoint called with:', {
+      query,
+      userId,
+      searchType,
+    });
+
+    // userId가 존재하는지 확인
+    if (!query || !userId || !searchType) {
+      return res
+        .status(400)
+        .json({ message: 'Keyword, userId, and searchType are required' });
+    }
+
+    // 업체명 검색
+    const vendors = await VendorService.searchVendors(
+      query,
+      userId,
+      searchType
+    );
+
+    /* 검색 기록 저장
+    console.log('Logging search history...'); // 로그 추가
+    await SearchHistoryService.logSearch(userId, name, searchType);
+*/
+    res.status(200).json(vendors);
+  } catch (error) {
+    console.error('Error in searchVendors endpoint:', error);
+    res.status(500).json({ message: 'Search failed', error: error.message });
+  }
+};
+/* 
   async searchVendors(req, res) {
     try {
-      const query = req.query.q;
-      const vendors = await VendorService.searchVendors(query);
+      const keyword = req.query.keyword; // 쿼리 파라미터로 검색어 가져오기
+      const userId = req.user._id; // 인증된 사용자 ID 가져오기
+      const searchType = req.query.searchType;
+      if (!keyword || !userId) {
+        return res
+          .status(400)
+          .json({ message: 'Name and userId are required' });
+      }
+      //검색 로직
+      const vendors = await Vendor.find({
+        name: new RegExp(keyword, 'i'),
+        user: userId,
+      });
+      // 검색 기록 저장
+      await SearchHistoryService.logSearch(userId, keyword, searchType);
+
       res.status(200).json(vendors);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   }
-
+*/
+class VendorController {
   async addVendor(req, res) {
     try {
       const name = req.body.name;
