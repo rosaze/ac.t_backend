@@ -11,95 +11,94 @@ const router = express.Router();
 
 // 토큰 생성 함수들
 const generateAccessToken = (user) => {
-  console.log('Access 토큰 생성 - 사용된 SECRET:', JWT_SECRET);
-  return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+  console.log('Access 토큰 생성 - 사용된 SECRET:', process.env.JWT_SECRET);
+  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
     expiresIn: '1h',
   });
 };
 
 const generateRefreshToken = (user) => {
-  console.log('Refresh 토큰 생성 - 사용된 SECRET:', JWT_REFRESH_SECRET);
-  return jwt.sign({ id: user._id, email: user.email }, JWT_REFRESH_SECRET, {
-    expiresIn: '7d',
-  });
+  console.log(
+    'Refresh 토큰 생성 - 사용된 SECRET:',
+    process.env.JWT_REFRESH_SECRET
+  );
+  return jwt.sign(
+    { id: user._id, email: user.email },
+    process.env.JWT_REFRESH_SECRET,
+    {
+      expiresIn: '7d',
+    }
+  );
 };
 
-// 이메일 인증 코드 요청
-router.post('/register', async (req, res) => {
-  const { email, password, phone, name } = req.body;
+// 회원가입 - 이메일 인증번호 전송
+router.post('/send-email', async (req, res) => {
+  const { email } = req.body;
+
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email already in use' });
-    }
-
-    // 인증 코드 생성 및 이메일 발송
-    const authCode = await sendAuthNumber(email);
-    console.log('Generated authCode:', authCode);
-
-    // 임시 사용자 정보와 인증 코드를 세션에 저장
-    req.session.tempUser = { email, password, phone, name };
-    req.session.authCode = authCode.toString();
-
-    res.status(200).json({ message: 'Verification code sent to email' });
+    const authNumber = await sendAuthNumber(email);
+    res.status(200).json({ message: 'Authentication number sent', authNumber });
   } catch (error) {
-    console.error('Error during registration:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Failed to send authentication email:', error.message);
+    res.status(500).json({ message: 'Failed to send authentication email' });
   }
 });
 
-// 이메일 인증 코드 확인 및 회원가입 완료
-router.post('/verify', async (req, res) => {
-  const { authCode } = req.body;
-  console.log('Received authCode:', authCode);
-  console.log('Session authCode:', req.session.authCode);
+// 회원가입 - 이메일 인증번호 확인 후 추가 정보 입력
+router.post('/register', async (req, res) => {
+  const { email, password, name, authNumber, inputAuthNumber } = req.body;
 
-  if (authCode === req.session.authCode) {
-    const { email, password, phone, name } = req.session.tempUser;
+  if (authNumber !== inputAuthNumber) {
+    return res.status(400).json({ message: 'Invalid authentication number' });
+  }
 
-    try {
-      console.log('Attempting to create user with email:', email);
-      const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const userExists = await User.findOne({ email });
 
-      const userData = {
-        email,
-        password: hashedPassword,
-        phone,
-        name,
-      };
-
-      if (req.session.tempUser.kakaoId) {
-        userData.kakaoId = req.session.tempUser.kakaoId;
-      }
-
-      console.log('New user data:', userData);
-
-      const newUser = new User(userData);
-      await newUser.save();
-
-      req.session.tempUser = null;
-      req.session.authCode = null;
-
-      return res
-        .status(201)
-        .json({ message: 'User registered successfully', userId: newUser._id });
-    } catch (error) {
-      console.error('Error creating user:', error.message);
-      return res.status(500).json({ error: error.message });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
     }
-  } else {
-    return res.status(400).json({ message: 'Invalid verification code' });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      name,
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error during user registration:', error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// 로그인 라우트
+// 로그인
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+
+    if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const payload = {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    };
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
@@ -107,22 +106,11 @@ router.post('/login', async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    console.log('로그인 - 생성된 refreshToken:', refreshToken);
-
-    const updatedUser = await User.findById(user._id);
-    console.log('저장 후 DB의 refreshToken:', updatedUser.refreshToken);
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({ success: true, accessToken });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
+    res.status(200).json({ accessToken });
   } catch (error) {
-    console.error('로그인 에러:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error during login:', error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -162,9 +150,7 @@ router.post('/additional-info', async (req, res) => {
 
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = generateAccessToken(user);
 
     res.status(200).json({ token, user });
   } catch (error) {
@@ -197,9 +183,7 @@ router.post('/balance-game', async (req, res) => {
 
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = generateAccessToken(user);
 
     res.status(200).json({ token, user });
   } catch (error) {
@@ -224,16 +208,20 @@ router.post('/token', async (req, res) => {
       return res.status(403).json({ message: 'Invalid refresh token' });
     }
 
-    jwt.verify(refreshToken, JWT_REFRESH_SECRET, async (err, decoded) => {
-      if (err) {
-        console.log('JWT verification failed:', err.message);
-        return res.status(403).json({ message: 'Invalid refresh token' });
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          console.log('JWT verification failed:', err.message);
+          return res.status(403).json({ message: 'Invalid refresh token' });
+        }
+
+        const newAccessToken = generateAccessToken(user);
+
+        res.status(200).json({ accessToken: newAccessToken });
       }
-
-      const newAccessToken = generateAccessToken(user);
-
-      res.status(200).json({ accessToken: newAccessToken });
-    });
+    );
   } catch (error) {
     console.error('Error during token processing:', error.message);
     res.status(500).json({ error: error.message });
@@ -253,37 +241,41 @@ router.post('/logout', async (req, res) => {
     console.log('로그아웃 요청 - 받은 refreshToken:', refreshToken);
 
     // JWT 검증
-    jwt.verify(refreshToken, JWT_REFRESH_SECRET, async (err, decoded) => {
-      if (err) {
-        console.log('JWT 검증 실패:', err.message);
-        return res.status(403).json({ message: 'Invalid refresh token' });
-      }
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          console.log('JWT 검증 실패:', err.message);
+          return res.status(403).json({ message: 'Invalid refresh token' });
+        }
 
-      // DB에서 해당 리프레시 토큰을 가진 사용자 찾기
-      const user = await User.findOne({ refreshToken });
+        // DB에서 해당 리프레시 토큰을 가진 사용자 찾기
+        const user = await User.findOne({ refreshToken });
 
-      if (!user) {
-        console.log('해당 refreshToken을 가진 사용자 없음');
+        if (!user) {
+          console.log('해당 refreshToken을 가진 사용자 없음');
+          console.log(
+            '데이터베이스에 저장된 refreshToken:',
+            user ? user.refreshToken : '사용자 없음'
+          );
+          return res.status(403).json({ message: 'Invalid refresh token' });
+        }
+
+        console.log('찾은 사용자의 refreshToken:', user.refreshToken);
         console.log(
-          '데이터베이스에 저장된 refreshToken:',
-          user ? user.refreshToken : '사용자 없음'
+          '요청된 refreshToken과 일치 여부:',
+          user.refreshToken === refreshToken
         );
-        return res.status(403).json({ message: 'Invalid refresh token' });
+
+        // 로그아웃 처리: refreshToken 삭제
+        user.refreshToken = null;
+        await user.save();
+
+        res.clearCookie('refreshToken');
+        res.status(200).json({ message: 'Logged out successfully' });
       }
-
-      console.log('찾은 사용자의 refreshToken:', user.refreshToken);
-      console.log(
-        '요청된 refreshToken과 일치 여부:',
-        user.refreshToken === refreshToken
-      );
-
-      // 로그아웃 처리: refreshToken 삭제
-      user.refreshToken = null;
-      await user.save();
-
-      res.clearCookie('refreshToken');
-      res.status(200).json({ message: 'Logged out successfully' });
-    });
+    );
   } catch (error) {
     console.error('로그아웃 에러:', error);
     res.status(500).json({ message: 'Internal server error' });
