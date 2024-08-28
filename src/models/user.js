@@ -114,8 +114,14 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: false,
   },
+
+  nickname: {
+    type: String,
+    required: false,
+  },
+
   bio: {
     type: String,
     maxlength: 255,
@@ -136,6 +142,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+
+  refreshToken: {
+    type: String, // refreshToken을 저장할 필드 추가
+  },
+
   preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가
   badges: [userBadgeSchema], // 사용자 배지 필드 추가
