@@ -1,5 +1,5 @@
 const ActivityMap = require('../models/activityMap');
-const User = require('../models/user');
+const User = require('../models/User');
 const HashtagService = require('./HashtagService');
 const BadgeService = require('./badgeService'); // 배지 서비스 추가
 const locations = require('../utils/location'); // 시군 리스트

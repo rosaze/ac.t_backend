@@ -1,92 +1,121 @@
 const PostService = require('../services/PostService');
 const ActivityMapService = require('../services/activityMapService');
 const SearchHistoryService = require('../services/SearchHistoryService');
+const User = require('../models/User'); // User 모델 경로에 맞게 조정하세요
+
 class PostController {
   async createPost(req, res) {
+    console.log('createPost called with data:', req.body);
     try {
-      //PostService를 통해 게시글 생성
+      // 사용자 ID가 유효한지 확인
+      const user = await User.findById(req.body.author);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
       const post = await PostService.createPost(req.body);
+      console.log('Post created:', post);
 
-      //사용자의 활동을 기록
       await ActivityMapService.addActivityMap({
-        user: req.body.author, // 사용자의 id
+        user: req.body.author,
         post: post._id,
-        region: req.body.locationTag, //지역 태그
+        region: req.body.locationTag,
         activity_date: new Date(),
         hashtags: [
           req.body.locationTag,
           req.body.activityTag,
           req.body.vendorTag,
-        ], //해시태그
+        ],
       });
+      console.log('Activity map updated for post:', post._id);
       res.status(201).json(post);
     } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-  //인기 급상승 게시물
-  async getTrendingPosts(req, res) {
-    try {
-      const posts = await PostService.getTrendingPosts();
-      res.status(200).json(posts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-  //후기글과 일반 게시글 분류
-  async getPostsByType(req, res) {
-    try {
-      const { type } = req.params; // "review" or "general"
-      const posts = await PostService.getPostsByType(type);
-      res.status(200).json(posts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-  //카테고리별 게시글 분류. 물론 하나의 글 안에서는 액티비티 종류 + 장소 태그 둘 다 있는데,
-  //나중에 집계할때 따로 집계해서 갖고올 일 있을 것 같아서 (추천알고리즘) 분류함)
-  async getPostsByCategory(req, res) {
-    try {
-      const { category } = req.params; //장소, 유형
-      const posts = await PostService.getPostsByCategory(catagory);
-      res.status(200).json(posts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-  //태그로 게시물 분류
-  async getPostsByTag(req, res) {
-    try {
-      const { tag } = req.params;
-      const posts = await PostService.getPostsByTag(tag);
-      res.status(200).json(posts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-  // 좋아요순/최신순 드롭다운
-  async getPostsSortedBy(req, res) {
-    try {
-      const sortOption = req.query.sort; // 'latest' or 'likes'
-      const posts = await PostService.getPostsSortedBy(sortOption);
-      res.status(200).json(posts);
-    } catch (err) {
+      console.error('Error in createPost:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
-  //정렬 기능 (시군별, 액티비티, 좋아요수)
-  async getSortedPosts(req, res) {
+  async getTrendingPosts(req, res) {
+    console.log('getTrendingPosts called');
     try {
-      const { sortBy } = req.params; // "city", "activity", "likes"
-      const posts = await PostService.getSortedPosts(sortBy);
+      const posts = await PostService.getTrendingPosts();
+      console.log('Trending posts retrieved:', posts);
       res.status(200).json(posts);
     } catch (err) {
+      console.error('Error in getTrendingPosts:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
-  //후기게시판 필터 기능
+
+  async getPostsByType(req, res) {
+    console.log('getPostsByType called with type:', req.params.type);
+    try {
+      const { type } = req.params;
+      const posts = await PostService.getPostsByType(type);
+      console.log('Posts retrieved by type:', posts);
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error('Error in getPostsByType:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getPostsByCategory(req, res) {
+    console.log(
+      'getPostsByCategory called with category:',
+      req.params.category
+    );
+    try {
+      const { category } = req.params;
+      const posts = await PostService.getPostsByCategory(category);
+      console.log('Posts retrieved by category:', posts);
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error('Error in getPostsByCategory:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getPostsByTag(req, res) {
+    console.log('getPostsByTag called with tag:', req.params.tag);
+    try {
+      const { tag } = req.params;
+      const posts = await PostService.getPostsByTag(tag);
+      console.log('Posts retrieved by tag:', posts);
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error('Error in getPostsByTag:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getPostsSortedBy(req, res) {
+    console.log('getPostsSortedBy called with sort option:', req.query.sort);
+    try {
+      const sortOption = req.query.sort;
+      const posts = await PostService.getPostsSortedBy(sortOption);
+      console.log('Posts sorted by:', sortOption, posts);
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error('Error in getPostsSortedBy:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getSortedPosts(req, res) {
+    console.log('getSortedPosts called with sortBy:', req.params.sortBy);
+    try {
+      const { sortBy } = req.params;
+      const posts = await PostService.getSortedPosts(sortBy);
+      console.log('Posts sorted by:', sortBy, posts);
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error('Error in getSortedPosts:', err.message);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   async getFilteredPosts(req, res) {
+    console.log('getFilteredPosts called with filters:', req.query);
     try {
       const filters = {
         location: req.query.location,
@@ -94,78 +123,101 @@ class PostController {
         vendor: req.query.vendor,
       };
       const posts = await PostService.getFilteredPosts(filters);
+      console.log('Filtered posts retrieved:', posts);
       res.status(200).json(posts);
     } catch (err) {
+      console.error('Error in getFilteredPosts:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
-  //후기 검색 기능
   async searchPosts(req, res) {
+    console.log('searchPosts called with query:', req.query.q);
     try {
       const userId = req.user._id; // Assume user is authenticated
       const keyword = req.query.q;
-      const searchType = 'post'; // 검색 유형 지정
+      const searchType = 'post';
 
       const posts = await PostService.searchPosts(keyword);
-      // 검색 기록 저장
+      console.log('Search results:', posts);
+
       await SearchHistoryService.logSearch(userId, keyword, searchType);
+      console.log('Search history logged for user:', userId);
       res.status(200).json(posts);
     } catch (err) {
+      console.error('Error in searchPosts:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
-  //crud
-
   async getPosts(req, res) {
+    console.log('getPosts called with query:', req.query);
+
     try {
-      const { type } = req.query; //후기 또는 일반 게시판 (자유 게시판)
       const posts = await PostService.getPosts();
+      console.log('Posts retrieved:', posts);
       res.status(200).json(posts);
     } catch (err) {
+      console.error('Error in getPosts:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
   async getPostById(req, res) {
+    console.log('getPostById called with id:', req.params.id);
     try {
       const post = await PostService.getPostById(req.params.id);
+      console.log('Post retrieved by ID:', post);
       res.status(200).json(post);
     } catch (err) {
+      console.error('Error in getPostById:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
   async updatePost(req, res) {
+    console.log(
+      'updatePost called with id:',
+      req.params.id,
+      'and data:',
+      req.body
+    );
     try {
       const post = await PostService.updatePost(req.params.id, req.body);
+      console.log('Post updated:', post);
       res.status(200).json(post);
     } catch (err) {
+      console.error('Error in updatePost:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
 
   async deletePost(req, res) {
+    console.log('deletePost called with id:', req.params.id);
     try {
       await PostService.deletePost(req.params.id);
+      console.log('Post deleted with ID:', req.params.id);
       res.status(204).send();
     } catch (err) {
+      console.error('Error in deletePost:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
-  //후기 요약 엔드포인트
+
   async summarizePost(req, res) {
+    console.log('summarizePost called with id:', req.params.id);
     try {
-      const { id } = req.params;
-      const summary = await PostService.summarizePostContent(id);
+      const summary = await PostService.summarizePostContent(req.params.id);
+      console.log('Post summary:', summary);
       res.status(200).json(summary);
     } catch (err) {
+      console.error('Error in summarizePost:', err.message);
       res.status(500).json({ message: err.message });
     }
   }
-  // 특정 장소와 활동에 대한 감정 분석
+
   async analyzeSentiments(req, res) {
+    console.log('analyzeSentiments called with params:', req.params);
     try {
       const { locationTag, activityTag, vendorTag } = req.params;
       const sentiments = await PostService.analyzeSentiments(
@@ -173,8 +225,10 @@ class PostController {
         activityTag,
         vendorTag
       );
+      console.log('Sentiment analysis results:', sentiments);
       res.status(200).json(sentiments);
     } catch (err) {
+      console.error('Error in analyzeSentiments:', err.message);
       res.status(500).json({ message: err.message });
     }
   }

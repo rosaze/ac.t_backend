@@ -7,8 +7,8 @@ const authorize = require('../middleware/authorize');
 
 router.get('/posts/type/:type', authorize, PostController.getPostsByType);
 router.post('/posts', authorize, PostController.createPost);
-router.get('/posts', authorize, PostController.getPosts);
-router.get('/posts/:id', authorize, PostController.getPostById);
+router.get('/posts', authorize, PostController.getPosts); //ok
+router.get('/posts/:id', authorize, PostController.getPostById); //OK
 router.put('/posts/:id', authorize, PostController.updatePost);
 router.delete('/posts/:id', authorize, PostController.deletePost);
 router.get(

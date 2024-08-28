@@ -1,6 +1,6 @@
 //사용자의 활동 데이터를 분석하여 요약 데이터를 제공하는 서비스
 
-const User = require('../models/user');
+const User = require('../models/User');
 
 class ActivityAnalysisService {
   static async getActivitySummary(userId) {

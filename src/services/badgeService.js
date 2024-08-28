@@ -1,5 +1,5 @@
 const Badge = require('../models/badges');
-const User = require('../models/user');
+const User = require('../models/User');
 const UserBadge = require('../models/userBadge');
 
 class BadgeService {

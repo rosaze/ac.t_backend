@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const User = require('../models/User');
 const { sendAuthNumber } = require('../passport/EmailService');
 const passport = require('passport');
 const JWT_SECRET = `${process.env.JWT_SECRET}`;

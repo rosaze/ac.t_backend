@@ -9,6 +9,11 @@ const PostSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    type: {
+      type: String,
+      enum: ['review', 'general'], // "review" or "general"
+      required: true,
+    },
     hashtags: [{ type: String }],
     locationTag: { type: String, required: true },
     activityTag: { type: String, required: true },

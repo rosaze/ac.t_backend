@@ -1,6 +1,6 @@
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-const User = require('../models/user');
+const User = require('../models/User');
 
 // 카카오 인증 전략 설정
 passport.use(
