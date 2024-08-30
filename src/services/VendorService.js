@@ -4,6 +4,9 @@ const mongoose = require('mongoose'); // mongoose 모듈 가져오기
 const Vendor = require('../models/Vendor');
 const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
+const ActivityAnalysisService = require('./ActivityAnalysisService');
+const ActivityRecommendationService = require('..services/ActivityRecommendationService');
+const PreferenceService = require('..services/PreferenceService');
 
 //검색 기능 추가
 class VendorService {
@@ -86,7 +89,9 @@ class VendorService {
       sentimentAnalysis,
     };
   }
-  //<액티비티 검색창> : 장소추천, 검색기록
+  //[수정전] <액티비티 검색창> : 장소추천, 검색기록
+
+  /*
   // 사용자 기반 추천 장소 제공
   async getRecommendedVendors(userId) {
     const user = await User.findById(userId);
@@ -94,6 +99,63 @@ class VendorService {
     if (!user) {
       throw new Error('User not found');
     }
+  }
+    */
+  // ------------------------------------------------------------------------------
+  // 사용자 선호도 분석한 결과 바탕 --> 특정 시군에서의 장소 집계하여 반환
+  // ActivityAnalysisService 사용 :특정 사용자에 대한 맞춤형 추천 장소를 시군별로 집계
+  async getCustomVendorsByRegion(userId) {
+    const userSummary = await ActivityAnalysisService.getActivitySummary(
+      userId
+    );
+    // 사용자 선호도가 반영된 필터링 조건 구성
+    const query = {
+      $or: [
+        { location: userSummary.location_preference },
+        { environment: userSummary.environment_preference },
+        { group: userSummary.group_preference },
+        { season: userSummary.season_preference },
+      ],
+    };
+    const pipeline = [
+      { $match: query },
+      { $group: { _id: '$sigunguname', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ];
+
+    return await Vendor.aggregate(pipeline).exec();
+  }
+  // 특정 카테고리와 시군에 해당하는 장소(업체) 데이터를 가져오기
+  async getVendorsByCategoryAndRegion(category, region, userId) {
+    // 1. 사용자 선호도 기반 추천 데이터 가져오기
+    const userRecommendations =
+      await PreferenceService.getRecommendedActivities(userId);
+
+    // 2. 사용자 기록 기반 추가 추천 데이터 가져오기 (활동 기록이 없을 경우 기본 선호도만 사용)
+    let activityRecommendations = [];
+    try {
+      activityRecommendations =
+        await ActivityRecommendationService.recommendActivities(userId);
+    } catch (error) {
+      console.log(
+        'No activity records found for this user. Using preference-based recommendations.'
+      );
+      activityRecommendations = userRecommendations; // 기본 선호도만 사용
+    }
+
+    // 3. 추천 데이터로 필터링된 장소 가져오기
+    const recommendedActivities =
+      activityRecommendations.length > 0
+        ? activityRecommendations
+        : userRecommendations;
+
+    const query = {
+      contenttype: { $in: recommendedActivities.map((item) => item.name) },
+      sigunguname: region,
+      contenttype: category,
+    };
+
+    return await Vendor.find(query).exec();
   }
   // 사용자의 최근 검색 기록 가져오기
   async getSearchHistory(userId) {

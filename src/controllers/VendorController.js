@@ -40,7 +40,7 @@ exports.searchVendors = async (req, res) => {
     res.status(500).json({ message: 'Search failed', error: error.message });
   }
 };
-/* 
+/* [기존 기능]
   async searchVendors(req, res) {
     try {
       const keyword = req.query.keyword; // 쿼리 파라미터로 검색어 가져오기
@@ -65,6 +65,7 @@ exports.searchVendors = async (req, res) => {
     }
   }
 */
+
 class VendorController {
   async addVendor(req, res) {
     try {
@@ -133,6 +134,7 @@ class VendorController {
         .json({ message: 'Failed to load search data', error: error.message });
     }
   }
+
   //검색 결과 저장
   async searchVendors(req, res) {
     const { keyword } = req.query;
@@ -151,6 +153,37 @@ class VendorController {
       res.status(200).json(vendors);
     } catch (error) {
       res.status(500).json({ message: 'Search failed', error: error.message });
+    }
+  }
+  //[수정부분]
+  // 사용자 맞춤형 추천 장소를 시군별로 집계하여 반환
+  async getCustomVendorsByRegion(req, res) {
+    try {
+      const userId = req.params.userId;
+      const vendorsCount = await VendorService.getCustomVendorsByRegion(userId);
+      res.status(200).json(vendorsCount);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+  // 특정 시군의 장소(업체) 리스트를 반환
+  async getVendorsByCategoryAndRegion(req, res) {
+    try {
+      const { category, region } = req.query;
+
+      if (!category || !region) {
+        return res
+          .status(400)
+          .json({ message: 'Category and region are required' });
+      }
+
+      const vendors = await VendorService.getVendorsByCategoryAndRegion(
+        category,
+        region
+      );
+      res.status(200).json(vendors);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   }
 }

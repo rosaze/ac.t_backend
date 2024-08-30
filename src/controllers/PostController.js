@@ -152,8 +152,16 @@ class PostController {
 
   async getPosts(req, res) {
     console.log('getPosts called with query:', req.query);
-
     try {
+      const { type } = req.query;
+      // type 값에 따라 쿼리 설정
+      const query =
+        type === 'review'
+          ? { type: 'review' } // 리뷰 게시물만
+          : type === 'general'
+          ? { type: 'general' } // 일반 게시물만
+          : {}; // type이 없을 경우 모든 게시물
+
       const posts = await PostService.getPosts();
       console.log('Posts retrieved:', posts);
       res.status(200).json(posts);

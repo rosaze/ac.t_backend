@@ -99,11 +99,13 @@ class PostService {
     return searchResults;
   }
 
-  async getPosts() {
+  async getPosts(type) {
     const query =
-      type == 'review'
-        ? { rating: { $exists: true } }
-        : { rating: { $exists: false } };
+      type === 'review'
+        ? { rating: { $exists: true } } // 리뷰 게시물만
+        : type === 'general'
+        ? { rating: { $exists: false } } // 일반 게시물만
+        : {}; // 모든 게시물
     return await Post.find().populate('author').exec();
   }
 

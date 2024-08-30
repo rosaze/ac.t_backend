@@ -20,6 +20,15 @@ router.get(
   VendorController.getInitialSearchData
 );
 
+// 사용자 맞춤형 추천 장소를 시군별로 집계하여 반환하는 엔드포인트
+router.get(
+  '/vendors/custom/:userId',
+  VendorController.getCustomVendorsByRegion
+);
+
+// 특정 카테고리와 시군에 해당하는 장소(업체) 리스트 반환
+router.get('/vendors/list', VendorController.getVendorsByCategoryAndRegion);
+
 // 찜 기능 라우트
 
 router.post('/wishlist', authorize, WishlistController.addToWishlist); // 찜 추가 OK
