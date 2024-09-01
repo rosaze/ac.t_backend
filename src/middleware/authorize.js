@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken');
 
 const authorize = (req, res, next) => {
-  const authHeader = req.header('Authorization'); // Authorization 헤더 추출
+  const authHeader = req.header('Authorization');
   if (!authHeader) {
+    console.log('Authorization 헤더가 없음');
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
 
-  const token = authHeader.replace('Bearer ', ''); // Bearer 문자열 제거
-
+  const token = authHeader.replace('Bearer ', '');
   if (!token) {
+    console.log('Bearer 이후에 토큰이 없음');
     return res
       .status(401)
       .json({ message: 'Token is missing after Bearer keyword' });
@@ -16,10 +17,12 @@ const authorize = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // 토큰에서 유저 정보를 추출하여 req.user에 저장
+    console.log('디코딩된 토큰 정보:', decoded);
+    req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Token is not valid' });
+    console.log('토큰 검증 실패:', err.message);
+    return res.status(401).json({ message: 'Token is not valid' });
   }
 };
 

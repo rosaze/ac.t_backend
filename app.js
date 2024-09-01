@@ -81,7 +81,7 @@ app.use(passport.session());
 //라우터설정 (추가)
 app.use("/api/users", usersRouter); //서빈//테스트 완료
 app.use("/api/posts", postRoutes); //지원
-app.use("/api/auth", authRouter); //서빈 //테스트 완료 - token 생성은 다시 보기
+app.use("/api/auth", authRouter); //서빈 //테스트 완료 - 카카오로그인은 프론트애서 태스트
 app.use("/api/chats", chatRoutes); //지원
 app.use("/api/events", eventRoutes); //지원
 app.use("/api/store", productRoutes); //서빈 // 스토어 라우트 설정
