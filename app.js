@@ -5,6 +5,7 @@ const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
 const dotenv = require("dotenv"); //추가
+const cors = require("cors");
 const http = require("http"); // 추가
 const socketIO = require("socket.io"); // 소켓 추가
 require("dotenv").config(); //에러 수정
@@ -34,6 +35,7 @@ const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 
 const app = express();
+app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
