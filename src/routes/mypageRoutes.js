@@ -4,7 +4,7 @@ const MypageController = require('../controllers/MypageController');
 const authorize = require('../middleware/authorize');
 
 // 개인 정보 관리
-router.get('/mypage/info', MypageController.getPersonalInfo);
+router.get('/mypage/info', authorize, MypageController.getPersonalInfo);
 
 // 전문 자격증 등록 및 확인
 router.post('/mypage/certificates', MypageController.manageCertificates);
