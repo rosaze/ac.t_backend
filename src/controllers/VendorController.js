@@ -135,32 +135,45 @@ class VendorController {
     }
   }
 
-  //검색 결과 저장
+  //검색 결과 저장 + 키워드 검색 처리
   async searchVendors(req, res) {
-    const { keyword } = req.query;
-    const userId = req.user._id;
-
     try {
-      await VendorService.saveSearchHistory(userId, keyword, 'activity'); // 검색 기록 저장
-      const vendors = await VendorService.searchActivitiesByKeyword(keyword);
+      const keyword = req.query.q;
+      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
+      const userId = req.params.userId;
 
-      if (vendors.length === 0) {
-        return res
-          .status(404)
-          .json({ message: 'No results found for your search' });
-      }
-
+      const vendors = await VendorService.searchActivitiesByKeyword(
+        keyword,
+        userId,
+        isCustomRecommendation
+      );
       res.status(200).json(vendors);
-    } catch (error) {
-      res.status(500).json({ message: 'Search failed', error: error.message });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   }
+  // 사용자의 최근 검색 기록을 반환
+  async getSearchHistory(req, res) {
+    try {
+      const userId = req.params.userId;
+      const history = await VendorService.getSearchHistory(userId);
+      res.status(200).json(history);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   //[수정부분]
   // 사용자 맞춤형 추천 장소를 시군별로 집계하여 반환
   async getCustomVendorsByRegion(req, res) {
     try {
+      // 토글 추가
       const userId = req.params.userId;
-      const vendorsCount = await VendorService.getCustomVendorsByRegion(userId);
+      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
+      const vendorsCount = await VendorService.getCustomVendorsByRegion(
+        userId,
+        isCustomRecommendation
+      );
       res.status(200).json(vendorsCount);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -170,6 +183,8 @@ class VendorController {
   async getVendorsByCategoryAndRegion(req, res) {
     try {
       const { category, region } = req.query;
+      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인(토클)
+      const userId = req.params.userId;
 
       if (!category || !region) {
         return res
@@ -179,7 +194,9 @@ class VendorController {
 
       const vendors = await VendorService.getVendorsByCategoryAndRegion(
         category,
-        region
+        region,
+        userId,
+        isCustomRecommendation
       );
       res.status(200).json(vendors);
     } catch (err) {
