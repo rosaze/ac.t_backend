@@ -29,7 +29,7 @@ router.get(
 );
 
 // 사용자 배지 조회
-router.get('/mypage/badges', MypageController.getUserBadges);
+router.get('/mypage/badges', authorize, MypageController.getUserBadges); //테스트 완료
 
 // 배지 지급 처리
 router.post('/mypage/badges/award', MypageController.processBadgeAward);

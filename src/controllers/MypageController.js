@@ -2,6 +2,7 @@ const UserService = require('../services/UserService');
 const ActivityAnalysisService = require('../services/ActivityAnalysisService');
 const PreferenceService = require('../services/preferenceService');
 const BadgeService = require('../services/badgeService');
+const activityMapService = require('../services/activityMapService');
 
 class MypageController {
   // 개인 정보 관리
@@ -45,12 +46,16 @@ class MypageController {
         const certificate = req.body;
         console.log('추가할 자격증 정보:', certificate);
 
-        await UserService.addCertificate(userId, certificate);
-        console.log('자격증 추가 성공');
-        const certificateId = req.params.certificateId;
-        console.log(`등록한 자격증 ID: ${certificated}`);
+        const addedCertificate = await UserService.addCertificate(
+          userId,
+          certificate
+        );
+        const certificateId = addedCertificate._id; // 새로 추가된 자격증의 ID를 가져옴
+        console.log(`등록한 자격증 ID: ${certificateId}`);
 
-        res.status(201).json({ message: 'Certificate added successfully' });
+        res
+          .status(201)
+          .json({ message: 'Certificate added successfully', certificateId });
       } else if (req.method === 'DELETE') {
         const certificateId = req.params.certificateId;
         console.log(`삭제할 자격증 ID: ${certificateId}`);
