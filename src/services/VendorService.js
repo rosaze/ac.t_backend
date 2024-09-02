@@ -5,8 +5,8 @@ const Vendor = require('../models/Vendor');
 const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 const ActivityAnalysisService = require('./ActivityAnalysisService');
-const ActivityRecommendationService = require('..services/ActivityRecommendationService');
-const PreferenceService = require('..services/PreferenceService');
+const ActivityRecommendationService = require('../services/activityRecommendationService');
+const PreferenceService = require('../services/preferenceService');
 
 //검색 기능 추가
 class VendorService {
