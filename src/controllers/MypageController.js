@@ -13,7 +13,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const userInfo = await UserService.getUserProfile(userId);
@@ -38,7 +38,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       if (req.method === 'POST') {
@@ -47,6 +47,8 @@ class MypageController {
 
         await UserService.addCertificate(userId, certificate);
         console.log('자격증 추가 성공');
+        const certificateId = req.params.certificateId;
+        console.log(`등록한 자격증 ID: ${certificated}`);
 
         res.status(201).json({ message: 'Certificate added successfully' });
       } else if (req.method === 'DELETE') {
@@ -79,7 +81,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const activitySummary = await ActivityAnalysisService.getActivitySummary(
@@ -110,7 +112,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const recommendations = await PreferenceService.getRecommendedActivities(
@@ -137,7 +139,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const badges = await BadgeService.getUserBadges(userId);
@@ -162,7 +164,7 @@ class MypageController {
       }
 
       const { badgeType } = req.body;
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}, 배지 유형: ${badgeType}`);
 
       let result;
@@ -216,7 +218,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const activitySummary = await ActivityAnalysisService.getActivitySummary(
@@ -243,7 +245,7 @@ class MypageController {
         return res.status(401).json({ message: 'User not authenticated' });
       }
 
-      const userId = req.user._id;
+      const userId = req.user.id;
       console.log(`사용자 ID: ${userId}`);
 
       const recommendation = await PreferenceService.recommendPreferenceUpdate(
