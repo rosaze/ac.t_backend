@@ -95,6 +95,7 @@ app.use("/api/store/cart", cartRoutes); //지원
 app.use("/api/hashtags", hashtagRoutes); //지원
 app.use("/api/mates", mateRoutes); //지원
 app.use("/api/mentor", mentorRoutes); //
+app.use("/api/");
 
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈
 app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원

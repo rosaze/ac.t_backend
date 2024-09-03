@@ -19,7 +19,7 @@ router.delete(
 ); //테스트 완료
 
 // 마이페이지 활동 기록
-router.get('/mypage/activity-map', authorize, MypageController.getActivityMap);
+router.get('/mypage/activitymap', authorize, MypageController.getActivityMap);
 
 // 안 가본 곳 추천
 router.get(
