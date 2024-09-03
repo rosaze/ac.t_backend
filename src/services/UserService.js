@@ -42,7 +42,8 @@ class UserService {
     // 자격증 등록에 따른 배지 지급
     await BadgeService.awardBadge(userId, `${certificateData.title} 마스터`);
 
-    return user.certificates;
+    // 새로 추가된 자격증 객체를 반환
+    return user.certificates[user.certificates.length - 1];
   }
 
   // 사용자에서 특정 자격증을 제거하는 메서드입니다.

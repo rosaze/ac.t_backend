@@ -13,34 +13,34 @@ class BadgeService {
       throw new Error('User not found');
     }
 
-    // 배지 존재 여부 확인
+    // 배지 존재 여부 확인 (name 필드를 기준으로 중복 확인)
     let badge = await Badge.findOne({ name: badgeName });
     if (!badge) {
+      // 새로운 배지를 생성
       badge = new Badge({ name: badgeName });
       await badge.save();
     }
 
-    // 이미 배지를 수여받은 경우 중복 수여 방지
-    const hasBadge = await UserBadge.findOne({
-      user: userId,
-      badge: badge._id,
-    });
+    // 사용자가 이미 해당 배지를 가지고 있는지 확인
+    const hasBadge = user.badges.some((b) => b.badge.equals(badge._id));
     if (hasBadge) {
       console.log('User already has this badge');
       return user;
     }
 
-    const userBadge = new UserBadge({ user: userId, badge: badge._id });
-    await userBadge.save();
-    console.log(`Badge ${badgeName} awarded to user: ${userId}`); // 테스트 로그
+    // 사용자에게 배지 추가
+    user.badges.push({ badge: badge._id });
+    await user.save(); // 사용자 객체에 배지를 추가한 후 저장
 
+    console.log(`Badge ${badgeName} awarded to user: ${userId}`); // 테스트 로그
     return user;
   }
 
   // 사용자 배지 가져오기 메서드
   static async getUserBadges(userId) {
     console.log(`Fetching badges for user: ${userId}`); // 테스트 로그
-    return await User.findById(userId).populate('badges.badge');
+    const user = await User.findById(userId).populate('badges.badge').exec();
+    return user.badges; // 사용자의 badges 필드만 반환
   }
 
   // 조건을 확인하여 배지 수여 메서드
