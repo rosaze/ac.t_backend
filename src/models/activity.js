@@ -1,12 +1,30 @@
 const mongoose = require('mongoose');
 
-const SurveyResultSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  seaOrLand: { type: String, required: true },
-  indoorOrOutdoor: { type: String, required: true },
-  groupSize: { type: String, required: true },
-  season: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+const ActivitySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    enum: ['outdoor', 'indoor'],
+    required: true,
+  },
+  environment: {
+    type: String,
+    enum: ['sea', 'mountain'],
+    required: true,
+  },
+  group: {
+    type: String,
+    enum: ['group', 'individual'],
+    required: true,
+  },
+  season: {
+    type: String,
+    enum: ['winter', 'summer'],
+    required: true,
+  },
 });
 
-module.exports = mongoose.model('SurveyResult', SurveyResultSchema);
+module.exports = mongoose.model('Activity', ActivitySchema);

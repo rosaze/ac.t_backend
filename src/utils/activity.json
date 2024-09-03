@@ -1,28 +1,410 @@
 {
   "activities": [
     {
-      "id": 1,
-      "name": "Surfing",
-      "region": "Gangwon-do",
-      "categories": ["equipment", "rental"]
+      "name": "워터파크",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "both"
     },
     {
-      "id": 2,
-      "name": "Freediving",
-      "region": "Gangwon-do",
-      "categories": ["equipment", "rental", "ticket"]
+      "name": "놀이동산",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
     },
     {
-      "id": 3,
-      "name": "Ski",
-      "region": "Gangwon-do",
-      "categories": ["equipment", "rental"]
+      "name": "아쿠아리움",
+      "season": "both",
+      "location": "indoor",
+      "environment": "sea",
+      "group": "both"
     },
     {
-      "id": 4,
-      "name": "Board",
-      "region": "Gangwon-do",
-      "categories": ["equipment", "rental"]
+      "name": "동물원",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "농장",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "수목원",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "해양경관(해양/계곡/폭포)",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "자연공원",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "국립공원",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "케이블카",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "group"
+    },
+    {
+      "name": "유람선/요트",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "group"
+    },
+    {
+      "name": "항구／포구",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "자연생태관광지(계곡/폭포/해변/해수욕장)",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "자연생태관광지(동굴)",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "전망대",
+      "season": "both",
+      "location": "both",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "쇼핑(백화점/쇼핑몰)",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "쇼핑(시장)",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "번지 점프",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "루지",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "자전거 하이킹",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "골프",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "짚라인",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "레일바이크",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "group"
+    },
+    {
+      "name": "페러 글라이딩",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "카트/ATV",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "스쿠터",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "스키",
+      "season": "winter",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "눈썰매",
+      "season": "winter",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "어트렉션",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "group"
+    },
+    {
+      "name": "보드",
+      "season": "winter",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "스케이트",
+      "season": "winter",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "승마",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "트래킹",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "individual"
+    },
+    {
+      "name": "키즈카페",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "키즈 체험",
+      "season": "both",
+      "location": "both",
+      "environment": "both",
+      "group": "both"
+    },
+    {
+      "name": "스파",
+      "season": "both",
+      "location": "indoor",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "사우나/찜질방",
+      "season": "both",
+      "location": "indoor",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "온천",
+      "season": "both",
+      "location": "both",
+      "environment": "sea",
+      "group": "both"
+    },
+    {
+      "name": "스노쿨링",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "스쿠버 다이빙",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "다이빙",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "빠지",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "group"
+    },
+    {
+      "name": "패들보드",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "보트",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "group"
+    },
+    {
+      "name": "카약",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "group"
+    },
+    {
+      "name": "래프팅",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "group"
+    },
+    {
+      "name": "서핑",
+      "season": "summer",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "낚시",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "sea",
+      "group": "individual"
+    },
+    {
+      "name": "역사유물/유적지",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "박물관",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "미술관",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "종교성지",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "미디어아트",
+      "season": "both",
+      "location": "indoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "원데이 클래스",
+      "season": "both",
+      "location": "both",
+      "environment": "both",
+      "group": "both"
+    },
+    {
+      "name": "체험",
+      "season": "both",
+      "location": "both",
+      "environment": "both",
+      "group": "both"
+    },
+    {
+      "name": "사진촬영(스냅촬영)",
+      "season": "both",
+      "location": "both",
+      "environment": "both",
+      "group": "both"
+    },
+    {
+      "name": "캠핑장",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
+    },
+    {
+      "name": "글램핑",
+      "season": "both",
+      "location": "outdoor",
+      "environment": "mountain",
+      "group": "both"
     }
   ]
 }
