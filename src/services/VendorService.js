@@ -5,19 +5,18 @@ const Vendor = require('../models/Vendor');
 const PostService = require('./PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 const ActivityAnalysisService = require('./ActivityAnalysisService');
-
 const ActivityRecommendationService = require('./activityRecommendationService');
 const PreferenceService = require('./preferenceService');
 
 //검색 기능 추가
 class VendorService {
   // 업체명 검색 (부분 일치)
-  async searchVendors(query) {
+  async searchVendors(keyword) {
     try {
-      console.log('searchVendors called with:', { query });
+      console.log('searchVendors called with:', { keyword });
 
       const vendors = await Vendor.find({
-        title: new RegExp(query, 'i'),
+        title: new RegExp(keyword, 'i'),
       }).exec();
 
       return vendors;
@@ -238,12 +237,11 @@ class VendorService {
       .exec();
   }
   // 검색 기록을 저장
-  async saveSearchHistory(userId, keyword, searchType) {
+  async saveSearchHistory(userId, keyword) {
     // 새로운 검색 기록 객체 생성 및 저장
     const history = new SearchHistory({
-      user: new mongoose.Types.ObjectId(userId),
+      user: new mongoose.ObjectId(userId),
       keyword,
-      searchType,
       createdAt: new Date(),
     });
 

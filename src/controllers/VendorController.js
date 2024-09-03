@@ -9,6 +9,7 @@ exports.searchVendors = async (req, res) => {
   try {
     // 쿼리 파라미터를 통해 값 가져오기
     const { keyword, searchType } = req.query;
+    const userId = req.user.id; // Bearer 토큰에서 추출된 사용자 ID
 
     // 로그 추가: 요청 파라미터 확인
     console.log('searchVendors endpoint called with:', {
@@ -30,10 +31,9 @@ exports.searchVendors = async (req, res) => {
       searchType
     );
 
-    /* 검색 기록 저장
     console.log('Logging search history...'); // 로그 추가
     await SearchHistoryService.logSearch(userId, name, searchType);
-*/
+
     res.status(200).json(vendors);
   } catch (error) {
     console.error('Error in searchVendors endpoint:', error);
