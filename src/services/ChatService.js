@@ -53,7 +53,7 @@ class ChatService {
     const message = new Message({
       chatRoom: chatRoomId,
       sender: senderId,
-      text: messageText,
+      message: messageText,
     });
     return await message.save();
   }

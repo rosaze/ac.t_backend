@@ -13,7 +13,7 @@ class ChatController {
 
   async getChatRooms(req, res) {
     try {
-      const chatRooms = await ChatService.getChatRooms(req.user.id);
+      const chatRooms = await ChatService.getChatRoomsByUser(req.user.id);
       res.status(200).json(chatRooms);
     } catch (err) {
       res.status(500).json({ message: err.message });

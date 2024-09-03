@@ -141,9 +141,9 @@ class PostService {
         'https://api.kakaobrain.com/v1/inference/kogpt/generation',
         {
           prompt: prompt,
-          max_tokens: 64, // 요약이 한 줄에 수렴할 수 있도록 토큰 수 설정
-          temperature: 0.5, // 적절한 다양성을 유지하면서 정확성을 높임
-          top_p: 0.9,
+          max_tokens: 30, // 요약이 한 줄에 수렴할 수 있도록 토큰 수 설정
+          temperature: 0.3, // 적절한 다양성을 유지하면서 정확성을 높임
+          top_p: 0.8,
           n: 1,
         },
         {
