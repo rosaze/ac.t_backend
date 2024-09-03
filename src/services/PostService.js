@@ -1,6 +1,6 @@
 // 비즈니스 로직
 const Post = require('../models/Posts');
-const BadgeService = require('../models/Posts');
+const BadgeService = require('./badgeService');
 const axios = require('axios');
 
 require('dotenv').config();
@@ -88,12 +88,9 @@ class PostService {
   async searchPosts(keyword) {
     const searchResults = await Post.find({
       $or: [
-        //해시태그, 본문, 제목 모두 검색
-        { 'hashtags.location': new RegExp(keyword, 'i') },
-        { 'hashtags.activity': new RegExp(keyword, 'i') },
-        { 'hashtags.vendor': new RegExp(keyword, 'i') },
-        { title: new RegExp(keyword, 'i') },
-        { content: new RegExp(keyword, 'i') },
+        { hashtags: new RegExp(keyword, 'i') }, // 해시태그 배열에서 검색
+        { title: new RegExp(keyword, 'i') }, // 제목에서 검색
+        { content: new RegExp(keyword, 'i') }, // 본문에서 검색
       ],
     }).exec();
     return searchResults;

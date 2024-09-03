@@ -2,11 +2,11 @@
 //-> 존재하면 자동완성 리스트에 보여주고, 존재하지 않으면 새로운 업체명 DB에 추가
 const mongoose = require('mongoose'); // mongoose 모듈 가져오기
 const Vendor = require('../models/Vendor');
-const PostService = require('../services/PostService'); // 감정 분석 서비스를 가져옵니다.
+const PostService = require('./PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 const ActivityAnalysisService = require('./ActivityAnalysisService');
-const ActivityRecommendationService = require('..services/ActivityRecommendationService');
-const PreferenceService = require('..services/PreferenceService');
+const ActivityRecommendationService = require('./activityRecommendationService');
+const PreferenceService = require('./preferenceService');
 
 //검색 기능 추가
 class VendorService {

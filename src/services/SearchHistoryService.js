@@ -1,4 +1,5 @@
 const SearchHistory = require('../models/SearchHistory');
+const mongoose = require('mongoose');
 
 class SearchHistoryService {
   async logSearch(userId, keyword, searchType) {
@@ -14,7 +15,7 @@ class SearchHistoryService {
       throw new Error('UserId is missing');
     }
     const searchRecord = new SearchHistory({
-      user: mongoose.Types.ObjectId(userId), // 문자열을 ObjectId로 변환
+      user: new mongoose.Types.ObjectId(userId), // 문자열을 ObjectId로 변환
       keyword: keyword,
       searchType: searchType,
     });

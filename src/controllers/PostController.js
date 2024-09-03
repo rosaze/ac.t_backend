@@ -2,6 +2,7 @@ const PostService = require('../services/PostService');
 const ActivityMapService = require('../services/activityMapService');
 const SearchHistoryService = require('../services/SearchHistoryService');
 const User = require('../models/User'); // User 모델 경로에 맞게 조정하세요
+const Post = require('../models/Posts'); // 경로는 실제 Post 모델의 위치에 맞게 조정
 
 class PostController {
   async createPost(req, res) {
@@ -134,9 +135,13 @@ class PostController {
   async searchPosts(req, res) {
     console.log('searchPosts called with query:', req.query.q);
     try {
-      const userId = req.user._id; // Assume user is authenticated
-      const keyword = req.query.q;
+      const userId = req.user.id; // Assume user is authenticated
+      const keyword = req.query.keyword;
       const searchType = 'post';
+
+      if (!keyword) {
+        return res.status(400).json({ message: 'Keyword is missing' });
+      }
 
       const posts = await PostService.searchPosts(keyword);
       console.log('Search results:', posts);
@@ -203,9 +208,14 @@ class PostController {
   async deletePost(req, res) {
     console.log('deletePost called with id:', req.params.id);
     try {
-      await PostService.deletePost(req.params.id);
-      console.log('Post deleted with ID:', req.params.id);
-      res.status(204).send();
+      const postId = req.params.id;
+      const post = await Post.findByIdAndDelete(postId); // MongoDB에서 해당 ID의 게시물을 삭제
+
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      res.status(204).send(); // 성공적으로 삭제되면 204 No Content 반환
     } catch (err) {
       console.error('Error in deletePost:', err.message);
       res.status(500).json({ message: err.message });
