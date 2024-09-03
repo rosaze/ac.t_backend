@@ -35,7 +35,11 @@ router.get('/mypage/badges', authorize, MypageController.getUserBadges); //테�
 router.post('/mypage/badges/award', MypageController.processBadgeAward);
 
 // 활동 기록 요약
-router.get('/mypage/activity-summary', MypageController.getActivitySummary);
+router.get(
+  '/mypage/activity-summary',
+  authorize,
+  MypageController.getActivitySummary
+);
 
 // 활동 기록 분석 결과에 따른 취향 변경 추천
 router.get(
