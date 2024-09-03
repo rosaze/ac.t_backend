@@ -166,7 +166,7 @@ class UserController {
   // 밸런스 게임 결과 저장 및 선호도 설정
   async saveBalanceGameResult(req, res) {
     try {
-      const userId = mongoose.Types.ObjectId(req.params.id);
+      const userId = new mongoose.Types.ObjectId(req.params.id);
       const recommendations = await PreferenceService.saveBalanceGameResult(
         userId,
         req.body
