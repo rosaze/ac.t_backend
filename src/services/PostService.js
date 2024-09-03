@@ -129,18 +129,21 @@ class PostService {
   }
 
   // 요약 로직
+  // 요약 로직
   async summarizeContent(content) {
     const REST_API_KEY = process.env.KAKAO_CLIENT_ID; // 환경 변수에서 REST API 키를 가져옴
-    const prompt = `다음 글을 요약해 주세요: ${content}`;
+
+    // 주어진 프롬프트 형식에 맞춰 수정
+    const prompt = `'''${content}'''\n\n한줄 요약:`;
 
     try {
       const response = await axios.post(
         'https://api.kakaobrain.com/v1/inference/kogpt/generation',
         {
           prompt: prompt,
-          max_tokens: 100,
-          temperature: 0.7,
-          top_p: 0.8,
+          max_tokens: 64, // 요약이 한 줄에 수렴할 수 있도록 토큰 수 설정
+          temperature: 0.5, // 적절한 다양성을 유지하면서 정확성을 높임
+          top_p: 0.9,
           n: 1,
         },
         {
@@ -150,7 +153,15 @@ class PostService {
           },
         }
       );
-      return response.data.generations[0].text.trim();
+
+      const generatedText = response.data.generations[0].text.trim();
+
+      // 요약이 예상치 못한 결과를 줄 경우 처리
+      if (generatedText && generatedText.length > 0) {
+        return generatedText;
+      } else {
+        throw new Error('Failed to generate a valid summary.');
+      }
     } catch (error) {
       console.error('Error summarizing content using KoGPT:', error.message);
       throw new Error('Failed to summarize content using KoGPT');
