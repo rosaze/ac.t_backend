@@ -75,22 +75,22 @@ const MarkerCategorySchema = new mongoose.Schema({
 const preferenceSchema = new mongoose.Schema({
   location: {
     type: String,
-    enum: ['outdoor', 'indoor'],
+    enum: ['outdoor', 'indoor', 'both'],
     required: true,
   },
   environment: {
     type: String,
-    enum: ['sea', 'mountain'],
+    enum: ['sea', 'mountain', 'both'],
     required: true,
   },
   group: {
     type: String,
-    enum: ['group', 'individual'],
+    enum: ['group', 'individual', 'both'],
     required: true,
   },
   season: {
     type: String,
-    enum: ['winter', 'summer'],
+    enum: ['winter', 'summer', 'both'],
     required: true,
   },
 });

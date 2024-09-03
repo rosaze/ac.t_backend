@@ -267,6 +267,61 @@ class MypageController {
       });
     }
   }
+
+  // 밸런스 게임 결과에 따른 선호도 업데이트
+  async updatePreferenceAfterBalanceGame(req, res) {
+    try {
+      console.log('updatePreferenceAfterBalanceGame 호출됨');
+      if (!req.user) {
+        console.error('Error: req.user가 정의되지 않음');
+        return res.status(401).json({ message: 'User not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const newPreferences = req.body;
+
+      console.log('받은 새로운 선호도:', newPreferences); // 로그 추가
+
+      // 선호도 데이터가 비어있는지 확인
+      if (Object.keys(newPreferences).length === 0) {
+        return res
+          .status(400)
+          .json({ message: 'New preferences data is required' });
+      }
+
+      // 선호도 데이터 유효성 검사
+      const validFields = ['location', 'environment', 'group', 'season'];
+      const validValues = {
+        location: ['outdoor', 'indoor', 'both'],
+        environment: ['sea', 'mountain', 'both'],
+        group: ['group', 'individual', 'both'],
+        season: ['winter', 'summer', 'both'],
+      };
+
+      for (const [key, value] of Object.entries(newPreferences)) {
+        if (!validFields.includes(key) || !validValues[key].includes(value)) {
+          return res
+            .status(400)
+            .json({ message: `Invalid preference data for ${key}` });
+        }
+      }
+
+      // PreferenceService를 사용하여 선호도를 업데이트
+      const result = await PreferenceService.updatePreferences(
+        userId,
+        newPreferences
+      );
+
+      console.log('선호도 업데이트 결과:', result);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('밸런스 게임 후 선호도 업데이트 실패:', error.message);
+      res.status(500).json({
+        message: 'Failed to update preferences after balance game',
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new MypageController();

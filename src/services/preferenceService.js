@@ -44,52 +44,76 @@ class PreferenceService {
 
     const recommendations = [];
 
+    // Location preference recommendation
     if (
       locationActivities.outdoor > locationActivities.indoor &&
-      user.location_preference === 'indoor'
+      user.preference.location !== 'outdoor'
     ) {
       recommendations.push('outdoor');
     } else if (
       locationActivities.indoor > locationActivities.outdoor &&
-      user.location_preference === 'outdoor'
+      user.preference.location !== 'indoor'
     ) {
       recommendations.push('indoor');
+    } else if (
+      locationActivities.outdoor === locationActivities.indoor &&
+      user.preference.location !== 'both'
+    ) {
+      recommendations.push('both for location');
     }
 
+    // Environment preference recommendation
     if (
       environmentActivities.mountain > environmentActivities.sea &&
-      user.environment_preference === 'sea'
+      user.preference.environment !== 'mountain'
     ) {
       recommendations.push('mountain');
     } else if (
       environmentActivities.sea > environmentActivities.mountain &&
-      user.environment_preference === 'mountain'
+      user.preference.environment !== 'sea'
     ) {
       recommendations.push('sea');
+    } else if (
+      environmentActivities.mountain === environmentActivities.sea &&
+      user.preference.environment !== 'both'
+    ) {
+      recommendations.push('both for environment');
     }
 
+    // Group preference recommendation
     if (
       groupActivities.group > groupActivities.individual &&
-      user.group_preference === 'individual'
+      user.preference.group !== 'group'
     ) {
       recommendations.push('group');
     } else if (
       groupActivities.individual > groupActivities.group &&
-      user.group_preference === 'group'
+      user.preference.group !== 'individual'
     ) {
       recommendations.push('individual');
+    } else if (
+      groupActivities.group === groupActivities.individual &&
+      user.preference.group !== 'both'
+    ) {
+      recommendations.push('both for group');
     }
 
+    // Season preference recommendation
     if (
       seasonActivities.winter > seasonActivities.summer &&
-      user.season_preference === 'summer'
+      user.preference.season !== 'winter'
     ) {
       recommendations.push('winter');
     } else if (
       seasonActivities.summer > seasonActivities.winter &&
-      user.season_preference === 'winter'
+      user.preference.season !== 'summer'
     ) {
       recommendations.push('summer');
+    } else if (
+      seasonActivities.winter === seasonActivities.summer &&
+      user.preference.season !== 'both'
+    ) {
+      recommendations.push('both for season');
     }
 
     if (recommendations.length > 0) {
@@ -104,23 +128,67 @@ class PreferenceService {
     return null;
   }
 
-  // 사용자 선호도 설정 및 업데이트
-  static async updatePreferences(userId, preferences) {
-    const user = await User.findById(userId);
+  // 사용자 선호도 업데이트
+  static async updatePreferences(userId, newPreferences) {
+    try {
+      const user = await User.findById(userId);
 
-    if (!user) {
-      throw new Error('User not found');
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // user.preference가 없으면 새로 생성
+      if (!user.preference) {
+        user.preference = {};
+      }
+
+      // 새로운 선호도 정보로 업데이트
+      if (
+        newPreferences.location &&
+        ['outdoor', 'indoor', 'both'].includes(newPreferences.location)
+      ) {
+        user.preference.location = newPreferences.location;
+      }
+      if (
+        newPreferences.environment &&
+        ['sea', 'mountain', 'both'].includes(newPreferences.environment)
+      ) {
+        user.preference.environment = newPreferences.environment;
+      }
+      if (
+        newPreferences.group &&
+        ['group', 'individual', 'both'].includes(newPreferences.group)
+      ) {
+        user.preference.group = newPreferences.group;
+      }
+      if (
+        newPreferences.season &&
+        ['winter', 'summer', 'both'].includes(newPreferences.season)
+      ) {
+        user.preference.season = newPreferences.season;
+      }
+
+      // 변경사항을 데이터베이스에 저장
+      await user.save();
+
+      // 활동 추천 로직
+      let recommendedActivities = [];
+      try {
+        recommendedActivities =
+          await ActivityRecommendationService.recommendActivities(user._id);
+      } catch (error) {
+        console.error('Error recommending activities:', error.message);
+      }
+
+      return {
+        message: 'Preferences updated successfully',
+        updatedPreference: user.preference,
+        recommendations: recommendedActivities,
+      };
+    } catch (error) {
+      console.error('Error updating preferences:', error.message);
+      throw new Error('Failed to update preferences: ' + error.message);
     }
-
-    user.location_preference = preferences.location;
-    user.environment_preference = preferences.environment;
-    user.group_preference = preferences.group;
-    user.season_preference = preferences.season;
-
-    await user.save();
-
-    // 선호도 기반 추천 활동 제공
-    return ActivityRecommendationService.recommendActivities(user._id);
   }
 
   // 상위 메소드로 전체 과정을 관리

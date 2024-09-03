@@ -1,6 +1,4 @@
-//사용자의 활동 통계를 기반으로 활동을 추천
-
-const activities = require('../utils/activity.json');
+const { activities } = require('../utils/activity.json');
 const ActivityMap = require('../models/activityMap');
 const User = require('../models/User');
 
@@ -9,20 +7,22 @@ class ActivityRecommendationService {
   async getUserActivityStats(userId) {
     try {
       const activityMaps = await ActivityMap.find({ user: userId }).select(
-        'hashtags'
+        'activityTag'
       );
 
+      // 활동 통계 초기화
       const activityCounts = {};
       activities.forEach((activity) => {
         activityCounts[activity.name] = 0;
       });
 
+      // activityTag를 활용하여 활동 카운트를 증가시킴
       activityMaps.forEach((activityMap) => {
-        const activityTag = activityMap.hashtags.find((tag) =>
-          activities.some((activity) => activity.name === tag)
-        );
-        if (activityTag) {
-          activityCounts[activityTag]++;
+        if (
+          activityMap.activityTag &&
+          activityCounts.hasOwnProperty(activityMap.activityTag)
+        ) {
+          activityCounts[activityMap.activityTag]++;
         }
       });
 
@@ -41,18 +41,21 @@ class ActivityRecommendationService {
 
       if (!user) throw new Error('User not found');
 
-      // 사용자 선호도 기반 추천
+      // 사용자 선호도 기반 추천, 'both' 옵션 반영
       const preferredActivities = activities.filter((activity) => {
         return (
-          activity.location === user.location_preference &&
-          activity.environment === user.environment_preference &&
-          activity.group === user.group_preference &&
-          activity.season === user.season_preference
+          (activity.location === user.preference.location ||
+            user.preference.location === 'both') &&
+          (activity.environment === user.preference.environment ||
+            user.preference.environment === 'both') &&
+          (activity.group === user.preference.group ||
+            user.preference.group === 'both') &&
+          (activity.season === user.preference.season ||
+            user.preference.season === 'both')
         );
       });
 
       // 사용자의 선호도와 일치하는 액티비티 중에서 사용자가 아직 수행하지 않은 활동 추천
-      //즉 수행빈도가 0인 액티비티 필터링하여 추천
       const rarelyDoneActivities = preferredActivities.filter(
         (activity) => activityCounts[activity.name] === 0
       );
