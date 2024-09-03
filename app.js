@@ -27,11 +27,9 @@ const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
 const mentorRoutes = require("./src/routes/MentorRoutes");
 const badgeRoutes = require("./src/routes/badgeRoutes");
-const activityMapRoutes = require("./src/routes/activityMapRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./src/routes/accommodationRoutes");
-const imageRoutes = require("./src/routes/imageRoutes"); //이미지합성
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 
 const app = express();
@@ -95,7 +93,7 @@ app.use("/api/store/cart", cartRoutes); //지원
 app.use("/api/hashtags", hashtagRoutes); //지원
 app.use("/api/mates", mateRoutes); //지원
 app.use("/api/mentor", mentorRoutes); //
-app.use("/api/");
+app.use("/api/badges", badgeRoutes);
 
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈
 app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원

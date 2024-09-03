@@ -3,6 +3,7 @@ const User = require('../models/User');
 const HashtagService = require('./HashtagService');
 const BadgeService = require('./badgeService'); // 배지 서비스 추가
 const locations = require('../utils/location'); // 시군 리스트
+const Posts = require('../models/Posts'); // 추가
 
 class ActivityMapService {
   // 활동 기록 추가, 사용자 활동 저장, 배지 지급
