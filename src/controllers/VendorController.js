@@ -1,70 +1,10 @@
 //사용자가 해시태그 입력시 해당 입력에 따라 자동으로 업체명 검색, 새롭게 추가
+const mongoose = require('mongoose'); // Add this line at the top
 const VendorService = require('../services/VendorService');
 const ActivityRecommendationService = require('../services/activityRecommendationService'); // 활동 추천 서비스
 
 const WishlistService = require('../services/WishlistService'); //찜
 const SearchHistoryService = require('../services/SearchHistoryService');
-
-exports.searchVendors = async (req, res) => {
-  try {
-    // 쿼리 파라미터를 통해 값 가져오기
-    const { keyword, searchType } = req.query;
-    const userId = req.user.id; // Bearer 토큰에서 추출된 사용자 ID
-
-    // 로그 추가: 요청 파라미터 확인
-    console.log('searchVendors endpoint called with:', {
-      keyword,
-      searchType,
-    });
-
-    // userId가 존재하는지 확인
-    if (!keyword || !searchType) {
-      return res
-        .status(400)
-        .json({ message: 'Keyword, and searchType are required' });
-    }
-
-    // 업체명 검색
-    const vendors = await VendorService.searchVendors(
-      query,
-      userId,
-      searchType
-    );
-
-    console.log('Logging search history...'); // 로그 추가
-    await SearchHistoryService.logSearch(userId, name, searchType);
-
-    res.status(200).json(vendors);
-  } catch (error) {
-    console.error('Error in searchVendors endpoint:', error);
-    res.status(500).json({ message: 'Search failed', error: error.message });
-  }
-};
-/* [기존 기능]
-  async searchVendors(req, res) {
-    try {
-      const keyword = req.query.keyword; // 쿼리 파라미터로 검색어 가져오기
-      const userId = req.user._id; // 인증된 사용자 ID 가져오기
-      const searchType = req.query.searchType;
-      if (!keyword || !userId) {
-        return res
-          .status(400)
-          .json({ message: 'Name and userId are required' });
-      }
-      //검색 로직
-      const vendors = await Vendor.find({
-        name: new RegExp(keyword, 'i'),
-        user: userId,
-      });
-      // 검색 기록 저장
-      await SearchHistoryService.logSearch(userId, keyword, searchType);
-
-      res.status(200).json(vendors);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-*/
 
 class VendorController {
   async addVendor(req, res) {
@@ -115,7 +55,7 @@ class VendorController {
   // 사용자 추천과 검색 기록을 처리하는 메서드
   // 검색 화면 로드 시 사용자 추천 장소와 최근 검색 기록 제공
   async getInitialSearchData(req, res) {
-    const userId = req.user._id; // 사용자의 ID (로그인된 사용자 기준)
+    const userId = req.user.id; // 사용자의 ID (로그인된 사용자 기준)
 
     try {
       const recommendedVendors = await VendorService.getRecommendedVendors(
@@ -136,17 +76,27 @@ class VendorController {
   }
 
   //검색 결과 저장 + 키워드 검색 처리
-  async searchVendors(req, res) {
+  async searchActivitiesByKeyword(req, res) {
     try {
-      const keyword = req.query.q;
-      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
-      const userId = req.params.userId;
+      console.log('req.user:', req.user);
 
+      const keyword = req.query.keyword;
+      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
+      const userId = req.user?.userId;
+
+      if (!keyword) {
+        return res.status(400).json({ message: 'Keyword required' });
+      }
       const vendors = await VendorService.searchActivitiesByKeyword(
         keyword,
         userId,
         isCustomRecommendation
       );
+      if (vendors.length === 0) {
+        return res
+          .status(404)
+          .json({ message: 'No results found for the given keyword.' });
+      }
       res.status(200).json(vendors);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -200,6 +150,7 @@ class VendorController {
       );
       res.status(200).json(vendors);
     } catch (err) {
+      console.error('Error in getVendorsByCategoryAndRegion:', err.message);
       res.status(500).json({ message: err.message });
     }
   }

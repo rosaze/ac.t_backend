@@ -8,16 +8,16 @@ class SearchHistoryService {
       throw new Error('UserId is missing');
     }
     const searchRecord = new SearchHistory({
-      user: new mongoose.ObjectId(userId), // 문자열을 ObjectId로 변환
+      user: new mongoose.Types.ObjectId(userId), // Correct way to convert string to ObjectId
       keyword: keyword,
-      searchType: searchType,
     });
     await searchRecord.save();
     return searchRecord;
   }
 
   async getRecentSearches(userId) {
-    return await SearchHistory.find({ user: userId, searchType })
+    // Removed searchType from the query
+    return await SearchHistory.find({ user: userId })
       .sort({ createdAt: -1 })
       .limit(5)
       .exec();
