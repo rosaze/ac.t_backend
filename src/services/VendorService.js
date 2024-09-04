@@ -4,10 +4,8 @@ const mongoose = require('mongoose'); // mongoose 모듈 가져오기
 const Vendor = require('../models/Vendor');
 const PostService = require('./PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
-const ActivityAnalysisService = require('./ActivityAnalysisService');
-
 const ActivityRecommendationService = require('./activityRecommendationService');
-const PreferenceService = require('./preferenceService');
+const locations = require('../utils/location');
 
 //검색 기능 추가
 class VendorService {
@@ -126,31 +124,24 @@ class VendorService {
     userId,
     isCustomRecommendation
   ) {
-    let recommendedActivities = [];
-
     // 맞춤형 추천이 활성화된 경우, 사용자 선호도 및 활동 기록 기반으로 장소 추천
     if (isCustomRecommendation) {
-      const userRecommendations =
-        await PreferenceService.getRecommendedActivities(userId);
-
-      try {
-        // 활동 기록을 기반으로 추천된 활동 목록 가져오기
-        recommendedActivities =
-          await ActivityRecommendationService.recommendActivities(userId);
-      } catch (error) {
-        console.log(
-          'No activity records found for this user. Using preference-based recommendations.'
+      // 사용자 선호도를 가져옴 (활동 기록 무시)
+      const recommendedActivities =
+        await ActivityRecommendationService.recommendActivitiesByPreference(
+          userId
         );
-        // 활동 기록이 없을 경우, 기본 선호도에 따른 추천 사용
-        recommendedActivities = userRecommendations;
-      }
 
       // 추천된 활동에 맞는 장소로 필터링
       if (recommendedActivities.length > 0) {
-        query.contenttype = {
-          $in: recommendedActivities.map((item) => item.name),
-        };
+        return Vendor.find({
+          sigunguname: region,
+          contenttype: { $in: recommendedActivities.map((item) => item.name) }, // contenttype 필드를 추천된 활동명과 비교
+        }).exec();
       }
+
+      // 추천된 활동이 없을 경우 빈 결과 반환
+      return [];
     }
 
     // 기본 검색 조건: 특정 카테고리와 시군에 해당하는 장소 검색
@@ -180,28 +171,18 @@ class VendorService {
       ],
     };
 
-    // 맞춤형 추천이 활성화된 경우, 사용자 선호도 및 활동 기록 기반으로 필터링
+    // 맞춤형 추천이 활성화된 경우, 사용자 선호도를 기반으로 필터링
     if (isCustomRecommendation) {
-      const userRecommendations =
-        await PreferenceService.getRecommendedActivities(userId);
-      let recommendedActivities = [];
-
-      try {
-        // 활동 기록을 기반으로 추천된 활동 목록 가져오기
-        recommendedActivities =
-          await ActivityRecommendationService.recommendActivities(userId);
-      } catch (error) {
-        console.log(
-          'No activity records found for this user. Using preference-based recommendations.'
+      // 사용자 선호도에 따른 추천 활동을 가져옴 (활동 기록 무시)
+      const recommendedActivities =
+        await ActivityRecommendationService.recommendActivitiesByPreference(
+          userId
         );
-        // 활동 기록이 없을 경우, 기본 선호도에 따른 추천 사용
-        recommendedActivities = userRecommendations;
-      }
 
       // 추천된 활동에 맞는 장소로 필터링
       if (recommendedActivities.length > 0) {
         query.contenttype = {
-          $in: recommendedActivities.map((item) => item.name),
+          $in: recommendedActivities.map((item) => item.name), // 선호도 기반 활동 필터링
         };
       }
     }
