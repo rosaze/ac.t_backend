@@ -5,7 +5,7 @@ const VendorSchema = new mongoose.Schema({
   title: { type: String, required: true }, // 업체명 or 장소명
   addr1: { type: String, required: true }, // 기본 주소
   addr2: { type: String }, // 상세 주소
-  areaname: { type: String, required: true }, // 도 이름 (강원도)
+  areaname: { type: String }, // 도 이름 (강원도)
   sigunguname: { type: String, required: true }, // 시군구 이름
   category1: { type: String }, // 대분류 (레포츠, 관광지 등)
   category2: { type: String }, // 중분류

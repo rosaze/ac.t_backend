@@ -4,29 +4,13 @@ const mongoose = require('mongoose'); // mongoose 모듈 가져오기
 const Vendor = require('../models/Vendor');
 const PostService = require('./PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
-const locations = require('../utils/location'); // 강원도 내 시군구 리스트
+const ActivityAnalysisService = require('./ActivityAnalysisService');
 
 const ActivityRecommendationService = require('./activityRecommendationService');
 const PreferenceService = require('./preferenceService');
 
 //검색 기능 추가
 class VendorService {
-  // 업체명 검색 (부분 일치)
-  async searchVendors(query) {
-    try {
-      console.log('searchVendors called with:', { query });
-
-      const vendors = await Vendor.find({
-        title: new RegExp(query, 'i'),
-      }).exec();
-
-      return vendors;
-    } catch (error) {
-      console.error('Error in searchVendors:', error);
-      throw error;
-    }
-  }
-
   async addVendor(name) {
     try {
       // 로그 추가: 입력 값 확인
@@ -64,52 +48,18 @@ class VendorService {
       .exec();
   }
   // 키워드를 통해 장소 검색
-  // 키워드를 통해 장소 검색 (토글 기능 적용)
-  async searchActivitiesByKeyword(keyword, userId, isCustomRecommendation) {
-    // 기본 검색 조건: 키워드로 장소 검색
-    let query = {
+  async searchActivitiesByKeyword(keyword) {
+    return await Vendor.find({
       $or: [
         { title: { $regex: keyword, $options: 'i' } },
         { addr1: { $regex: keyword, $options: 'i' } },
         { sigunguname: { $regex: keyword, $options: 'i' } },
-        { contenttype: { $regex: keyword, $options: 'i' } },
+        { contentype: { $regex: keyword, $options: 'i' } },
         { category1: { $regex: keyword, $options: 'i' } },
         { category2: { $regex: keyword, $options: 'i' } },
         { category3: { $regex: keyword, $options: 'i' } },
       ],
-    };
-
-    // 맞춤형 추천이 활성화된 경우, 사용자 선호도 기반 필터링
-    if (isCustomRecommendation) {
-      const recommendedActivities =
-        await ActivityRecommendationService.recommendActivitiesByPreference(
-          userId
-        );
-
-      // 추천된 활동에 맞는 장소로 필터링
-      if (recommendedActivities.length > 0) {
-        query.activityType = {
-          $in: recommendedActivities,
-        };
-      }
-    }
-
-    // 검색 기록 저장 (키워드로 검색한 경우)
-    await this.saveSearchHistory(userId, keyword, 'keyword');
-
-    return await Vendor.find(query).exec();
-  }
-
-  // 검색 기록 저장
-  async saveSearchHistory(userId, keyword, searchType) {
-    const history = new SearchHistory({
-      user: new mongoose.Types.ObjectId(userId),
-      keyword,
-      searchType,
-      createdAt: new Date(),
-    });
-
-    return await history.save();
+    }).exec();
   }
   // 특정 장소에 대한 감정 분석 결과를 가져옴
   async getVendorDetailsAndSentiments(vendorId) {
@@ -124,7 +74,21 @@ class VendorService {
       sentimentAnalysis,
     };
   }
+  //[수정전] <액티비티 검색창> : 장소추천, 검색기록
 
+  /*
+  // 사용자 기반 추천 장소 제공
+  async getRecommendedVendors(userId) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+  }
+    */
+  // ------------------------------------------------------------------------------
+  // 사용자 선호도 분석한 결과 바탕 --> 특정 시군에서의 장소 집계하여 반환
+  // ActivityAnalysisService 사용 :특정 사용자에 대한 맞춤형 추천 장소를 시군별로 집계
   // 사용자 선호도 분석 결과를 바탕으로 특정 시군에서 장소를 집계하여 반환
   async getCustomVendorsByRegion(userId, isCustomRecommendation) {
     let query = {};
@@ -243,7 +207,7 @@ class VendorService {
     }
 
     // 검색 기록 저장 (키워드로 검색한 경우)
-    await this.saveSearchHistory(userId, keyword, 'keyword');
+    //await this.saveSearchHistory(userId, keyword, 'keyword');
 
     return await Vendor.find(query).exec();
   }
@@ -255,18 +219,30 @@ class VendorService {
       .limit(5)
       .exec();
   }
+  /*
   // 검색 기록을 저장
-  async saveSearchHistory(userId, keyword, searchType) {
-    // 새로운 검색 기록 객체 생성 및 저장
-    const history = new SearchHistory({
-      user: new mongoose.Types.ObjectId(userId),
-      keyword,
-      searchType,
-      createdAt: new Date(),
-    });
+  async saveSearchHistory(userId, keyword) {
+    try {
+      // 여기서 userId가 실제로 존재하는지, 올바른지 확인합니다.
+      if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        throw new Error('Invalid or missing userId');
+      }
 
-    return await history.save();
+      // userId를 ObjectId로 변환하여 저장
+      const searchRecord = new SearchHistory({
+        user: mongoose.Types.ObjectId(userId), // 변환된 ObjectId 사용
+        keyword: keyword,
+        createdAt: new Date(),
+      });
+
+      await searchRecord.save();
+      return searchRecord;
+    } catch (error) {
+      console.error('Error saving search history:', error.message);
+      throw error;
+    }
   }
+  */
 }
 
 module.exports = new VendorService();
