@@ -1,180 +1,268 @@
 const axios = require("axios");
-const moment = require("moment");
+const fs = require("fs");
+require("dotenv").config(); // Load environment variables from .env file
 
-// 서비스 키 및 요청 변수 설정
-const serviceKey =
-  "C5t0O8kVyOhrnXYsr29n5Bv1MoPskbn7QJAzSbGV4o0VhlpP6azls0YNWjSh2D8YDDKR78wvsCwkWcFRsUxFcw=="; // Replace with your actual service key
-const nx = "62"; // 예보 지점 x좌표 (원주시 등으로 설정)
-const ny = "123"; // 예보 지점 y좌표 (원주시 등으로 설정)
+const serviceKey = process.env.SERVICE_KEY;
+const baseUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService";
 
-// 방위 정보, 강수 정보 등을 위한 코드 정의
-const degCode = {
-  0: "N",
-  360: "N",
-  180: "S",
-  270: "W",
-  90: "E",
-  22.5: "NNE",
-  45: "NE",
-  67.5: "ENE",
-  112.5: "ESE",
-  135: "SE",
-  157.5: "SSE",
-  202.5: "SSW",
-  225: "SW",
-  247.5: "WSW",
-  292.5: "WNW",
-  315: "NW",
-  337.5: "NNW",
-};
+// Define region codes for 시군구 in 강원도
+const cities = [
+  { name: "대관령", code: "11D20201", region: "영동" },
+  { name: "태백", code: "11D20301", region: "영동" },
+  { name: "속초", code: "11D20401", region: "영동", seaRegion: "12C30000" }, // 동해북부
+  { name: "고성", code: "11D20402", region: "영동", seaRegion: "12C30000" }, // 동해북부
+  { name: "양양", code: "11D20403", region: "영동", seaRegion: "12C30000" }, // 동해북부
+  { name: "강릉", code: "11D20501", region: "영동", seaRegion: "12C20000" }, // 동해중부
+  { name: "동해", code: "11D20601", region: "영동", seaRegion: "12C20000" }, // 동해중부
+  { name: "삼척", code: "11D20602", region: "영동", seaRegion: "12C20000" }, // 동해중부
+  { name: "철원", code: "11D10101", region: "영서" },
+  { name: "화천", code: "11D10102", region: "영서" },
+  { name: "인제", code: "11D10201", region: "영서" },
+  { name: "양구", code: "11D10202", region: "영서" },
+  { name: "춘천", code: "11D10301", region: "영서" },
+  { name: "홍천", code: "11D10302", region: "영서" },
+  { name: "원주", code: "11D10401", region: "영서" },
+  { name: "횡성", code: "11D10402", region: "영서" },
+  { name: "영월", code: "11D10501", region: "영서" },
+  { name: "정선", code: "11D10502", region: "영서" },
+  { name: "평창", code: "11D10503", region: "영서" },
+];
 
-const skyCode = { 1: "맑음", 3: "구름많음", 4: "흐림" };
-const ptyCode = {
-  0: "강수 없음",
-  1: "비",
-  2: "비/눈",
-  3: "눈",
-  5: "빗방울",
-  6: "진눈깨비",
-  7: "눈날림",
-};
-
-// 방위 각도를 방위명으로 변환하는 함수
-function degToDir(deg) {
-  let closestDir = "";
-  let minAbs = 360;
-  for (const key in degCode) {
-    if (Math.abs(key - deg) < minAbs) {
-      minAbs = Math.abs(key - deg);
-      closestDir = degCode[key];
-    }
-  }
-  return closestDir;
+// Get the latest available forecast time (either 06:00 or 18:00)
+function getLatestForecastTime() {
+  const now = new Date();
+  const hours = now.getHours();
+  const forecastHour = hours >= 18 ? "1800" : "0600"; // Use 18:00 or 06:00
+  const forecastDate = now.toISOString().split("T")[0].replace(/-/g, "");
+  return `${forecastDate}${forecastHour}`;
 }
 
-// 주어진 날짜에 대한 날씨 데이터를 가져오는 함수
-async function fetchWeatherForDate(baseDate, baseTime, nx, ny) {
-  const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=${serviceKey}&numOfRows=60&pageNo=1&dataType=json&base_date=${baseDate}&base_time=${baseTime}&nx=${nx}&ny=${ny}`;
+const tmFc = getLatestForecastTime(); // Get the forecast timestamp
+
+// Fetch 중기 육상 예보 조회 (Mid-term Land Forecast) for 영동 and 영서
+async function fetchLandForecast(regionCode) {
+  const landParams = {
+    serviceKey: serviceKey,
+    numOfRows: 10,
+    pageNo: 1,
+    regId: regionCode,
+    tmFc: tmFc,
+    dataType: "JSON",
+  };
 
   try {
-    const response = await axios.get(url);
-
-    if (
-      !response.data.response ||
-      !response.data.response.body ||
-      !response.data.response.body.items
-    ) {
-      throw new Error("No data available or unexpected response structure");
-    }
-
-    const items = response.data.response.body.items.item;
-
-    const informations = {};
-
-    items.forEach((item) => {
-      const { category, fcstTime, fcstValue } = item;
-
-      if (!informations[fcstTime]) {
-        informations[fcstTime] = {};
-      }
-      informations[fcstTime][category] = fcstValue;
+    const response = await axios.get(`${baseUrl}/getMidLandFcst`, {
+      params: landParams,
     });
+    if (response.data.response.header.resultCode === "00") {
+      const items = response.data.response.body.items.item[0];
+      return [
+        {
+          day: 3,
+          morning: items.wf3Am,
+          evening: items.wf3Pm,
+          rainMorning: items.rnSt3Am,
+          rainEvening: items.rnSt3Pm,
+        },
+        {
+          day: 4,
+          morning: items.wf4Am,
+          evening: items.wf4Pm,
+          rainMorning: items.rnSt4Am,
+          rainEvening: items.rnSt4Pm,
+        },
+        {
+          day: 5,
+          morning: items.wf5Am,
+          evening: items.wf5Pm,
+          rainMorning: items.rnSt5Am,
+          rainEvening: items.rnSt5Pm,
+        },
+        {
+          day: 6,
+          morning: items.wf6Am,
+          evening: items.wf6Pm,
+          rainMorning: items.rnSt6Am,
+          rainEvening: items.rnSt6Pm,
+        },
+        {
+          day: 7,
+          morning: items.wf7Am,
+          evening: items.wf7Pm,
+          rainMorning: items.rnSt7Am,
+          rainEvening: items.rnSt7Pm,
+        },
+        {
+          day: 8,
+          morning: items.wf8,
+          evening: items.wf8,
+          rainMorning: items.rnSt8,
+          rainEvening: items.rnSt8,
+        },
+        {
+          day: 9,
+          morning: items.wf9,
+          evening: items.wf9,
+          rainMorning: items.rnSt9,
+          rainEvening: items.rnSt9,
+        },
+        {
+          day: 10,
+          morning: items.wf10,
+          evening: items.wf10,
+          rainMorning: items.rnSt10,
+          rainEvening: items.rnSt10,
+        },
+      ];
+    } else {
+      console.error(
+        `Error fetching land forecast for region:`,
+        response.data.response.header.resultMsg
+      );
+      return [];
+    }
+  } catch (error) {
+    console.error(`Error fetching land forecast for region:`, error.message);
+    return [];
+  }
+}
 
-    return informations;
+// Fetch 중기 기온 조회 (Mid-term Temperature Forecast) for each city
+async function fetchTemperatureForecast(city) {
+  const tempParams = {
+    serviceKey: serviceKey,
+    numOfRows: 10,
+    pageNo: 1,
+    regId: city.code,
+    tmFc: tmFc,
+    dataType: "JSON",
+  };
+
+  try {
+    const response = await axios.get(`${baseUrl}/getMidTa`, {
+      params: tempParams,
+    });
+    if (response.data.response.header.resultCode === "00") {
+      const items = response.data.response.body.items.item[0];
+      return [
+        { day: 3, min: items.taMin3, max: items.taMax3 },
+        { day: 4, min: items.taMin4, max: items.taMax4 },
+        { day: 5, min: items.taMin5, max: items.taMax5 },
+        { day: 6, min: items.taMin6, max: items.taMax6 },
+        { day: 7, min: items.taMin7, max: items.taMax7 },
+        { day: 8, min: items.taMin8, max: items.taMax8 },
+        { day: 9, min: items.taMin9, max: items.taMax9 },
+        { day: 10, min: items.taMin10, max: items.taMax10 },
+      ];
+    } else {
+      console.error(
+        `Error fetching temperature forecast for city ${city.name}:`,
+        response.data.response.header.resultMsg
+      );
+      return [];
+    }
   } catch (error) {
     console.error(
-      `Error fetching data for ${baseDate} ${baseTime}:`,
+      `Error fetching temperature forecast for city ${city.name}:`,
       error.message
     );
-    return null;
+    return [];
   }
 }
 
-// 발표 시간에 맞는 base_time을 반환하는 함수 (전날 기준)
-function getBaseTime() {
-  const currentHour = moment().hour();
+// Fetch 중기 해상 예보 조회 (Mid-term Sea Forecast) for the sea region
+async function fetchSeaForecast(seaRegionCode) {
+  const seaParams = {
+    serviceKey: serviceKey,
+    numOfRows: 10,
+    pageNo: 1,
+    regId: seaRegionCode,
+    tmFc: tmFc,
+    dataType: "JSON",
+  };
 
-  if (currentHour >= 23 || currentHour < 2) return "2300";
-  if (currentHour >= 20) return "2000";
-  if (currentHour >= 17) return "1700";
-  if (currentHour >= 14) return "1400";
-  if (currentHour >= 11) return "1100";
-  if (currentHour >= 8) return "0800";
-  if (currentHour >= 5) return "0500";
-  return "0200";
-}
-
-// 3일간의 날씨 데이터를 가져와서 출력하는 함수 (오늘, 내일, 모레 오전까지)
-async function fetchAndPrintWeather() {
-  const currentDate = moment();
-
-  for (let i = 0; i < 3; i++) {
-    const baseDate = currentDate.clone().add(i, "days").format("YYYYMMDD");
-    const previousDate = currentDate
-      .clone()
-      .add(i - 1, "days")
-      .format("YYYYMMDD"); // 전날 기준
-    const baseTime = getBaseTime(); // 적절한 발표 시간을 사용
-
-    const informations = await fetchWeatherForDate(
-      previousDate,
-      baseTime,
-      nx,
-      ny
+  try {
+    const response = await axios.get(`${baseUrl}/getMidSeaFcst`, {
+      params: seaParams,
+    });
+    if (response.data.response.header.resultCode === "00") {
+      const items = response.data.response.body.items.item[0];
+      return [
+        { day: 3, morning: items.wf3Am, evening: items.wf3Pm },
+        { day: 4, morning: items.wf4Am, evening: items.wf4Pm },
+        { day: 5, morning: items.wf5Am, evening: items.wf5Pm },
+        { day: 6, morning: items.wf6Am, evening: items.wf6Pm },
+        { day: 7, morning: items.wf7Am, evening: items.wf7Pm },
+        { day: 8, morning: items.wf8, evening: items.wf8 },
+        { day: 9, morning: items.wf9, evening: items.wf9 },
+        { day: 10, morning: items.wf10, evening: items.wf10 },
+      ];
+    } else {
+      console.error(
+        `Error fetching sea forecast for region ${seaRegionCode}:`,
+        response.data.response.header.resultMsg
+      );
+      return [];
+    }
+  } catch (error) {
+    console.error(
+      `Error fetching sea forecast for region ${seaRegionCode}:`,
+      error.message
     );
+    return [];
+  }
+}
 
-    // 오늘과 내일은 전부, 모레는 오전까지만 데이터 출력
-    if (informations) {
-      if (i === 2) {
-        // 모레의 경우 오전 12시까지만 데이터 출력
-        printWeatherData(baseDate, informations, "0000", "1200");
+// Fetch and save the forecasts into a JSON file
+async function fetchAndSaveForecasts() {
+  let resultData = [];
+
+  // Fetch land forecast for 영동 and 영서 regions once
+  const landForecasts = {
+    영동: await fetchLandForecast("11D20000"),
+    영서: await fetchLandForecast("11D10000"),
+  };
+
+  // For each city, fetch temperature and sea forecast (if applicable), and combine with land forecast
+  for (const city of cities) {
+    console.log(`Fetching data for ${city.name} (${city.code})...`);
+
+    // Fetch temperature forecast for the city
+    const temperatureData = await fetchTemperatureForecast(city);
+
+    // Get the corresponding land forecast based on the region (영동 or 영서)
+    const landForecast = landForecasts[city.region];
+
+    // Fetch sea forecast if the city belongs to a sea region
+    let seaForecast = [];
+    if (city.seaRegion) {
+      seaForecast = await fetchSeaForecast(city.seaRegion);
+    }
+
+    // Combine all data for this city
+    let cityData = {
+      city: city.name,
+      temperature: temperatureData,
+      landForecast: landForecast,
+      seaForecast: seaForecast.length > 0 ? seaForecast : null,
+    };
+
+    resultData.push(cityData);
+  }
+
+  // Save the result data to a JSON file
+  fs.writeFile(
+    "gangwon_forecast.json",
+    JSON.stringify(resultData, null, 2),
+    (err) => {
+      if (err) {
+        console.error("Error saving the forecast data:", err);
       } else {
-        printWeatherData(baseDate, informations);
+        console.log("Forecast data saved to gangwon_forecast.json");
       }
     }
-  }
+  );
 }
 
-// 날씨 데이터를 출력하는 함수
-function printWeatherData(
-  baseDate,
-  informations,
-  startTime = "0000",
-  endTime = "2400"
-) {
-  for (const [time, data] of Object.entries(informations)) {
-    if (time >= startTime && time <= endTime) {
-      let template = `${baseDate.slice(0, 4)}년 ${baseDate.slice(
-        4,
-        6
-      )}월 ${baseDate.slice(6, 8)}일 ${time.slice(0, 2)}시 ${time.slice(
-        2
-      )}분 (${nx}, ${ny}) 지역의 날씨는 `;
-
-      if (data.SKY) {
-        template += `${skyCode[data.SKY]} `;
-      }
-      if (data.PTY) {
-        template += `${ptyCode[data.PTY]} `;
-        if (data.RN1 && data.RN1 !== "강수없음") {
-          template += `시간당 ${data.RN1}mm `;
-        }
-      }
-      if (data.T1H) {
-        template += `기온 ${data.T1H}℃ `;
-      }
-      if (data.REH) {
-        template += `습도 ${data.REH}% `;
-      }
-      if (data.VEC && data.WSD) {
-        const direction = degToDir(parseFloat(data.VEC));
-        template += `풍속 ${direction} 방향 ${data.WSD}m/s`;
-      }
-
-      console.log(template);
-    }
-  }
-}
-
-// 날씨 데이터 가져오기 실행
-fetchAndPrintWeather();
+// Call the function to fetch and save forecasts
+fetchAndSaveForecasts();
