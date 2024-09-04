@@ -46,34 +46,45 @@ class UserService {
     return user.certificates[user.certificates.length - 1];
   }
 
-  // 사용자에서 특정 자격증을 제거하는 메서드입니다.
+  // 자격증 삭제와 배지 삭제를 함께 진행하는 메서드입니다.
   static async removeCertificate(userId, certificateId) {
     try {
-      const result = await User.findByIdAndUpdate(
-        userId,
-        { $pull: { certificates: { _id: certificateId } } },
-        { new: true }
-      ).exec();
-
-      if (!result) {
+      // 사용자 조회
+      const user = await User.findById(userId);
+      if (!user) {
         throw new Error('User not found');
       }
 
-      // 자격증이 제거되었는지 확인
-      const certificateRemoved = result.certificates.every(
-        (cert) => cert._id.toString() !== certificateId.toString()
+      // 자격증을 찾아서 삭제
+      const certificate = user.certificates.find((cert) =>
+        cert._id.equals(certificateId)
       );
-      if (!certificateRemoved) {
+      if (!certificate) {
         throw new Error('Certificate not found');
       }
 
-      return result.certificates;
+      // 자격증 삭제
+      user.certificates = user.certificates.filter(
+        (cert) => !cert._id.equals(certificateId)
+      );
+
+      // 관련 배지 이름 가져오기
+      const badgeName = certificate.badgeName;
+
+      // 배지 삭제
+      if (badgeName) {
+        await BadgeService.removeBadge(userId, badgeName);
+      }
+
+      // 변경 사항 저장
+      await user.save();
+
+      return user.certificates; // 업데이트된 자격증 목록 반환
     } catch (error) {
-      console.error('Error removing certificate:', error);
+      console.error('Error removing certificate and badge:', error);
       throw error;
     }
   }
-
   // 사용자 정보를 업데이트하는 메서드입니다.
   static async updateUser(userId, updateData) {
     return await User.findByIdAndUpdate(userId, updateData, {

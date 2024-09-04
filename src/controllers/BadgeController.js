@@ -21,6 +21,19 @@ class BadgeController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  // 배지 삭제
+  async removeBadge(req, res) {
+    try {
+      const { userId, badgeName } = req.body;
+      const updatedBadges = await badgeService.removeBadge(userId, badgeName);
+      res
+        .status(200)
+        .json({ message: 'Badge removed successfully', updatedBadges });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new BadgeController();

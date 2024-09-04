@@ -6,7 +6,7 @@ const WishlistController = require('../controllers/WishlistController'); // 찜 
 const authorize = require('../middleware/authorize');
 
 router.get('/vendors/search', authorize, VendorController.searchVendors); // 업체명 검색
-router.post('/vendors', authorize, VendorController.addVendor); // 업체명 추가
+//router.post('/vendors', authorize, VendorController.addVendor); // 업체명 추가
 
 // 장소 검색 라우트
 router.get('/activities/search', authorize, VendorController.searchActivities);

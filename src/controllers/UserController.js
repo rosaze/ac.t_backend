@@ -142,24 +142,52 @@ class UserController {
     }
   }
 
-  // 사용자 선호도 업데이트 및 추천 제공
-  async updatePreferences(req, res) {
+  // 사용자 업데이트 및 프로필 수정
+  async updateUser(req, res) {
     try {
-      const userId = mongoose.Types.ObjectId(req.params.id);
-      const recommendations = await PreferenceService.updatePreferences(
-        userId,
-        req.body
-      );
-      res.status(200).json({
-        message: 'Preferences updated successfully',
-        recommendations,
-      });
+      if (!req.params.id) {
+        return res.status(400).json({ message: 'User ID is required' });
+      }
+
+      const userId = new mongoose.Types.ObjectId(req.params.id);
+
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ message: 'Update data is required' });
+      }
+
+      // 유저 정보 업데이트를 위해 전달된 데이터를 사용
+      const updateData = {};
+
+      // 요청에 따라 특정 필드만 업데이트
+      if (req.body.bio !== undefined) {
+        updateData.bio = req.body.bio;
+      }
+      if (req.body.nickname !== undefined) {
+        updateData.nickname = req.body.nickname;
+      }
+      if (req.body.gender !== undefined) {
+        updateData.gender = req.body.gender;
+      }
+      if (req.body.age !== undefined) {
+        updateData.age = req.body.age;
+      }
+
+      // 빈 업데이트 데이터를 보내지 않도록 처리
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ message: 'No valid fields to update' });
+      }
+
+      const user = await UserService.updateUser(userId, updateData);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json(user);
     } catch (error) {
-      console.error(`Error updating preferences: ${error.message}`);
-      res.status(400).json({
-        message: 'Failed to update preferences',
-        error: error.message,
-      });
+      console.error(`Error updating user: ${error.message}`);
+      res
+        .status(500)
+        .json({ message: 'Failed to update user', error: error.message });
     }
   }
 
@@ -187,7 +215,7 @@ class UserController {
   // 사용자에게 활동 추천 제공
   async getRecommendedActivities(req, res) {
     try {
-      const userId = mongoose.Types.ObjectId(req.params.id);
+      const userId = new mongoose.Types.ObjectId(req.params.id);
       const recommendations = await PreferenceService.getRecommendedActivities(
         userId
       );
