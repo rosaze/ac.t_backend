@@ -11,6 +11,7 @@ router.post(
 );
 // 사용자에게 활동 추천 제공
 router.get(
+  //테스트 완료
   '/users/:id/recommendations',
   authorize,
   userController.getRecommendedActivities
