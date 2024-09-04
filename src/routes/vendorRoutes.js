@@ -1,9 +1,10 @@
 // 업체명 검색 및 추가 처리
 const express = require('express');
-const router = express.Router();
-const VendorController = require('../controllers/VendorController');
+const VendorController = require('../controllers/VendorController.js');
 const WishlistController = require('../controllers/WishlistController'); // 찜 라우터 추가
 const authorize = require('../middleware/authorize');
+
+const router = express.Router();
 
 router.post('/add', authorize, VendorController.addVendor); // 업체명 추가
 

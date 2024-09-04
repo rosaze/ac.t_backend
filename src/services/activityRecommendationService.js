@@ -74,6 +74,46 @@ class ActivityRecommendationService {
       throw new Error('Failed to generate activity recommendations.');
     }
   }
+  // 사용자 활동 기록을 반영하지 않고 선호도만을 고려한 추천
+  async recommendActivitiesByPreference(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error('User not found');
+
+      // 사용자 선호도 기반 추천, 'both' 옵션 반영
+      const preferredActivities = activities.filter((activity) => {
+        return (
+          (activity.location === user.preference.location ||
+            user.preference.location === 'both') &&
+          (activity.environment === user.preference.environment ||
+            user.preference.environment === 'both') &&
+          (activity.group === user.preference.group ||
+            user.preference.group === 'both') &&
+          (activity.season === user.preference.season ||
+            user.preference.season === 'both')
+        );
+      });
+
+      const recommendations = preferredActivities.map(
+        (activity) => activity.name
+      );
+
+      if (recommendations.length === 0) {
+        throw new Error(
+          'No recommendations available based on user preferences.'
+        );
+      }
+
+      return recommendations;
+    } catch (error) {
+      console.error(
+        `Error recommending activities by preference: ${error.message}`
+      );
+      throw new Error(
+        'Failed to generate activity recommendations based on preferences.'
+      );
+    }
+  }
 }
 
 module.exports = new ActivityRecommendationService();

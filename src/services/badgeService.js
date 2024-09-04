@@ -62,6 +62,28 @@ class BadgeService {
     console.log(`User badges updated for user: ${userId}`); // 테스트 로그
     return user.badges;
   }
+
+  static async removeBadge(userId, badgeName) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // 배지 이름을 통해 배지 ID 조회
+    const badge = await Badge.findOne({ name: badgeName });
+    if (!badge) {
+      throw new Error('Badge not found');
+    }
+
+    // 사용자 배지 목록에서 해당 배지 삭제 (ID 기반)
+    user.badges = user.badges.filter(
+      (userBadge) => !userBadge.badge.equals(badge._id)
+    );
+
+    await user.save();
+    return user.badges;
+  }
 }
 
 module.exports = BadgeService;

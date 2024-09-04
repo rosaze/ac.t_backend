@@ -23,7 +23,6 @@ const productRoutes = require("./src/routes/productRoutes"); // 스토어 라우
 const cartRoutes = require("./src/routes/cartRoutes");
 const rentalRoutes = require("./src/routes/rentalRoutes");
 const paymentRoutes = require("./src/routes/paymentRoutes");
-const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
 const mentorRoutes = require("./src/routes/MentorRoutes");
 const activityMapRoutes = require("./src/routes/mypageRoutes");
@@ -91,10 +90,9 @@ app.use("/api/store/cart", cartRoutes); //지원
 app.use("/api/preference", preferenceRoutes); //서빈
 
 //지원
-app.use("/api/hashtags", hashtagRoutes); //지원
 app.use("/api/mates", mateRoutes); //지원
 app.use("/api/mentor", mentorRoutes); //
-app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈
+app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈 //테스트 완료
 app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원
 app.use("/api", accommodationRoutes); //숙박 라우트
 
