@@ -8,14 +8,6 @@ const WishlistSchema = new mongoose.Schema({
     required: true,
   },
   createdAt: { type: Date, default: Date.now },
-  marker: {
-    color: {
-      type: String,
-      enum: ['red', 'yellow', 'green', 'blue', 'purple'],
-      required: true,
-    },
-    categoryName: { type: String, required: true },
-  },
 });
 
 module.exports = mongoose.model('Wishlist', WishlistSchema);

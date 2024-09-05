@@ -48,28 +48,6 @@ class VendorController {
       });
     }
   }
-  // 사용자 추천과 검색 기록을 처리하는 메서드
-  // 검색 화면 로드 시 사용자 추천 장소와 최근 검색 기록 제공
-  async getInitialSearchData(req, res) {
-    const userId = req.user.id; // 사용자의 ID (로그인된 사용자 기준)
-
-    try {
-      const recommendedVendors = await VendorService.getRecommendedVendors(
-        userId
-      );
-      const searchHistory = await VendorService.getSearchHistory(userId);
-      const recommendedActivities =
-        await VendorService.getRecommendedActivities(userId);
-
-      res
-        .status(200)
-        .json({ recommendedVendors, searchHistory, recommendedActivities });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: 'Failed to load search data', error: error.message });
-    }
-  }
 
   //검색 결과 저장 + 키워드 검색 처리
   async searchActivitiesByKeyword(req, res) {
@@ -166,7 +144,7 @@ class VendorController {
 
   // 사용자 맞춤형 추천과 검색 기록 제공
   async getInitialSearchData(req, res) {
-    const userId = req.user._id; // 사용자의 ID (로그인된 사용자 기준)
+    const userId = req.params.id; // 사용자의 ID (로그인된 사용자 기준)
 
     try {
       const recommendedVendors = await VendorService.getRecommendedVendors(

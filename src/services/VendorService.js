@@ -72,7 +72,6 @@ class VendorService {
       sentimentAnalysis,
     };
   }
-  //[수정전] <액티비티 검색창> : 장소추천, 검색기록
 
   /*
   // 사용자 기반 추천 장소 제공
@@ -200,7 +199,7 @@ class VendorService {
       .limit(5)
       .exec();
   }
-  /*
+
   // 검색 기록을 저장
   async saveSearchHistory(userId, keyword) {
     try {
@@ -211,7 +210,7 @@ class VendorService {
 
       // userId를 ObjectId로 변환하여 저장
       const searchRecord = new SearchHistory({
-        user: mongoose.Types.ObjectId(userId), // 변환된 ObjectId 사용
+        user: new mongoose.Types.ObjectId(userId), // 변환된 ObjectId 사용
         keyword: keyword,
         createdAt: new Date(),
       });
@@ -223,7 +222,6 @@ class VendorService {
       throw error;
     }
   }
-  */
 }
 
 module.exports = new VendorService();
