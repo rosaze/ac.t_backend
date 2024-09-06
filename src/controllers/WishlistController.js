@@ -15,7 +15,7 @@ class WishlistController {
   // 찜 목록에 추가하기
   async addToWishlist(req, res) {
     try {
-      const userId = req.user._id; // 인증된 사용자 ID 가져오기
+      const userId = req.user.id; // 인증된 사용자 ID 가져오기
       const { vendorId } = req.body; // 요청 본문에서 vendorId 가져오기
 
       const newWishlistItem = await WishlistService.addToWishlist(
@@ -31,7 +31,7 @@ class WishlistController {
   // 찜 목록에서 제거하기
   async removeFromWishlist(req, res) {
     try {
-      const userId = req.user._id; // 인증된 사용자 ID 가져오기
+      const userId = req.user.id; // 인증된 사용자 ID 가져오기
       const { vendorId } = req.body; // 요청 본문에서 vendorId 가져오기
 
       const removedItem = await WishlistService.removeFromWishlist(

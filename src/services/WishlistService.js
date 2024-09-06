@@ -1,5 +1,4 @@
 const Wishlist = require('../models/Wishlist');
-const User = require('../models/User');
 
 class WishlistService {
   // 사용자의 찜 목록 가져오기
