@@ -8,6 +8,10 @@ const dotenv = require("dotenv"); //추가
 const cors = require("cors");
 const http = require("http"); // 추가
 const socketIO = require("socket.io"); // 소켓 추가
+const schedule = require("node-schedule");
+const fetchAndSaveForecasts = require("./src/models/forecastMiddle");
+const fetchAndSaveForecastsShort = require("./src/models/forecastShort");
+
 require("dotenv").config(); //에러 수정
 
 const passport = require("./src/passport/passport");
@@ -36,18 +40,21 @@ app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
+// 날씨 데이터를 가져오는 함수 호출 (좌표는 forecastShort.js에서 설정)
+app.get("/fetch-weather", async (req, res) => {
+  try {
+    await fetchAndSaveForecastsShort(); // 좌표 없이 함수 호출
+    res.send("날씨 데이터를 저장했습니다.");
+  } catch (error) {
+    console.error("날씨 데이터를 저장하는 중 에러 발생:", error);
+    res.status(500).send("날씨 데이터를 가져오는 중 오류가 발생했습니다.");
+  }
+});
+
 nunjucks.configure(path.join(__dirname, "src/views"), {
   autoescape: true,
   express: app,
 });
-
-// 에러 처리 미들웨어
-
-//app.use((req, res, next) => {
-//  res
-//    .status(404)
-//    .render("views/error.html", { error: { message: "Page Not Found" } });
-//});
 
 app.set("view engine", "html");
 
@@ -95,6 +102,17 @@ app.use("/api/mentor", mentorRoutes); //
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈 //테스트 완료
 app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원
 app.use("/api", accommodationRoutes); //숙박 라우트
+
+// 중기예보Schedule to fetch and save weather data every day at midnight (00:00)
+schedule.scheduleJob("0 0 * * *", async () => {
+  console.log("Scheduled job: Fetching and saving weather data...");
+  try {
+    await fetchAndSaveForecasts();
+    console.log("Weather data saved successfully.");
+  } catch (error) {
+    console.error("Error in scheduled job:", error);
+  }
+});
 
 //socket.io 연결
 io.on("connection", (socket) => {
