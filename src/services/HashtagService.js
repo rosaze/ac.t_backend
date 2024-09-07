@@ -3,15 +3,13 @@ const BadgeService = require('./badgeService');
 const Hashtag = require('../models/Hashtags');
 
 class HashtagService {
-  async registerHashtag(userId, hashtagData) {
-    //새로운 해시태그 등록 로직
+  async createHashtag(userId, hashtagData) {
+    // 해시태그 생성 로직
     const hashtag = new Hashtag(hashtagData);
     await hashtag.save();
 
-    //해시태그 최초 등록에 따른 배지 지급
-    await BadgeService.awardBadge(userId, '해시태그 개척자');
-
-    return hashtag;
+    // 해시태그 관련 배지 지급
+    await BadgeService.awardBadgeForHashtag(userId);
   }
 
   async getTopHashtags() {

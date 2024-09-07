@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const BadgeService = require('./badgeService');
 
 class UserService {
@@ -29,21 +29,24 @@ class UserService {
     return user;
   }
 
-  // 사용자 프로필에 자격증을 추가하는 메서드입니다.
+  // 자격증 추가 메서드
   static async addCertificate(userId, certificateData) {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error('User not found');
+
+      // 자격증 추가 로직
+      user.certificates.push({
+        date: certificateData.date,
+        institution: certificateData.institution,
+        title: certificateData.title,
+      });
+
+      await user.save(); // 저장
+      return user.certificates[user.certificates.length - 1]; // 추가된 자격증 반환
+    } catch (error) {
+      throw new Error('Failed to add certificate: ' + error.message);
     }
-
-    user.certificates.push(certificateData);
-    await user.save();
-
-    // 자격증 등록에 따른 배지 지급
-    await BadgeService.awardBadge(userId, `${certificateData.title} 마스터`);
-
-    // 새로 추가된 자격증 객체를 반환
-    return user.certificates[user.certificates.length - 1];
   }
 
   // 자격증 삭제와 배지 삭제를 함께 진행하는 메서드입니다.
@@ -105,21 +108,22 @@ class UserService {
 
   // 사용자 프로필 정보를 가져오는 메서드입니다.
   static async getUserProfile(userId) {
-    const user = await User.findById(userId).populate('badges').exec();
+    const user = await User.findById(userId).populate('certificates').exec();
 
     if (!user) {
       throw new Error('User not found');
     }
 
     return {
-      profileImage: user.profileImage,
-      name: user.name,
-      badges: user.badges,
-      preferences: user.preference,
-      gender: user.gender,
-      age: user.age,
+      nickname: user.nickname, // 닉네임 추가
+      gender: user.gender, // 성별
+      age: user.age, // 나이
+      bio: user.bio, // 소개글
+      email: user.email, // 이메일
+      certificates: user.certificates, // 자격증 정보
     };
   }
+  ㄴ;
 }
 
 module.exports = UserService;

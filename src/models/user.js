@@ -16,20 +16,6 @@ const certificateSchema = new mongoose.Schema({
   },
 });
 
-// 배지 스키마
-const badgeSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-  },
-  icon_url: {
-    type: String,
-  },
-});
-
 // 사용자 배지 스키마
 const userBadgeSchema = new mongoose.Schema({
   badge: {
