@@ -128,6 +128,7 @@
 - cors 미들웨어 추가
 - gitignore 적용
 - Vendor 추천 기능 : 사용자 활동 기록 상관 없이 단순 추천 리스트
+- badgeService 파일에서 뱃지 지급 통합 처리 + mypage 정리
 
 > 앞으로:
 
