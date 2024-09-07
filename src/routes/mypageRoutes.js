@@ -40,4 +40,14 @@ router.get('/mypage/recommend-activities', authorize, (req, res) =>
   mypageController.recommendActivities(req, res)
 );
 
+// 사용자 찜 목록 조회
+router.get('/mypage/wishlist', authorize, (req, res) =>
+  mypageController.getWishlist(req, res)
+);
+
+// 사용자 채팅방 목록 조회
+router.get('/mypage/chatrooms', authorize, (req, res) =>
+  mypageController.getChatRooms(req, res)
+);
+
 module.exports = router;
