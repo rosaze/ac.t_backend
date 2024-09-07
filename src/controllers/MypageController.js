@@ -1,6 +1,8 @@
 const UserService = require('../services/UserService');
 const ActivityRecommendationService = require('../services/activityRecommendationService');
 const activityMapService = require('../services/activityMapService');
+const WishlistService = require('../services/WishlistService');
+const ChatService = require('../services/ChatService');
 
 class MypageController {
   constructor(badgeService) {
@@ -122,6 +124,32 @@ class MypageController {
     } catch (error) {
       res.status(500).json({
         message: 'Failed to recommend activities',
+        error: error.message,
+      });
+    }
+  }
+  //찜 목록
+  async getWishlist(req, res) {
+    try {
+      const userId = req.user.id; // 로그인된 사용자의 ID
+      const wishlist = await WishlistService.getWishlist(userId);
+      res.status(200).json(wishlist); // 성공 시 찜 목록 반환
+    } catch (error) {
+      res.status(500).json({
+        message: '찜 목록을 가져오는 데 실패했습니다.',
+        error: error.message,
+      });
+    }
+  }
+  //채팅방 목록
+  async getChatRooms(req, res) {
+    try {
+      const userId = req.user.id; // 로그인된 사용자의 ID
+      const chatRooms = await ChatService.getChatRoomsByUser(userId);
+      res.status(200).json(chatRooms); // 성공 시 채팅방 목록 반환
+    } catch (error) {
+      res.status(500).json({
+        message: '채팅방 목록을 가져오는 데 실패했습니다.',
         error: error.message,
       });
     }
