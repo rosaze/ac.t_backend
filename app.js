@@ -10,7 +10,6 @@ const http = require("http"); // 추가
 const socketIO = require("socket.io"); // 소켓 추가
 const schedule = require("node-schedule");
 const fetchAndSaveForecasts = require("./src/models/forecastMiddle");
-const fetchAndSaveForecastsShort = require("./src/models/forecastShort");
 
 require("dotenv").config(); //에러 수정
 
@@ -40,6 +39,7 @@ app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
+/*
 // 날씨 데이터를 가져오는 함수 호출 (좌표는 forecastShort.js에서 설정)
 app.get("/fetch-weather", async (req, res) => {
   try {
@@ -50,7 +50,7 @@ app.get("/fetch-weather", async (req, res) => {
     res.status(500).send("날씨 데이터를 가져오는 중 오류가 발생했습니다.");
   }
 });
-
+*/
 nunjucks.configure(path.join(__dirname, "src/views"), {
   autoescape: true,
   express: app,
