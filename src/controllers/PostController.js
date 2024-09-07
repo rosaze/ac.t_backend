@@ -1,7 +1,7 @@
 const PostService = require('../services/PostService');
 const ActivityMapService = require('../services/activityMapService');
 const SearchHistoryService = require('../services/SearchHistoryService');
-const User = require('../models/User'); // User 모델 경로에 맞게 조정하세요
+const User = require('../models/user'); // User 모델 경로에 맞게 조정하세요
 const Post = require('../models/Posts'); // 경로는 실제 Post 모델의 위치에 맞게 조정
 
 class PostController {

@@ -12,10 +12,6 @@ const badgeSchema = new mongoose.Schema({
   icon_url: {
     type: String,
   },
-  //condition: {
-  //  type: String,
-  //  required: true,
-  //}, // 배지 지급 조건 추가
 });
 
 module.exports = mongoose.model('Badge', badgeSchema);

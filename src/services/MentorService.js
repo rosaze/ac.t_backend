@@ -1,5 +1,5 @@
 const Mentor = require('../models/Mentor');
-const User = require('../models/User');
+const User = require('../models/user');
 const ChatService = require('./ChatService');
 
 class MentorService {
