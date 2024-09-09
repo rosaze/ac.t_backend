@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
-const BadgeController = require('../controllers/BadgeController');
-
 const MyPageController = require('../controllers/MypageController');
 const authorize = require('../middleware/authorize');
 
@@ -28,9 +26,6 @@ router.delete(
   authorize,
   userController.removeCertificate
 ); //테스트 완료
-
-// 배지 삭제 라우트 추가
-router.delete('/users/:id/badge', authorize, BadgeController.removeBadge);
 
 //사용자 프로필 정보 반환 (프로필 클릭 시 팝업창)
 router.get('/profile/:id', authorize, userController.getUserProfile); //테스트 완료
