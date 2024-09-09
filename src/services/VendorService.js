@@ -6,6 +6,26 @@ const PostService = require('./PostService'); // 감정 분석 서비스를 가�
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 const ActivityRecommendationService = require('./activityRecommendationService');
 const locations = require('../utils/location');
+const User = require('../models/user');
+const activities = require('../utils/activity.json').activities;
+
+function safeStringify(obj, indent = 2) {
+  let cache = [];
+  const retVal = JSON.stringify(
+    obj,
+    (key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (cache.includes(value)) return '[Circular]';
+        cache.push(value);
+      }
+      if (value instanceof RegExp) return value.toString();
+      return value;
+    },
+    indent
+  );
+  cache = null;
+  return retVal;
+}
 
 //검색 기능 추가
 class VendorService {
@@ -115,44 +135,73 @@ class VendorService {
     return await Vendor.aggregate(pipeline).exec();
   }
 
-  // 특정 카테고리와 시군에 해당하는 장소(업체) 데이터를 가져오기
-  // 특정 카테고리와 시군에 해당하는 장소(업체) 데이터를 가져오기
   async getVendorsByCategoryAndRegion(
     category,
     region,
     userId,
     isCustomRecommendation
   ) {
-    // 맞춤형 추천이 활성화된 경우, 사용자 선호도 및 활동 기록 기반으로 장소 추천
-    if (isCustomRecommendation) {
-      // 사용자 선호도를 가져옴 (활동 기록 무시)
-      const recommendedActivities =
-        await ActivityRecommendationService.recommendActivitiesByPreference(
-          userId
+    try {
+      // 기본 검색 조건
+      let query = {
+        sigunguname: { $regex: new RegExp(region, 'i') },
+        $or: [
+          { category1: { $regex: new RegExp(category, 'i') } },
+          { category2: { $regex: new RegExp(category, 'i') } },
+          { category3: { $regex: new RegExp(category, 'i') } },
+          { contenttype: { $regex: new RegExp(category, 'i') } },
+        ],
+      };
+
+      if (isCustomRecommendation) {
+        const user = await User.findById(userId);
+        if (!user) throw new Error('User not found');
+
+        const userPreferences = user.preference;
+        console.log('User Preferences:', safeStringify(userPreferences));
+
+        // 사용자 선호도에 맞는 액티비티 필터링
+        const recommendedActivities = activities.filter(
+          (activity) =>
+            (activity.location === userPreferences.location ||
+              userPreferences.location === 'both') &&
+            (activity.environment === userPreferences.environment ||
+              userPreferences.environment === 'both') &&
+            (activity.group === userPreferences.group ||
+              userPreferences.group === 'both') &&
+            (activity.season === userPreferences.season ||
+              activity.season === 'both' ||
+              userPreferences.season === 'both')
         );
 
-      // 추천된 활동에 맞는 장소로 필터링
-      if (recommendedActivities.length > 0) {
-        return Vendor.find({
-          sigunguname: region,
-          contenttype: { $in: recommendedActivities.map((item) => item.name) }, // contenttype 필드를 추천된 활동명과 비교
-        }).exec();
+        const activityNames = recommendedActivities.map(
+          (activity) => activity.name
+        );
+
+        // 기존 쿼리와 선호도 기반 필터 조건 결합
+        query = {
+          ...query,
+          $and: [
+            {
+              $or: [
+                { category1: { $in: activityNames } },
+                { category2: { $in: activityNames } },
+                { category3: { $in: activityNames } },
+                { contenttype: { $in: activityNames } },
+              ],
+            },
+          ],
+        };
       }
 
-      // 추천된 활동이 없을 경우 빈 결과 반환
-      return [];
+      console.log('Query:', safeStringify(query));
+      const results = await Vendor.find(query).exec();
+      console.log('Results:', results.length);
+      return results;
+    } catch (error) {
+      console.error('Error in getVendorsByCategoryAndRegion:', error);
+      throw error;
     }
-
-    // 기본 검색 조건: 특정 카테고리와 시군에 해당하는 장소 검색
-    const query = {
-      sigunguname: region,
-      contenttype: category,
-    };
-
-    // 검색 기록 저장 (카테고리와 시군으로 검색한 경우)
-    await this.saveSearchHistory(userId, category, 'category_region');
-
-    return await Vendor.find(query).exec();
   }
 
   // 키워드를 통해 장소 검색 (토글 기능 적용)
