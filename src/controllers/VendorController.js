@@ -120,8 +120,8 @@ class VendorController {
   async getVendorsByCategoryAndRegion(req, res) {
     try {
       const { category, region } = req.query;
-      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인(토클)
       const userId = req.params.userId;
+      const isCustomRecommendation = req.query.custom === 'true';
 
       if (!category || !region) {
         return res
@@ -135,6 +135,8 @@ class VendorController {
         userId,
         isCustomRecommendation
       );
+
+      console.log('Vendors found:', vendors.length);
       res.status(200).json(vendors);
     } catch (err) {
       console.error('Error in getVendorsByCategoryAndRegion:', err.message);
