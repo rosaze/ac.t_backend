@@ -3,35 +3,60 @@ const User = require('../models/user');
 const ChatService = require('./ChatService');
 
 class MentorService {
-  async createMentorPost(data) {
-    const user = await User.findById(data.mentor).exec();
+  async createMentorPost(userId, mentorData) {
+    try {
+      if (!userId) {
+        console.error('userId is not defined');
+        throw new Error('userId is not defined');
+      }
 
-    if (!user || !user.isMentor) {
-      throw new Error('User is not eligible to be a mentor');
+      const user = await User.findById(userId);
+      if (!user) {
+        console.error(`User not found: ${userId}`);
+        throw new Error('User not found');
+      }
+
+      console.log(`User isMentor status: ${user.isMentor}`);
+      if (!user.isMentor) {
+        console.error(`User is not eligible to be a mentor: ${userId}`);
+        throw new Error('User is not eligible to be a mentor');
+      }
+
+      const newMentorPost = new Mentor({
+        mentor: userId,
+        title: mentorData.title,
+        description: mentorData.description,
+        locationTag: mentorData.locationTag,
+        activityTag: mentorData.activityTag,
+        date: mentorData.date,
+        price: mentorData.price,
+        maxMentees: mentorData.maxMentees,
+        currentMentees: 0,
+      });
+
+      await newMentorPost.save();
+      console.log(`Mentor post created successfully for user: ${userId}`);
+      return newMentorPost;
+    } catch (error) {
+      console.error(`Error in createMentorPost: ${error.message}`, error);
+      throw new Error(`Failed to create mentor post: ${error.message}`);
     }
-
-    const mentorPost = new Mentor(data);
-    return await mentorPost.save();
   }
 
-  async joinMentorChatRoom(mentorId, userId) {
-    // 멘토 게시글 가져오기
-    const mentorPost = await this.getMentorPostById(mentorId);
-    const creatorId = mentorPost.mentor; // 멘토 게시글 작성자를 채팅방 생성자로 지정
+  async joinMentorChatRoom(mentorPostId, userId) {
+    const mentorPost = await this.getMentorPostById(mentorPostId);
+    const creatorId = mentorPost.mentor;
 
-    // 채팅방이 이미 있는지 확인
-    let chatRoom = await ChatService.findChatRoomByMentorId(mentorId);
+    let chatRoom = await ChatService.findChatRoomByMentorId(mentorPostId);
     if (!chatRoom) {
-      // 채팅방이 없으면 새로 생성
       chatRoom = await ChatService.createChatRoom(
         `Mentor 채팅방`,
         [userId],
         creatorId,
         null,
-        mentorId
+        mentorPostId
       );
     } else {
-      // 이미 존재하는 채팅방에 유저 추가
       await ChatService.addUserToChatRoom(chatRoom._id, userId);
     }
 
@@ -56,7 +81,10 @@ class MentorService {
 
     return await Mentor.find(query)
       .sort(sortCriteria)
-      .populate('mentor')
+      .populate({
+        path: 'mentor',
+        select: 'email name certifications age gender preference -_id',
+      })
       .exec();
   }
 
@@ -70,6 +98,27 @@ class MentorService {
 
   async deleteMentorPost(id) {
     return await Mentor.findByIdAndDelete(id).exec();
+  }
+
+  async addMenteeToProgram(mentorPostId, menteeId) {
+    try {
+      const mentorPost = await Mentor.findById(mentorPostId);
+      if (!mentorPost) {
+        throw new Error('Mentor post not found');
+      }
+
+      if (mentorPost.currentMentees >= mentorPost.maxMentees) {
+        throw new Error('This mentor program is already full');
+      }
+
+      mentorPost.currentMentees += 1;
+      await mentorPost.save();
+
+      return mentorPost;
+    } catch (error) {
+      console.error(`Error in addMenteeToProgram: ${error.message}`, error);
+      throw error;
+    }
   }
 }
 
