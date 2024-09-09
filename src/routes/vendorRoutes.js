@@ -31,7 +31,7 @@ router.get(
   '/vendors/list/:userId',
   authorize,
   VendorController.getVendorsByCategoryAndRegion
-);
+); // 검토해보기
 
 // 찜 기능 라우트
 
