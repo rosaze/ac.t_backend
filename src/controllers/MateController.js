@@ -1,5 +1,6 @@
 const MateService = require('../services/MateService');
 const ChatService = require('../services/ChatService');
+const PreferenceService = require('../services/preferenceService');
 
 class MateController {
   async joinMateChatRoom(req, res) {
@@ -31,7 +32,7 @@ class MateController {
     try {
       const matePost = await MateService.createMatePost({
         ...req.body,
-        author: req.user._id, //현재 로그인된 사용자의 ID를 포함
+        author: req.user.id, //현재 로그인된 사용자의 ID를 포함
       });
       res.status(201).json(matePost);
     } catch (err) {
@@ -49,7 +50,7 @@ class MateController {
         personal_preferences: req.query.personal_preferences,
       };
       const matePosts = await MateService.getMatePosts(filters);
-      res.status(200).json(matePosts);
+      res.status(200).jsonc(matePosts);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -81,13 +82,24 @@ class MateController {
 
   async filterMatePostsByPreferences(req, res) {
     try {
-      const preferences = {
-        personal_preferences: req.query.personal_preferences,
-      };
+      // Log req.user to check if it exists
+      console.log('req.user:', req.user);
 
-      const matePosts = await MateService.filterMatePostsByPreferences(
-        preferences
+      // Check if user is authenticated
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+      }
+
+      const userId = req.user.id;
+
+      // Log userId
+      console.log('userId:', userId);
+
+      // Call MateService to filter based on user preferences
+      const matePosts = await MateService.filterMatePostsByUserPreferences(
+        userId
       );
+
       res.status(200).json(matePosts);
     } catch (err) {
       res.status(500).json({ message: err.message });

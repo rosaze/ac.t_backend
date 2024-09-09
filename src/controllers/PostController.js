@@ -3,6 +3,7 @@ const ActivityMapService = require('../services/activityMapService');
 const SearchHistoryService = require('../services/SearchHistoryService');
 const User = require('../models/User'); // User 모델 경로에 맞게 조정하세요
 const Post = require('../models/Posts'); // 경로는 실제 Post 모델의 위치에 맞게 조정
+const BadgeService = require('../services/badgeService');
 
 class PostController {
   async createPost(req, res) {
@@ -14,11 +15,11 @@ class PostController {
         return res.status(404).json({ message: 'User not found' });
       }
       const post = await PostService.createPost(req.body);
-      console.log('Post created:', post);
+      console.log('Post created:');
 
       await ActivityMapService.addActivityMap({
         user: req.body.author,
-        post: post._id,
+        post: post.id,
         region: req.body.locationTag,
         activity_date: new Date(),
         hashtags: [
@@ -27,7 +28,10 @@ class PostController {
           req.body.vendorTag,
         ],
       });
-      console.log('Activity map updated for post:', post._id);
+      // 3. 새롭게 추가된 부분: 날씨 데이터를 저장
+      await PostService.saveWeatherDataAndActivity(req.body, post.id);
+
+      console.log('Activity map updated for post:', post.id);
       res.status(201).json(post);
     } catch (err) {
       console.error('Error in createPost:', err.message);

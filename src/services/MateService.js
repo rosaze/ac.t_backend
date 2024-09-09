@@ -1,8 +1,9 @@
 //메이트 게시글 CRUD 처리
 const Mate = require('../models/Mate');
 const User = require('../models/User');
+const PreferenceService = require('./preferenceService');
 
-//새로운 메이트 게시글 생성할 떄, User모델에서 해당 사용자의 선호도 정보를 가져와 이를 Mate모델에 포함시킴
+//새로운 메이트 게시글 생성할 때, User모델에서 해당 사용자의 선호도 정보를 가져와 이를 Mate모델에 포함시킴
 class MateService {
   async createMatePost(data) {
     const mate = new Mate(data);
@@ -34,7 +35,32 @@ class MateService {
       .populate('author participants')
       .exec();
   }
+  async filterMatePostsByLocation(locationTag) {
+    return await Mate.find({ locationTag })
+      .populate('author participants')
+      .exec();
+  }
+  async filterMatePostsByUserPreferences(userId) {
+    // Use PreferenceService to get user preferences
+    const userPreferences = await PreferenceService.recommendPreferenceUpdate(
+      userId
+    );
 
+    // Build a query based on the user's preferences
+    const query = {};
+    if (userPreferences && userPreferences.recommendations.length > 0) {
+      query.personal_preferences = userPreferences.recommendations.join('_');
+    }
+
+    return await Mate.find(query).populate('author participants').exec();
+  }
+
+  async filterMatePostsByActivity(activityTag) {
+    // Use the activityTag to filter mate posts
+    return await Mate.find({ activityTag })
+      .populate('author participants')
+      .exec();
+  }
   async filterMatePostsByPreferences(preferences) {
     const query = {};
 

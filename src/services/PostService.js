@@ -2,11 +2,25 @@
 const Post = require('../models/Posts');
 const BadgeService = require('./badgeService');
 const axios = require('axios');
+const UserActivity = require('../models/UserActivities');
+const ActivityMapService = require('./activityMapService'); // 경로 맞게 수정
+const { fetchWeatherData } = require('../services/weatherService'); // 올바르게 가져오기
+const WeatherService = require('./weatherService'); // WeatherService 사용
 
 require('dotenv').config();
 
 class PostService {
   async createPost(data) {
+    // 날씨 데이터 가져오기
+    // 이미 data에 nx, ny가 있다면 좌표 변환을 건너뜁니다.
+    if (!data.nx || !data.ny) {
+      const { nx, ny } = WeatherService.getCoordinates(data.locationTag);
+      data.nx = nx;
+      data.ny = ny;
+    }
+    const weatherData = await WeatherService.fetchWeatherData(data.nx, data.ny);
+    data.weather = weatherData; // 날씨 데이터를 포함
+    //게시물 생성
     const post = new Post(data);
     await post.save();
 
@@ -16,8 +30,71 @@ class PostService {
       await BadgeService.awardBadge(data.author, '아낌없이 주는 나무');
     }
 
+    // ActivityMapService로 활동 데이터를 저장할 때, activityTag 전달
+    await ActivityMapService.addActivityMap({
+      user: data.author,
+      post: post.id,
+      region: data.locationTag,
+      activity_date: new Date(data.date),
+      hashtags: [data.locationTag, data.activityTag, data.vendorTag],
+      activityTag: data.activityTag, // 필수 필드로 추가
+    });
+
     return post;
   }
+
+  // 새로운 메서드: 날씨 데이터를 가져오고 user_activities에 저장
+  async saveWeatherDataAndActivity(postData, postId) {
+    try {
+      // 1. 날씨 데이터를 가져옴
+      const weatherData = await WeatherService.fetchWeatherData(
+        postData.nx,
+        postData.ny,
+        postData.date
+      );
+
+      // 2. Post 모델에 날씨 데이터를 추가로 업데이트
+      await Post.findByIdAndUpdate(postId, { weather: weatherData });
+
+      // 3. user_activities 컬렉션에 날씨와 함께 사용자 활동을 저장
+      const userActivity = new UserActivity({
+        postId,
+        title: postData.title,
+        content: postData.content,
+        location: postData.locationTag,
+        date: postData.date,
+        weather: weatherData, // 날씨 데이터 저장
+        author: postData.author,
+        activityTag: postData.activityTag,
+        vendorTag: postData.vendorTag,
+      });
+
+      await userActivity.save();
+    } catch (error) {
+      console.error(
+        'Error saving weather data and user activity:',
+        error.message
+      );
+    }
+  }
+
+  // 날씨 데이터를 가져오는 메서드
+  async fetchWeatherData(nx, ny, date) {
+    try {
+      const response = await axios.get(
+        'http://example-weather-api.com/forecast',
+        {
+          params: { nx, ny, date },
+        }
+      );
+
+      return response.data; // 날씨 데이터 반환
+    } catch (error) {
+      console.error('Error fetching weather data:', error.message);
+      return null;
+    }
+  }
+
   //좋아요수로 내림차순
   async getTrendingPosts() {
     const trendingPosts = await Post.find() //모든게시물 중에서

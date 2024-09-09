@@ -11,16 +11,17 @@ const PostSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['review', 'general'], // "review" or "general"
+      enum: ['review', 'general'], // 리뷰, 일반
       required: true,
     },
     hashtags: [{ type: String }],
     locationTag: { type: String, required: true },
     activityTag: { type: String, required: true },
     vendorTag: { type: String, required: true },
-    //해시태그 필수필드로 만듬
-    likes: { type: Number, default: 0 },
-    rating: { type: Number, min: 1, max: 5, required: false }, // 별점 추가 (optional)
+    nx: { type: Number, required: true },
+    ny: { type: Number, required: true },
+    date: { type: Date, required: true },
+    weather: Object, // 날씨 데이터를 저장할 필드
   },
   { timestamps: true }
 );
