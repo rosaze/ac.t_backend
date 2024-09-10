@@ -41,6 +41,8 @@ class UserService {
         institution: certificateData.institution,
         title: certificateData.title,
       });
+      // 멘토 자격 부여 로직 추가: 자격증을 등록하면 자동으로 멘토 자격을 부여
+      user.isMentor = true;
 
       await user.save(); // 저장
       return user.certificates[user.certificates.length - 1]; // 추가된 자격증 반환

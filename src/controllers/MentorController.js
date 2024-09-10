@@ -3,27 +3,26 @@ const MentorService = require('../services/MentorService');
 class MentorController {
   async createMentorPost(req, res) {
     try {
-      const mentorPost = await MentorService.createMentorPost({
-        ...req.body,
-        mentor: req.user._id,
+      const userId = req.user._id || req.user.id;
+      console.log(`Creating mentor post for user: ${userId}`);
+
+      const newMentorPost = await MentorService.createMentorPost(
+        userId,
+        req.body
+      );
+      res.status(201).json(newMentorPost);
+    } catch (error) {
+      console.error(
+        `Error in MentorController.createMentorPost: ${error.message}`,
+        error
+      );
+      res.status(500).json({
+        message: 'Failed to create mentor post',
+        error: error.message,
       });
-      res.status(201).json(mentorPost);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
     }
   }
 
-  async joinMentorChatRoom(req, res) {
-    try {
-      const { mentorId, userId } = req.body;
-
-      // 멘토 채팅방 참여
-      const chatRoom = await MentorService.joinMentorChatRoom(mentorId, userId);
-      res.status(200).json({ chatRoomId: chatRoom._id });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
   async getMentorPosts(req, res) {
     try {
       const filters = {
@@ -50,10 +49,51 @@ class MentorController {
 
   async deleteMentorPost(req, res) {
     try {
-      await MentorService.deleteMentorPost(req.params.id);
-      res.status(200).json({ message: 'Mentor post deleted' });
+      const deletedPost = await MentorService.deleteMentorPost(req.params.id);
+      if (deletedPost) {
+        res
+          .status(200)
+          .json({
+            message: 'Mentor post and related chat room deleted successfully',
+          });
+      } else {
+        res.status(404).json({ message: 'Mentor post not found' });
+      }
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error('Error in deleteMentorPost:', err);
+      res
+        .status(500)
+        .json({ message: 'Failed to delete mentor post', error: err.message });
+    }
+  }
+
+  async joinMentorProgram(req, res) {
+    try {
+      const { mentorPostId } = req.params;
+      const menteeId = req.user._id;
+
+      // 멘토 프로그램에 멘티 추가
+      const updatedMentorPost = await MentorService.addMenteeToProgram(
+        mentorPostId,
+        menteeId
+      );
+
+      // 채팅방에 멘티 추가
+      const chatRoom = await MentorService.joinMentorChatRoom(
+        mentorPostId,
+        menteeId
+      );
+
+      res.status(200).json({
+        mentorPost: updatedMentorPost,
+        chatRoomId: chatRoom._id,
+      });
+    } catch (error) {
+      console.error(`Error in joinMentorProgram: ${error.message}`, error);
+      res.status(500).json({
+        message: 'Failed to join mentor program and chat room',
+        error: error.message,
+      });
     }
   }
 }
