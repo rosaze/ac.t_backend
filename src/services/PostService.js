@@ -19,7 +19,7 @@ class PostService {
     console.log('Post data saved:', post); // 게시물 전체 데이터 출력
 
     // 게시글 작성 시 배지 지급(지금 이 부분 오류남 )
-    // await BadgeService.awardBadgeForPost(userId);
+    await BadgeService.awardBadgeForPost(userId);
 
     return post;
   }

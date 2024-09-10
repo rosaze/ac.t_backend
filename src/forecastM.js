@@ -1,5 +1,7 @@
 const axios = require('axios');
 const forecastMiddle = require('./models/forecastMiddle');
+const schedule = require('node-schedule'); // for scheduling
+
 require('dotenv').config();
 
 // 환경 변수에서 서비스 키 로드
@@ -136,5 +138,15 @@ async function fetchAndSaveForecasts() {
   await Promise.all(savePromises); // 모든 요청이 완료될 때까지 대기
   console.log('Weather data has been saved/updated in MongoDB.');
 }
+// Schedule the job to run at midnight every day
+schedule.scheduleJob('0 0 * * *', async () => {
+  console.log('Scheduled job: Fetching and saving weather data...');
+  try {
+    await fetchAndSaveForecasts();
+    console.log('Weather data saved successfully.');
+  } catch (error) {
+    console.error('Error in scheduled job:', error);
+  }
+});
 
 module.exports = fetchAndSaveForecasts;

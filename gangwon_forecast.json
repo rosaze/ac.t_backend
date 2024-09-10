@@ -4,87 +4,87 @@
     "temperature": [
       {
         "day": 3,
-        "min": 16,
+        "min": 19,
         "max": 24
       },
       {
         "day": 4,
-        "min": 17,
-        "max": 24
+        "min": 18,
+        "max": 22
       },
       {
         "day": 5,
         "min": 17,
-        "max": 25
+        "max": 24
       },
       {
         "day": 6,
-        "min": 17,
-        "max": 27
+        "min": 18,
+        "max": 25
       },
       {
         "day": 7,
-        "min": 18,
+        "min": 19,
         "max": 26
       },
       {
         "day": 8,
-        "min": 17,
-        "max": 23
-      },
-      {
-        "day": 9,
-        "min": 17,
+        "min": 18,
         "max": 22
       },
       {
+        "day": 9,
+        "min": 15,
+        "max": 21
+      },
+      {
         "day": 10,
-        "min": 13,
-        "max": 19
+        "min": 12,
+        "max": 20
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -108,27 +108,27 @@
     "temperature": [
       {
         "day": 3,
-        "min": 18,
-        "max": 25
+        "min": 20,
+        "max": 27
       },
       {
         "day": 4,
-        "min": 18,
+        "min": 20,
         "max": 26
       },
       {
         "day": 5,
-        "min": 18,
-        "max": 26
+        "min": 19,
+        "max": 27
       },
       {
         "day": 6,
-        "min": 18,
-        "max": 29
+        "min": 19,
+        "max": 27
       },
       {
         "day": 7,
-        "min": 18,
+        "min": 20,
         "max": 28
       },
       {
@@ -138,57 +138,57 @@
       },
       {
         "day": 9,
-        "min": 18,
-        "max": 25
+        "min": 17,
+        "max": 24
       },
       {
         "day": 10,
-        "min": 15,
-        "max": 20
+        "min": 14,
+        "max": 22
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -212,87 +212,87 @@
     "temperature": [
       {
         "day": 3,
-        "min": 21,
-        "max": 27
-      },
-      {
-        "day": 4,
-        "min": 22,
-        "max": 27
-      },
-      {
-        "day": 5,
-        "min": 22,
-        "max": 28
-      },
-      {
-        "day": 6,
-        "min": 23,
-        "max": 30
-      },
-      {
-        "day": 7,
         "min": 24,
         "max": 27
       },
       {
-        "day": 8,
+        "day": 4,
+        "min": 21,
+        "max": 26
+      },
+      {
+        "day": 5,
+        "min": 21,
+        "max": 26
+      },
+      {
+        "day": 6,
         "min": 22,
         "max": 27
       },
       {
+        "day": 7,
+        "min": 24,
+        "max": 29
+      },
+      {
+        "day": 8,
+        "min": 23,
+        "max": 26
+      },
+      {
         "day": 9,
-        "min": 21,
+        "min": 20,
         "max": 25
       },
       {
         "day": 10,
-        "min": 18,
-        "max": 25
+        "min": 17,
+        "max": 24
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -312,33 +312,33 @@
     "seaForecast": [
       {
         "day": 3,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 4,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 5,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 6,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 7,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 8,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 9,
@@ -347,8 +347,8 @@
       },
       {
         "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
+        "morning": "구름많음",
+        "evening": "구름많음"
       }
     ]
   },
@@ -357,87 +357,87 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
+        "min": 23,
         "max": 27
       },
       {
         "day": 4,
         "min": 20,
-        "max": 27
+        "max": 24
       },
       {
         "day": 5,
         "min": 21,
-        "max": 28
+        "max": 25
       },
       {
         "day": 6,
         "min": 21,
-        "max": 30
+        "max": 27
       },
       {
         "day": 7,
-        "min": 22,
-        "max": 26
+        "min": 23,
+        "max": 30
       },
       {
         "day": 8,
-        "min": 20,
+        "min": 21,
         "max": 25
       },
       {
         "day": 9,
-        "min": 20,
+        "min": 18,
         "max": 24
       },
       {
         "day": 10,
-        "min": 17,
+        "min": 16,
         "max": 23
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -457,33 +457,33 @@
     "seaForecast": [
       {
         "day": 3,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 4,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 5,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 6,
-        "morning": "맑음",
-        "evening": "맑음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 7,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 8,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 9,
@@ -492,8 +492,8 @@
       },
       {
         "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
+        "morning": "구름많음",
+        "evening": "구름많음"
       }
     ]
   },
@@ -502,168 +502,23 @@
     "temperature": [
       {
         "day": 3,
-        "min": 21,
-        "max": 27
-      },
-      {
-        "day": 4,
-        "min": 21,
-        "max": 27
-      },
-      {
-        "day": 5,
-        "min": 21,
-        "max": 28
-      },
-      {
-        "day": 6,
-        "min": 22,
-        "max": 30
-      },
-      {
-        "day": 7,
         "min": 23,
-        "max": 27
-      },
-      {
-        "day": 8,
-        "min": 21,
         "max": 26
       },
       {
-        "day": 9,
+        "day": 4,
         "min": 21,
         "max": 25
       },
       {
-        "day": 10,
-        "min": 18,
-        "max": 22
-      }
-    ],
-    "landForecast": [
-      {
-        "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
-        "evening": "흐리고 비",
-        "rainMorning": 20,
-        "rainEvening": 70
-      },
-      {
-        "day": 8,
-        "morning": "흐리고 비",
-        "evening": "흐리고 비",
-        "rainMorning": 70,
-        "rainEvening": 70
-      },
-      {
-        "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
-      },
-      {
-        "day": 10,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
-      }
-    ],
-    "seaForecast": [
-      {
-        "day": 3,
-        "morning": "맑음",
-        "evening": "맑음"
-      },
-      {
-        "day": 4,
-        "morning": "맑음",
-        "evening": "맑음"
-      },
-      {
-        "day": 5,
-        "morning": "맑음",
-        "evening": "맑음"
-      },
-      {
-        "day": 6,
-        "morning": "맑음",
-        "evening": "맑음"
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
-        "evening": "구름많음"
-      },
-      {
-        "day": 8,
-        "morning": "구름많음",
-        "evening": "구름많음"
-      },
-      {
-        "day": 9,
-        "morning": "흐림",
-        "evening": "흐림"
-      },
-      {
-        "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
-      }
-    ]
-  },
-  {
-    "city": "강릉",
-    "temperature": [
-      {
-        "day": 3,
         "min": 21,
-        "max": 27
-      },
-      {
-        "day": 4,
-        "min": 22,
-        "max": 28
-      },
-      {
-        "day": 5,
-        "min": 22,
-        "max": 29
+        "max": 26
       },
       {
         "day": 6,
-        "min": 23,
-        "max": 31
+        "min": 22,
+        "max": 27
       },
       {
         "day": 7,
@@ -672,62 +527,62 @@
       },
       {
         "day": 8,
-        "min": 22,
-        "max": 26
+        "min": 21,
+        "max": 23
       },
       {
         "day": 9,
-        "min": 22,
-        "max": 25
+        "min": 19,
+        "max": 24
       },
       {
         "day": 10,
-        "min": 20,
-        "max": 26
+        "min": 15,
+        "max": 23
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -747,28 +602,173 @@
     "seaForecast": [
       {
         "day": 3,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 7,
         "morning": "흐림",
+        "evening": "흐림"
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림"
+      },
+      {
+        "day": 9,
+        "morning": "흐림",
+        "evening": "흐림"
+      },
+      {
+        "day": 10,
+        "morning": "구름많음",
+        "evening": "구름많음"
+      }
+    ]
+  },
+  {
+    "city": "강릉",
+    "temperature": [
+      {
+        "day": 3,
+        "min": 24,
+        "max": 29
+      },
+      {
+        "day": 4,
+        "min": 22,
+        "max": 27
+      },
+      {
+        "day": 5,
+        "min": 21,
+        "max": 28
+      },
+      {
+        "day": 6,
+        "min": 23,
+        "max": 28
+      },
+      {
+        "day": 7,
+        "min": 24,
+        "max": 30
+      },
+      {
+        "day": 8,
+        "min": 23,
+        "max": 26
+      },
+      {
+        "day": 9,
+        "min": 20,
+        "max": 26
+      },
+      {
+        "day": 10,
+        "min": 18,
+        "max": 25
+      }
+    ],
+    "landForecast": [
+      {
+        "day": 3,
+        "morning": "흐리고 비",
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
+      },
+      {
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
+        "morning": "흐리고 비",
+        "evening": "흐리고 비",
+        "rainMorning": 70,
+        "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 9,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 10,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      }
+    ],
+    "seaForecast": [
+      {
+        "day": 3,
+        "morning": "흐리고 비",
         "evening": "흐리고 비"
+      },
+      {
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비"
+      },
+      {
+        "day": 5,
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림"
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 8,
@@ -782,8 +782,8 @@
       },
       {
         "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
+        "morning": "구름많음",
+        "evening": "구름많음"
       }
     ]
   },
@@ -792,87 +792,87 @@
     "temperature": [
       {
         "day": 3,
-        "min": 21,
-        "max": 27
+        "min": 24,
+        "max": 28
       },
       {
         "day": 4,
-        "min": 22,
-        "max": 28
+        "min": 23,
+        "max": 27
       },
       {
         "day": 5,
         "min": 22,
-        "max": 29
+        "max": 28
       },
       {
         "day": 6,
-        "min": 22,
-        "max": 30
+        "min": 23,
+        "max": 28
       },
       {
         "day": 7,
-        "min": 23,
-        "max": 29
+        "min": 24,
+        "max": 30
       },
       {
         "day": 8,
-        "min": 22,
-        "max": 27
-      },
-      {
-        "day": 9,
-        "min": 22,
+        "min": 23,
         "max": 26
       },
       {
-        "day": 10,
+        "day": 9,
         "min": 20,
+        "max": 25
+      },
+      {
+        "day": 10,
+        "min": 17,
         "max": 24
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -892,28 +892,28 @@
     "seaForecast": [
       {
         "day": 3,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐리고 비"
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 7,
         "morning": "흐림",
-        "evening": "흐리고 비"
+        "evening": "흐림"
       },
       {
         "day": 8,
@@ -927,8 +927,8 @@
       },
       {
         "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
+        "morning": "구름많음",
+        "evening": "구름많음"
       }
     ]
   },
@@ -937,87 +937,87 @@
     "temperature": [
       {
         "day": 3,
-        "min": 22,
-        "max": 28
+        "min": 24,
+        "max": 29
       },
       {
         "day": 4,
         "min": 23,
-        "max": 28
+        "max": 27
       },
       {
         "day": 5,
-        "min": 22,
-        "max": 29
+        "min": 23,
+        "max": 28
       },
       {
         "day": 6,
-        "min": 23,
-        "max": 31
+        "min": 22,
+        "max": 29
       },
       {
         "day": 7,
-        "min": 22,
-        "max": 29
+        "min": 24,
+        "max": 30
       },
       {
         "day": 8,
-        "min": 22,
-        "max": 29
-      },
-      {
-        "day": 9,
         "min": 23,
         "max": 27
       },
       {
+        "day": 9,
+        "min": 21,
+        "max": 26
+      },
+      {
         "day": 10,
-        "min": 19,
+        "min": 17,
         "max": 24
       }
     ],
     "landForecast": [
       {
         "day": 3,
-        "morning": "구름많고 비",
-        "evening": "구름많음",
-        "rainMorning": 80,
-        "rainEvening": 30
-      },
-      {
-        "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 40,
-        "rainEvening": 30
-      },
-      {
-        "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 30,
-        "rainEvening": 20
-      },
-      {
-        "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
-      },
-      {
-        "day": 7,
-        "morning": "구름많음",
+        "morning": "흐리고 비",
         "evening": "흐리고 비",
-        "rainMorning": 20,
+        "rainMorning": 60,
         "rainEvening": 70
       },
       {
-        "day": 8,
+        "day": 4,
+        "morning": "흐림",
+        "evening": "흐리고 비",
+        "rainMorning": 40,
+        "rainEvening": 70
+      },
+      {
+        "day": 5,
         "morning": "흐리고 비",
         "evening": "흐리고 비",
         "rainMorning": 70,
         "rainEvening": 70
+      },
+      {
+        "day": 6,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 7,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
+      },
+      {
+        "day": 8,
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 9,
@@ -1037,28 +1037,28 @@
     "seaForecast": [
       {
         "day": 3,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐리고 비"
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐리고 비",
+        "evening": "흐리고 비"
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음"
+        "morning": "흐림",
+        "evening": "흐림"
       },
       {
         "day": 7,
         "morning": "흐림",
-        "evening": "흐리고 비"
+        "evening": "흐림"
       },
       {
         "day": 8,
@@ -1072,8 +1072,8 @@
       },
       {
         "day": 10,
-        "morning": "흐림",
-        "evening": "흐림"
+        "morning": "구름많음",
+        "evening": "구름많음"
       }
     ]
   },
@@ -1082,23 +1082,23 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
-        "max": 29
+        "min": 23,
+        "max": 27
       },
       {
         "day": 4,
-        "min": 20,
-        "max": 31
+        "min": 21,
+        "max": 28
       },
       {
         "day": 5,
-        "min": 20,
-        "max": 31
+        "min": 21,
+        "max": 30
       },
       {
         "day": 6,
         "min": 21,
-        "max": 31
+        "max": 30
       },
       {
         "day": 7,
@@ -1107,54 +1107,54 @@
       },
       {
         "day": 8,
-        "min": 20,
+        "min": 21,
         "max": 28
       },
       {
         "day": 9,
-        "min": 19,
-        "max": 28
+        "min": 18,
+        "max": 26
       },
       {
         "day": 10,
-        "min": 18,
-        "max": 27
+        "min": 15,
+        "max": 26
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1166,10 +1166,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1186,18 +1186,18 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
-        "max": 29
+        "min": 23,
+        "max": 27
       },
       {
         "day": 4,
-        "min": 20,
-        "max": 30
+        "min": 21,
+        "max": 28
       },
       {
         "day": 5,
-        "min": 20,
-        "max": 31
+        "min": 21,
+        "max": 30
       },
       {
         "day": 6,
@@ -1206,59 +1206,59 @@
       },
       {
         "day": 7,
-        "min": 21,
-        "max": 31
+        "min": 22,
+        "max": 30
       },
       {
         "day": 8,
-        "min": 20,
+        "min": 21,
         "max": 28
       },
       {
         "day": 9,
-        "min": 20,
-        "max": 27
+        "min": 18,
+        "max": 26
       },
       {
         "day": 10,
-        "min": 17,
-        "max": 26
+        "min": 15,
+        "max": 25
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1270,10 +1270,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1290,42 +1290,42 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
-        "max": 29
+        "min": 22,
+        "max": 27
       },
       {
         "day": 4,
         "min": 20,
-        "max": 30
+        "max": 27
       },
       {
         "day": 5,
-        "min": 20,
-        "max": 30
-      },
-      {
-        "day": 6,
-        "min": 21,
-        "max": 31
-      },
-      {
-        "day": 7,
         "min": 21,
         "max": 29
       },
       {
+        "day": 6,
+        "min": 21,
+        "max": 30
+      },
+      {
+        "day": 7,
+        "min": 22,
+        "max": 29
+      },
+      {
         "day": 8,
-        "min": 20,
+        "min": 21,
         "max": 27
       },
       {
         "day": 9,
-        "min": 19,
+        "min": 18,
         "max": 26
       },
       {
         "day": 10,
-        "min": 17,
+        "min": 15,
         "max": 25
       }
     ],
@@ -1333,36 +1333,36 @@
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1374,10 +1374,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1394,38 +1394,38 @@
     "temperature": [
       {
         "day": 3,
-        "min": 19,
-        "max": 29
+        "min": 22,
+        "max": 27
       },
       {
         "day": 4,
         "min": 20,
-        "max": 31
+        "max": 27
       },
       {
         "day": 5,
         "min": 20,
-        "max": 31
+        "max": 30
       },
       {
         "day": 6,
         "min": 20,
-        "max": 30
+        "max": 31
       },
       {
         "day": 7,
-        "min": 21,
-        "max": 30
+        "min": 22,
+        "max": 29
       },
       {
         "day": 8,
-        "min": 20,
+        "min": 21,
         "max": 28
       },
       {
         "day": 9,
-        "min": 20,
-        "max": 27
+        "min": 18,
+        "max": 26
       },
       {
         "day": 10,
@@ -1437,36 +1437,36 @@
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1478,10 +1478,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1498,23 +1498,23 @@
     "temperature": [
       {
         "day": 3,
-        "min": 21,
-        "max": 30
+        "min": 23,
+        "max": 27
       },
       {
         "day": 4,
         "min": 21,
-        "max": 31
+        "max": 28
       },
       {
         "day": 5,
-        "min": 22,
-        "max": 31
+        "min": 21,
+        "max": 30
       },
       {
         "day": 6,
         "min": 22,
-        "max": 31
+        "max": 30
       },
       {
         "day": 7,
@@ -1528,49 +1528,49 @@
       },
       {
         "day": 9,
-        "min": 21,
-        "max": 28
+        "min": 19,
+        "max": 27
       },
       {
         "day": 10,
-        "min": 20,
-        "max": 28
+        "min": 17,
+        "max": 26
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1582,10 +1582,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1602,13 +1602,13 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
-        "max": 30
+        "min": 23,
+        "max": 28
       },
       {
         "day": 4,
-        "min": 21,
-        "max": 31
+        "min": 22,
+        "max": 29
       },
       {
         "day": 5,
@@ -1618,63 +1618,63 @@
       {
         "day": 6,
         "min": 21,
-        "max": 32
-      },
-      {
-        "day": 7,
-        "min": 22,
         "max": 31
       },
       {
+        "day": 7,
+        "min": 23,
+        "max": 30
+      },
+      {
         "day": 8,
-        "min": 21,
-        "max": 29
+        "min": 22,
+        "max": 28
       },
       {
         "day": 9,
-        "min": 20,
-        "max": 29
+        "min": 19,
+        "max": 28
       },
       {
         "day": 10,
-        "min": 20,
-        "max": 27
+        "min": 17,
+        "max": 28
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1686,10 +1686,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1706,13 +1706,13 @@
     "temperature": [
       {
         "day": 3,
-        "min": 22,
-        "max": 29
+        "min": 24,
+        "max": 30
       },
       {
         "day": 4,
         "min": 22,
-        "max": 31
+        "max": 29
       },
       {
         "day": 5,
@@ -1721,13 +1721,13 @@
       },
       {
         "day": 6,
-        "min": 22,
-        "max": 32
+        "min": 23,
+        "max": 31
       },
       {
         "day": 7,
-        "min": 23,
-        "max": 31
+        "min": 24,
+        "max": 30
       },
       {
         "day": 8,
@@ -1736,49 +1736,49 @@
       },
       {
         "day": 9,
-        "min": 21,
-        "max": 29
+        "min": 20,
+        "max": 28
       },
       {
         "day": 10,
-        "min": 20,
-        "max": 28
+        "min": 18,
+        "max": 26
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1790,10 +1790,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1810,13 +1810,13 @@
     "temperature": [
       {
         "day": 3,
-        "min": 21,
-        "max": 30
+        "min": 23,
+        "max": 28
       },
       {
         "day": 4,
-        "min": 21,
-        "max": 31
+        "min": 22,
+        "max": 30
       },
       {
         "day": 5,
@@ -1825,27 +1825,27 @@
       },
       {
         "day": 6,
-        "min": 21,
-        "max": 32
-      },
-      {
-        "day": 7,
         "min": 22,
         "max": 31
       },
       {
-        "day": 8,
-        "min": 22,
+        "day": 7,
+        "min": 23,
         "max": 30
       },
       {
-        "day": 9,
-        "min": 21,
+        "day": 8,
+        "min": 22,
         "max": 29
       },
       {
+        "day": 9,
+        "min": 19,
+        "max": 27
+      },
+      {
         "day": 10,
-        "min": 18,
+        "min": 17,
         "max": 27
       }
     ],
@@ -1853,36 +1853,36 @@
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1894,10 +1894,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -1914,28 +1914,28 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
+        "min": 22,
         "max": 29
       },
       {
         "day": 4,
-        "min": 20,
-        "max": 31
+        "min": 21,
+        "max": 30
       },
       {
         "day": 5,
-        "min": 20,
+        "min": 21,
         "max": 31
       },
       {
         "day": 6,
-        "min": 20,
+        "min": 22,
         "max": 31
       },
       {
         "day": 7,
-        "min": 21,
-        "max": 31
+        "min": 22,
+        "max": 30
       },
       {
         "day": 8,
@@ -1944,49 +1944,49 @@
       },
       {
         "day": 9,
-        "min": 20,
-        "max": 29
+        "min": 18,
+        "max": 27
       },
       {
         "day": 10,
-        "min": 18,
-        "max": 26
+        "min": 16,
+        "max": 27
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -1998,10 +1998,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -2018,79 +2018,79 @@
     "temperature": [
       {
         "day": 3,
-        "min": 19,
-        "max": 30
+        "min": 21,
+        "max": 29
       },
       {
         "day": 4,
-        "min": 20,
-        "max": 30
+        "min": 21,
+        "max": 29
       },
       {
         "day": 5,
-        "min": 20,
+        "min": 21,
         "max": 30
       },
       {
         "day": 6,
-        "min": 20,
-        "max": 31
-      },
-      {
-        "day": 7,
         "min": 21,
         "max": 30
       },
       {
-        "day": 8,
-        "min": 21,
-        "max": 28
+        "day": 7,
+        "min": 22,
+        "max": 30
       },
       {
-        "day": 9,
+        "day": 8,
         "min": 20,
         "max": 27
       },
       {
-        "day": 10,
+        "day": 9,
         "min": 18,
-        "max": 22
+        "max": 26
+      },
+      {
+        "day": 10,
+        "min": 15,
+        "max": 24
       }
     ],
     "landForecast": [
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -2102,10 +2102,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
@@ -2122,13 +2122,13 @@
     "temperature": [
       {
         "day": 3,
-        "min": 20,
-        "max": 29
+        "min": 22,
+        "max": 27
       },
       {
         "day": 4,
-        "min": 20,
-        "max": 30
+        "min": 21,
+        "max": 28
       },
       {
         "day": 5,
@@ -2137,27 +2137,27 @@
       },
       {
         "day": 6,
-        "min": 20,
-        "max": 31
+        "min": 21,
+        "max": 30
       },
       {
         "day": 7,
-        "min": 20,
+        "min": 22,
         "max": 30
       },
       {
         "day": 8,
         "min": 20,
-        "max": 29
+        "max": 28
       },
       {
         "day": 9,
-        "min": 20,
+        "min": 18,
         "max": 27
       },
       {
         "day": 10,
-        "min": 17,
+        "min": 15,
         "max": 25
       }
     ],
@@ -2165,36 +2165,36 @@
       {
         "day": 3,
         "morning": "흐리고 비",
-        "evening": "맑음",
-        "rainMorning": 90,
-        "rainEvening": 20
+        "evening": "흐리고 비",
+        "rainMorning": 60,
+        "rainEvening": 70
       },
       {
         "day": 4,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 5,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 6,
-        "morning": "구름많음",
-        "evening": "구름많음",
-        "rainMorning": 20,
-        "rainEvening": 20
+        "morning": "흐림",
+        "evening": "흐림",
+        "rainMorning": 40,
+        "rainEvening": 40
       },
       {
         "day": 7,
-        "morning": "구름많음",
+        "morning": "흐림",
         "evening": "흐림",
-        "rainMorning": 20,
+        "rainMorning": 40,
         "rainEvening": 40
       },
       {
@@ -2206,10 +2206,10 @@
       },
       {
         "day": 9,
-        "morning": "흐림",
-        "evening": "흐림",
-        "rainMorning": 40,
-        "rainEvening": 40
+        "morning": "맑음",
+        "evening": "맑음",
+        "rainMorning": 20,
+        "rainEvening": 20
       },
       {
         "day": 10,
