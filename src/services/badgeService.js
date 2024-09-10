@@ -1,5 +1,6 @@
 const User = require('../models/user'); // 유저 모델
 const Badge = require('../models/badge'); // 유저 모델
+const Post = require('../models/Posts');
 
 class BadgeService {
   // 배지 지급 (특정 기준 충족 시)
@@ -97,13 +98,37 @@ class BadgeService {
     }
   }
 
-  // 게시글 작성에 따른 배지 지급 (기본 로직)
+  //게시글 등록에 따른 배지 지급
   async awardBadgeForPost(userId) {
-    const user = await User.findById(userId);
-    const postCount = user.posts.length;
+    try {
+      const userPosts = await Post.countDocuments({ author: userId });
 
-    if (postCount >= 5) {
-      await this.awardBadge(userId, '아낌없이 주는 나무'); // 5번 이상 게시글 작성 시 배지 지급
+      // 게시글이 6개 이상이면 '아낌없이 주는 나무' 배지를 지급
+      if (userPosts >= 5) {
+        const hasBadge = await User.findOne({
+          _id: userId,
+          'badges.name': '아낌없이 주는 나무',
+        });
+
+        if (!hasBadge) {
+          await User.updateOne(
+            { _id: userId },
+            { $push: { badges: { name: '아낌없이 주는 나무' } } }
+          );
+          console.log(`'아낌없이 주는 나무' 배지 지급 완료: ${userId}`);
+        } else {
+          console.log(
+            `사용자 ${userId}는 이미 '아낌없이 주는 나무' 배지를 가지고 있습니다.`
+          );
+        }
+      } else {
+        console.log(
+          `게시글이 ${userPosts}개로 아직 배지 지급 조건에 도달하지 않았습니다.`
+        );
+      }
+    } catch (error) {
+      console.error('배지 지급 중 오류:', error.message);
+      throw new Error('배지 지급 실패');
     }
   }
 
