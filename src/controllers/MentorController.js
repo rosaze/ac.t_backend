@@ -49,10 +49,21 @@ class MentorController {
 
   async deleteMentorPost(req, res) {
     try {
-      await MentorService.deleteMentorPost(req.params.id);
-      res.status(200).json({ message: 'Mentor post deleted' });
+      const deletedPost = await MentorService.deleteMentorPost(req.params.id);
+      if (deletedPost) {
+        res
+          .status(200)
+          .json({
+            message: 'Mentor post and related chat room deleted successfully',
+          });
+      } else {
+        res.status(404).json({ message: 'Mentor post not found' });
+      }
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error('Error in deleteMentorPost:', err);
+      res
+        .status(500)
+        .json({ message: 'Failed to delete mentor post', error: err.message });
     }
   }
 

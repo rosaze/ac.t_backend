@@ -133,6 +133,11 @@ const userSchema = new mongoose.Schema({
     type: String, // refreshToken을 저장할 필드 추가
   },
 
+  isDeveloper: {
+    type: Boolean,
+    default: false,
+  },
+
   preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가
   badges: [userBadgeSchema], // 사용자 배지 필드 추가

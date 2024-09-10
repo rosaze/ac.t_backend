@@ -73,6 +73,18 @@ class ChatService {
       .sort({ createdAt: -1 }) // 최신 채팅방부터 정렬
       .exec();
   }
+
+  async deleteChatRoomByMentorId(mentorId, session) {
+    const result = await ChatRoom.deleteOne({ mentorId: mentorId }).session(
+      session
+    );
+    if (result.deletedCount === 0) {
+      console.log(`No chat room found for mentor post: ${mentorId}`);
+    } else {
+      console.log(`Deleted chat room for mentor post: ${mentorId}`);
+    }
+    return result;
+  }
 }
 
 module.exports = new ChatService();
