@@ -1,8 +1,17 @@
 const axios = require("axios");
-const fs = require("fs");
+const mongoose = require("mongoose");
+const schedule = require("node-schedule"); // Import node-schedule for scheduling the job
+
 require("dotenv").config(); // Load environment variables from .env file
 
-require("dotenv").config();
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 const serviceKey = process.env.SERVICE_KEY;
 const baseUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService";
@@ -29,6 +38,17 @@ const cities = [
   { name: "정선", code: "11D10502", region: "영서" },
   { name: "평창", code: "11D10503", region: "영서" },
 ];
+
+// Mongoose Schema for weather forecast
+const forecastSchema = new mongoose.Schema({
+  city: String,
+  temperature: Array,
+  landForecast: Array,
+  seaForecast: Array,
+  updatedAt: { type: Date, default: Date.now },
+});
+
+const Forecast = mongoose.model("Forecast", forecastSchema);
 
 // Get the latest available forecast time (either 06:00 or 18:00)
 function getLatestForecastTime() {
@@ -248,23 +268,24 @@ async function fetchAndSaveForecasts() {
       landForecast: landForecast,
       seaForecast: seaForecast.length > 0 ? seaForecast : null,
     };
+    // Save or update the forecast in MongoDB
+    await Forecast.findOneAndUpdate(
+      { city: city.name }, // Search by city name
+      cityData, // Data to insert/update
+      { upsert: true, new: true } // Insert if it doesn't exist, update if it does
+    );
 
     resultData.push(cityData);
   }
-
-  // Save the result data to a JSON file
-  fs.writeFile(
-    "gangwon_forecast.json",
-    JSON.stringify(resultData, null, 2),
-    (err) => {
-      if (err) {
-        console.error("Error saving the forecast data:", err);
-      } else {
-        console.log("Forecast data saved to gangwon_forecast.json");
-      }
-    }
-  );
+  console.log("Weather data has been saved to MongoDB.");
 }
-
-// Call the function to fetch and save forecasts
-fetchAndSaveForecasts();
+// Set up a scheduler to run the job every day at 12:00 AM (midnight)
+schedule.scheduleJob("0 0 * * *", async () => {
+  console.log("Scheduled job running: Fetching and saving weather data...");
+  try {
+    await fetchAndSaveForecasts();
+    console.log("Weather data updated successfully.");
+  } catch (error) {
+    console.error("Error during scheduled weather update:", error);
+  }
+});

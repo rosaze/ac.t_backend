@@ -30,8 +30,8 @@ const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
-//중기 날씨 테스트용 라우터 (나중에 삭제해도 O)
-const testRoutes = require("./src/routes/fcstMiddle");
+// Import the forecast scheduler to ensure it runs daily
+require("./forecastScheduler"); // This will trigger the scheduler to run every day at midnight
 
 const app = express();
 app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.
@@ -89,20 +89,6 @@ app.use("/api/mentor", mentorRoutes); //
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈 //테스트 완료
 app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원
 app.use("/api", accommodationRoutes); //숙박 라우트
-app.use(testRoutes); // Add this to include your test route
-
-/*
-// 중기예보Schedule to fetch and save weather data every day at midnight (00:00)
-schedule.scheduleJob("0 0 * * *", async () => {
-  console.log("Scheduled job: Fetching and saving weather data...");
-  try {
-    await fetchAndSaveForecasts();
-    console.log("Weather data saved successfully.");
-  } catch (error) {
-    console.error("Error in scheduled job:", error);
-  }
-});
-*/
 
 //socket.io 연결
 io.on("connection", (socket) => {

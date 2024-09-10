@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the weather schema
-const forecastMiddleSchema = new Schema({
+// Define the schema for the forecast data
+const forecastSchema = new Schema({
   city: String,
   temperature: [
     {
@@ -27,9 +27,8 @@ const forecastMiddleSchema = new Schema({
       evening: String,
     },
   ],
-  updatedAt: { type: Date, default: Date.now }, // Timestamp to track updates
+  updatedAt: { type: Date, default: Date.now }, // Timestamp for when the data was saved
 });
 
-// Create a Weather model
-
-module.exports = mongoose.model('forecastMiddle', forecastMiddleSchema);
+const Forecast = mongoose.model('Forecast', forecastSchema);
+module.exports = Forecast;
