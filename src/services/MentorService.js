@@ -97,7 +97,32 @@ class MentorService {
   }
 
   async deleteMentorPost(id) {
-    return await Mentor.findByIdAndDelete(id).exec();
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // 멘토 포스트 삭제
+      const deletedMentorPost = await Mentor.findByIdAndDelete(id).session(
+        session
+      );
+
+      if (!deletedMentorPost) {
+        throw new Error('Mentor post not found');
+      }
+
+      // 관련 채팅방 삭제
+      await ChatService.deleteChatRoomByMentorId(id, session);
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return deletedMentorPost;
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error('Error in deleteMentorPost:', error);
+      throw error;
+    }
   }
 
   async addMenteeToProgram(mentorPostId, menteeId) {
