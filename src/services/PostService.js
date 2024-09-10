@@ -1,41 +1,37 @@
 const Post = require('../models/Posts');
 const BadgeService = require('./badgeService');
 const UserActivity = require('../models/UserActivities');
-const ActivityMapService = require('./activityMapService'); // 경로 맞게 수정
-const WeatherService = require('./weatherService'); // WeatherService 사용
-
-const axios = require('axios');
-
-require('dotenv').config();
+const WeatherService = require('./weatherService');
 
 class PostService {
+  constructor(badgeService) {
+    this.badgeService = badgeService; // badgeService를 외부에서 주입받음
+  }
+
   async createPost(userId, data) {
-    // 날씨 데이터를 추가하지 않고, 순수하게 후기 관련 정보만 저장
-    const post = new Post(data);
+    try {
+      const post = new Post(data);
+      await post.save();
 
-    await post.save();
+      console.log('생성된 게시글 ID:', post._id);
+      console.log('저장된 게시글 데이터:', post);
 
-    console.log('Post created with ID:', post._id);
-    console.log('Post data saved:', post); // 게시물 전체 데이터 출력
+      // 게시글 작성 시 배지 지급
+      await this.badgeService.awardBadgeForPost(userId);
 
-    // 게시글 작성 시 배지 지급(지금 이 부분 오류남 )
-    // await BadgeService.awardBadgeForPost(userId);
-
-    return post;
+      return post;
+    } catch (error) {
+      console.error('게시글 저장 중 오류:', error.message);
+      throw new Error('게시글 생성 실패');
+    }
   }
-  catch(error) {
-    console.error('Error saving post:', error.message);
-    throw new Error('Post creation failed');
-  }
 
-  // 새로운 메서드: 날씨 데이터를 가져오고 user_activities에 저장
   async saveWeatherDataAndActivity(postData, postId) {
     try {
       const weatherData = await WeatherService.fetchWeatherData(
         postData.locationTag,
         postData.date
       );
-      // 날씨 데이터가 제대로 받아졌는지 확인
       if (!weatherData) {
         throw new Error('Failed to retrieve weather data');
       }
@@ -58,33 +54,10 @@ class PostService {
     }
   }
 
-  // 날씨 데이터를 가져오는 메서드
-  async fetchWeatherData(nx, ny, date) {
-    try {
-      const response = await axios.get(
-        'http://example-weather-api.com/forecast',
-        {
-          params: { nx, ny, date },
-        }
-      );
-
-      return response.data; // 날씨 데이터 반환
-    } catch (error) {
-      console.error('Error fetching weather data:', error.message);
-      return null;
-    }
-  }
-
-  //좋아요수로 내림차순
   async getTrendingPosts() {
-    const trendingPosts = await Post.find() // 모든 게시물 중에서
-      .sort({ likes: -1 }) // 좋아요 수 기준으로 내림차순 정렬
-      .limit(10)
-      .populate('author');
-    return trendingPosts;
+    return await Post.find().sort({ likes: -1 }).limit(10).populate('author');
   }
 
-  // 태그, 카테고리, 필터링 관련 메서드
   async getPostsByType(type) {
     return await Post.find({ type }).populate('author').exec();
   }
@@ -98,25 +71,18 @@ class PostService {
   }
 
   async getPostsSortedBy(option) {
-    let sortOption;
-    if (option === 'latest') {
-      sortOption = { createdAt: -1 }; // 최신순
-    } else if (option === 'likes') {
-      sortOption = { likes: -1 }; // 좋아요 순
-    }
-
+    const sortOption = option === 'latest' ? { createdAt: -1 } : { likes: -1 };
     return await Post.find({}).sort(sortOption).exec();
   }
 
   async searchPosts(keyword) {
-    const searchResults = await Post.find({
+    return await Post.find({
       $or: [
-        { hashtags: new RegExp(keyword, 'i') }, // 해시태그 배열에서 검색
-        { title: new RegExp(keyword, 'i') }, // 제목에서 검색
-        { content: new RegExp(keyword, 'i') }, // 본문에서 검색
+        { hashtags: new RegExp(keyword, 'i') },
+        { title: new RegExp(keyword, 'i') },
+        { content: new RegExp(keyword, 'i') },
       ],
     }).exec();
-    return searchResults;
   }
 
   async getPostById(id) {
@@ -132,4 +98,4 @@ class PostService {
   }
 }
 
-module.exports = new PostService();
+module.exports = PostService;

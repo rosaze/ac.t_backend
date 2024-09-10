@@ -132,10 +132,32 @@ class MentorService {
         throw new Error('Mentor post not found');
       }
 
+      // Check if mentee is already registered
+      const alreadyRegistered = mentorPost.mentees.some(
+        (mentee) => mentee.id.toString() === menteeId.toString()
+      );
+      if (alreadyRegistered) {
+        throw new Error('Mentee has already joined this mentor program');
+      }
+
+      // Check if the mentor program is full
       if (mentorPost.currentMentees >= mentorPost.maxMentees) {
         throw new Error('This mentor program is already full');
       }
 
+      // Get mentee details
+      const mentee = await User.findById(menteeId);
+      if (!mentee) {
+        throw new Error('Mentee not found');
+      }
+
+      // Add mentee details
+      mentorPost.mentees.push({
+        id: menteeId,
+        gender: mentee.gender,
+        age: mentee.age,
+        preferences: mentee.preferences,
+      });
       mentorPost.currentMentees += 1;
       await mentorPost.save();
 
