@@ -2,7 +2,6 @@ const Post = require('../models/Posts');
 const BadgeService = require('./badgeService');
 const UserActivity = require('../models/UserActivities');
 const ActivityMapService = require('./activityMapService'); // 경로 맞게 수정
-const { fetchWeatherData } = require('../services/weatherService'); // 올바르게 가져오기
 const WeatherService = require('./weatherService'); // WeatherService 사용
 
 const axios = require('axios');
@@ -10,53 +9,47 @@ const axios = require('axios');
 require('dotenv').config();
 
 class PostService {
-  async createPost(data) {
-    // 날씨 데이터 가져오기
-    // 이미 data에 nx, ny가 있다면 좌표 변환을 건너뜁니다.
-    if (!data.nx || !data.ny) {
-      const { nx, ny } = WeatherService.getCoordinates(data.locationTag);
-      data.nx = nx;
-      data.ny = ny;
-    }
-    const weatherData = await WeatherService.fetchWeatherData(data.nx, data.ny);
-    data.weather = weatherData; // 날씨 데이터를 포함
-    //게시물 생성
+  async createPost(userId, data) {
+    // 날씨 데이터를 추가하지 않고, 순수하게 후기 관련 정보만 저장
     const post = new Post(data);
+
     await post.save();
 
-    // 게시글 작성 시 배지 지급
-    await BadgeService.awardBadgeForPost(userId);
+    console.log('Post created with ID:', post._id);
+    console.log('Post data saved:', post); // 게시물 전체 데이터 출력
+
+    // 게시글 작성 시 배지 지급(지금 이 부분 오류남 )
+    // await BadgeService.awardBadgeForPost(userId);
 
     return post;
+  }
+  catch(error) {
+    console.error('Error saving post:', error.message);
+    throw new Error('Post creation failed');
   }
 
   // 새로운 메서드: 날씨 데이터를 가져오고 user_activities에 저장
   async saveWeatherDataAndActivity(postData, postId) {
     try {
-      // 1. 날씨 데이터를 가져옴
       const weatherData = await WeatherService.fetchWeatherData(
-        postData.nx,
-        postData.ny,
+        postData.locationTag,
         postData.date
       );
+      // 날씨 데이터가 제대로 받아졌는지 확인
+      if (!weatherData) {
+        throw new Error('Failed to retrieve weather data');
+      }
 
-      // 2. Post 모델에 날씨 데이터를 추가로 업데이트
-      await Post.findByIdAndUpdate(postId, { weather: weatherData });
-
-      // 3. user_activities 컬렉션에 날씨와 함께 사용자 활동을 저장
       const userActivity = new UserActivity({
         postId,
-        title: postData.title,
-        content: postData.content,
         location: postData.locationTag,
         date: postData.date,
-        weather: weatherData, // 날씨 데이터 저장
-        author: postData.author,
+        weather: weatherData,
         activityTag: postData.activityTag,
-        vendorTag: postData.vendorTag,
       });
 
       await userActivity.save();
+      console.log('User activity saved successfully:', userActivity);
     } catch (error) {
       console.error(
         'Error saving weather data and user activity:',

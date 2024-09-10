@@ -25,8 +25,6 @@ class MateController {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-
-    // 추가적인 Mate 관련 메서드들...
   }
   async createMatePost(req, res) {
     try {

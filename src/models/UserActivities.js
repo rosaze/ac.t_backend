@@ -7,20 +7,13 @@ const UserActivitySchema = new mongoose.Schema(
       ref: 'Posts',
       required: true,
     },
-    author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    title: { type: String, required: true },
-    content: { type: String, required: true },
     location: { type: String, required: true },
     activityTag: { type: String, required: true },
-    vendorTag: { type: String, required: true },
     date: { type: Date, required: true },
     weather: Object, // 날씨 데이터
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+  { collection: 'userActivities' }
+); // 명시적으로 컬렉션 이름 설정
 
 module.exports = mongoose.model('UserActivity', UserActivitySchema);

@@ -18,10 +18,8 @@ const PostSchema = new mongoose.Schema(
     locationTag: { type: String, required: true },
     activityTag: { type: String, required: true },
     vendorTag: { type: String, required: true },
-    nx: { type: Number, required: true },
-    ny: { type: Number, required: true },
     date: { type: Date, required: true },
-    weather: Object, // 날씨 데이터를 저장할 필드
+    //weather: Object, // 날씨 데이터를 저장할 필드
   },
   { timestamps: true }
 );

@@ -14,24 +14,35 @@ class PostController {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      const post = await PostService.createPost(req.body);
-      console.log('Post created:');
+      // **userId 정의**
+      const userId = req.user.id; // 토큰에서 가져온 userId
 
+      // 후기를 작성 (날씨 데이터는 포함하지 않음)
+      const post = await PostService.createPost(userId, req.body);
+      console.log('Post created:', post);
+
+      //await BadgeService.awardBadgeForPost(userId);
+
+      // 활동 맵을 업데이트 (예: 사용자 활동을 기록)
+
+      /*
       await ActivityMapService.addActivityMap({
         user: req.body.author,
         post: post.id,
         region: req.body.locationTag,
-        activity_date: new Date(),
+        activity_date: new Date(req.body.date),
         hashtags: [
           req.body.locationTag,
           req.body.activityTag,
           req.body.vendorTag,
         ],
       });
-      // 3. 새롭게 추가된 부분: 날씨 데이터를 저장
+
+      console.log('Activity map updated for post:', post.id);*/
+
+      // 날씨 데이터를 별도로 저장 (후기와 분리된 프로세스)
       await PostService.saveWeatherDataAndActivity(req.body, post.id);
 
-      console.log('Activity map updated for post:', post.id);
       res.status(201).json(post);
     } catch (err) {
       console.error('Error in createPost:', err.message);
