@@ -12,6 +12,21 @@ const MentorSchema = new mongoose.Schema({
   currentMentees: { type: Number, default: 0 }, // 현재 멘티 수
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  mentees: [
+    {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      gender: { type: String },
+      age: { type: Number },
+      preferences: {
+        location: String,
+        environment: String,
+        group: String,
+        season: String,
+      },
+    },
+  ],
+  currentMentees: { type: Number, default: 0 },
+  maxMentees: { type: Number },
 });
 
 module.exports = mongoose.model('Mentor', MentorSchema);

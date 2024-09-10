@@ -7,46 +7,27 @@ const BadgeService = require('../services/badgeService');
 
 class PostController {
   async createPost(req, res) {
-    console.log('createPost called with data:', req.body);
     try {
-      // 사용자 ID가 유효한지 확인
-      const user = await User.findById(req.body.author);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      // **userId 정의**
-      const userId = req.user.id; // 토큰에서 가져온 userId
+      const userId = req.user.id;
+      const postData = {
+        ...req.body,
+        author: userId, // 작성자 정보 설정
+      };
 
-      // 후기를 작성 (날씨 데이터는 포함하지 않음)
-      const post = await PostService.createPost(userId, req.body);
-      console.log('Post created:', post);
+      const post = new Post(postData);
+      await post.save();
 
-      //await BadgeService.awardBadgeForPost(userId);
+      console.log('생성된 게시글 ID:', post._id);
+      console.log('저장된 게시글 데이터:', post);
 
-      // 활동 맵을 업데이트 (예: 사용자 활동을 기록)
+      // 배지 지급
+      const badgeService = new BadgeService();
+      await badgeService.awardBadgeForPost(userId);
 
-      /*
-      await ActivityMapService.addActivityMap({
-        user: req.body.author,
-        post: post.id,
-        region: req.body.locationTag,
-        activity_date: new Date(req.body.date),
-        hashtags: [
-          req.body.locationTag,
-          req.body.activityTag,
-          req.body.vendorTag,
-        ],
-      });
-
-      console.log('Activity map updated for post:', post.id);*/
-
-      // 날씨 데이터를 별도로 저장 (후기와 분리된 프로세스)
-      await PostService.saveWeatherDataAndActivity(req.body, post.id);
-
-      res.status(201).json(post);
-    } catch (err) {
-      console.error('Error in createPost:', err.message);
-      res.status(500).json({ message: err.message });
+      return res.status(201).json(post);
+    } catch (error) {
+      console.error('게시글 저장 중 오류:', error.message);
+      return res.status(500).json({ message: '게시글 생성 실패' });
     }
   }
 

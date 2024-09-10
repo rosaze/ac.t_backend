@@ -11,5 +11,5 @@ router.post(
   '/mentors/:mentorPostId/join',
   authorize,
   MentorController.joinMentorProgram
-);
+); //중복 인원 처리 - 한번만 참가 가능하도록 수정, chatroom db에서 멘티 아이디 나오도록
 module.exports = router;
