@@ -74,7 +74,7 @@ async function fetchWeatherData(locationTag, date) {
   let weatherData = [];
 
   // 현재 기준으로 과거와 미래 모두 요청하도록 설정
-  for (let i = -1; i <= 1; i++) {
+  for (let i = -1; i <= 2; i++) {
     // 과거 1일 ~ 미래 2일간의 날씨 데이터 요청
     const targetDate = moment(date).add(i, 'days').format('YYYYMMDD');
     const baseTime = '0200'; // 발표 시간
