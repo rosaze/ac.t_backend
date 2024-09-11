@@ -28,7 +28,7 @@ class PostService {
 
   async saveWeatherDataAndActivity(postData, postId) {
     try {
-      const weatherData = await WeatherService.fetchWeatherData(
+      const weatherData = await WeatherService.fetchThreeDaysWeatherData(
         postData.locationTag,
         postData.date
       );
