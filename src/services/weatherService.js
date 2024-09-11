@@ -20,36 +20,40 @@ function getCoordinates(locationTag) {
   return { nx: location.nx, ny: location.ny };
 }
 
-// 3일간의 날씨 데이터를 가져오는 함수
+// 3일간의 날씨 데이터를 가져오는 함수 (현재, 내일, 모레)
 async function fetchThreeDaysWeatherData(locationTag, date) {
   const { nx, ny } = getCoordinates(locationTag); // locationTag로 좌표 변환
   const serviceKey = process.env.SHORT_WEATHER; // 기상청 API 키
 
   let weatherData = [];
 
-  // 현재 기준으로 과거와 미래 모두 요청하도록 설정
-  for (let i = 0; i <= 2; i++) {
-    // 과거 1일 ~ 미래 2일간의 날씨 데이터 요청
-    const targetDate = moment(date).add(i, 'days').format('YYYYMMDD');
-    const baseTime = '0500'; // 예보 기준 시간 (0500)
+  // 현재 날짜를 기준으로 API 호출
+  const baseDate = moment(date).format('YYYYMMDD');
+  const baseTime = '0200'; // 발표 시간
 
-    const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${serviceKey}&numOfRows=1000&pageNo=1&dataType=JSON&base_date=${targetDate}&base_time=${baseTime}&nx=${nx}&ny=${ny}`;
+  const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${serviceKey}&numOfRows=1000&pageNo=1&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=${nx}&ny=${ny}`;
 
-    try {
-      console.log(
-        `Fetching weather data for ${locationTag} (nx=${nx}, ny=${ny}, date=${targetDate})`
-      );
-      const response = await axios.get(url);
+  try {
+    console.log(
+      `Fetching weather data for ${locationTag} (nx=${nx}, ny=${ny}, base_date=${baseDate})`
+    );
+    const response = await axios.get(url);
 
-      if (!response.data.response.body || !response.data.response.body.items) {
-        console.error(
-          `No weather data found for ${locationTag} on ${targetDate}`
-        );
-        continue;
-      }
+    if (!response.data.response.body || !response.data.response.body.items) {
+      console.error(`No weather data found for ${locationTag} on ${baseDate}`);
+      return weatherData;
+    }
 
-      const items = response.data.response.body.items.item;
+    const items = response.data.response.body.items.item;
 
+    // 현재, 내일, 모레에 대한 날짜 생성
+    const targetDates = [
+      moment(date).format('YYYYMMDD'),
+      moment(date).add(1, 'days').format('YYYYMMDD'),
+      moment(date).add(2, 'days').format('YYYYMMDD'),
+    ];
+
+    targetDates.forEach((targetDate) => {
       let dailyWeatherData = {
         date: targetDate,
         temperature: null,
@@ -60,45 +64,58 @@ async function fetchThreeDaysWeatherData(locationTag, date) {
         windDirection: null,
       };
 
-      // 데이터를 분류하여 저장
       items.forEach((item) => {
-        switch (item.category) {
-          case 'TMP':
-            dailyWeatherData.temperature = item.fcstValue;
-            break;
-          case 'PTY':
-            dailyWeatherData.precipitationType = getPrecipitationType(
-              item.fcstValue
-            );
-            break;
-          case 'SKY':
-            dailyWeatherData.skyStatus = getSkyStatus(item.fcstValue);
-            break;
-          case 'REH':
-            dailyWeatherData.humidity = item.fcstValue;
-            break;
-          case 'WSD':
-            dailyWeatherData.windSpeed = item.fcstValue;
-            break;
-          case 'VEC':
-            dailyWeatherData.windDirection = getWindDirection(item.fcstValue);
-            break;
-          default:
-            break;
+        if (item.fcstDate === targetDate) {
+          switch (item.category) {
+            case 'TMP':
+              if (dailyWeatherData.temperature === null) {
+                dailyWeatherData.temperature = item.fcstValue;
+              }
+              break;
+            case 'PTY':
+              if (dailyWeatherData.precipitationType === null) {
+                dailyWeatherData.precipitationType = getPrecipitationType(
+                  item.fcstValue
+                );
+              }
+              break;
+            case 'SKY':
+              if (dailyWeatherData.skyStatus === null) {
+                dailyWeatherData.skyStatus = getSkyStatus(item.fcstValue);
+              }
+              break;
+            case 'REH':
+              if (dailyWeatherData.humidity === null) {
+                dailyWeatherData.humidity = item.fcstValue;
+              }
+              break;
+            case 'WSD':
+              if (dailyWeatherData.windSpeed === null) {
+                dailyWeatherData.windSpeed = item.fcstValue;
+              }
+              break;
+            case 'VEC':
+              if (dailyWeatherData.windDirection === null) {
+                dailyWeatherData.windDirection = getWindDirection(
+                  item.fcstValue
+                );
+              }
+              break;
+          }
         }
       });
 
       weatherData.push(dailyWeatherData);
       console.log(
-        `Weather data fetched successfully for ${locationTag} on ${targetDate}:`,
+        `Weather data processed for ${locationTag} on ${targetDate}:`,
         dailyWeatherData
       );
-    } catch (error) {
-      console.error(
-        `Error fetching weather data for ${locationTag} on ${targetDate}:`,
-        error.message
-      );
-    }
+    });
+  } catch (error) {
+    console.error(
+      `Error fetching weather data for ${locationTag}:`,
+      error.message
+    );
   }
 
   return weatherData;
