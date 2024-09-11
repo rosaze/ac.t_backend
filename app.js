@@ -29,6 +29,7 @@ const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 // Import the forecast scheduler to ensure it runs daily
 require("./forecastScheduler"); // This will trigger the scheduler to run every day at midnight
+require("./src/services/dailyShortWeatherService");
 
 const app = express();
 app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.

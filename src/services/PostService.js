@@ -63,23 +63,8 @@ class PostService {
 
       await userActivity.save();
       console.log('User activity saved successfully:', userActivity);
-
-      // 새로운 shortweatherData 컬렉션에 날씨 데이터 저장
-      const shortWeatherDataDoc = new ShortWeatherData({
-        locationTag: postData.locationTag,
-        date: postData.date,
-        weather: weatherData,
-      });
-      await shortWeatherDataDoc.save();
-      console.log(
-        'Short weather data saved successfully:',
-        shortWeatherDataDoc
-      );
     } catch (error) {
-      console.error(
-        'Error saving weather data and user activity:',
-        error.message
-      );
+      console.error('Error saving user activity:', error);
       throw error;
     }
   }
