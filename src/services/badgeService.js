@@ -98,7 +98,7 @@ class BadgeService {
     }
   }
 
-  //게시글 등록에 따른 배지 지급
+  // 게시글 등록에 따른 배지 지급
   async awardBadgeForPost(userId) {
     try {
       const userPosts = await Post.countDocuments({ author: userId });
@@ -107,13 +107,20 @@ class BadgeService {
       if (userPosts >= 5) {
         const hasBadge = await User.findOne({
           _id: userId,
-          'badges.name': '아낌없이 주는 나무',
+          'badges.badge': (
+            await Badge.findOne({ name: '아낌없이 주는 나무' })
+          )._id,
         });
 
         if (!hasBadge) {
+          const badge = await Badge.findOne({ name: '아낌없이 주는 나무' });
+          if (!badge) {
+            throw new Error("Badge '아낌없이 주는 나무' not found");
+          }
+
           await User.updateOne(
             { _id: userId },
-            { $push: { badges: { name: '아낌없이 주는 나무' } } }
+            { $push: { badges: { badge: badge._id, awarded_at: new Date() } } }
           );
           console.log(`'아낌없이 주는 나무' 배지 지급 완료: ${userId}`);
         } else {
