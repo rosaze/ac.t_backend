@@ -2,6 +2,7 @@ const Post = require('../models/Posts');
 const BadgeService = require('./badgeService');
 const UserActivity = require('../models/UserActivities');
 const WeatherService = require('./weatherService');
+const ShortWeatherData = require('../models/shortweatherData');
 
 class PostService {
   constructor(badgeService) {
@@ -36,6 +37,7 @@ class PostService {
         throw new Error('Failed to retrieve weather data');
       }
 
+      // UserActivity에 날씨 데이터 저장
       const userActivity = new UserActivity({
         postId,
         location: postData.locationTag,
@@ -46,11 +48,24 @@ class PostService {
 
       await userActivity.save();
       console.log('User activity saved successfully:', userActivity);
+
+      // 새로운 shortweatherData 컬렉션에 날씨 데이터 저장
+      const shortWeatherDataDoc = new ShortWeatherData({
+        locationTag: postData.locationTag,
+        date: postData.date,
+        weather: weatherData,
+      });
+      await shortWeatherDataDoc.save();
+      console.log(
+        'Short weather data saved successfully:',
+        shortWeatherDataDoc
+      );
     } catch (error) {
       console.error(
         'Error saving weather data and user activity:',
         error.message
       );
+      throw error;
     }
   }
 

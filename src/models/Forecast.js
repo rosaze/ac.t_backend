@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+//중기 날씨 저장
 // Define the schema for the forecast data
 const forecastSchema = new Schema({
   city: String,

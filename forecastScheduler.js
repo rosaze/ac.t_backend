@@ -1,7 +1,7 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
 const schedule = require("node-schedule"); // Import node-schedule for scheduling the job
-
+//중기 날씨 밤 12시마다 fetch 하는 코드
 require("dotenv").config(); // Load environment variables from .env file
 
 // MongoDB connection
