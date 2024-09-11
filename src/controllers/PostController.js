@@ -24,6 +24,11 @@ class PostController {
       const badgeService = new BadgeService();
       await badgeService.awardBadgeForPost(userId);
 
+      // PostService 인스턴스를 생성
+      const postService = new PostService(badgeService);
+      // 날씨 데이터를 별도로 저장 (후기와 분리된 프로세스)
+      await postService.saveWeatherDataAndActivity(req.body, post._id);
+
       return res.status(201).json(post);
     } catch (error) {
       console.error('게시글 저장 중 오류:', error.message);
