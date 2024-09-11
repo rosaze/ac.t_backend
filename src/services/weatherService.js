@@ -2,7 +2,7 @@ const axios = require('axios');
 const moment = require('moment');
 const dotenv = require('dotenv');
 const locationData = require('../utils/locationData'); // 위치 데이터 로드
-
+//단기날씨서비스
 dotenv.config();
 
 // 좌표 변환 함수 (locationTag를 기반으로 nx, ny 좌표를 찾음)
