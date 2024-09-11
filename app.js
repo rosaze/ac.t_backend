@@ -11,8 +11,6 @@ const socketIO = require("socket.io"); // 소켓 추가
 require("dotenv").config(); //에러 수정
 
 const passport = require("./src/passport/passport");
-const EmailService = require("./src/passport/EmailService");
-const DbConnection = require("./src/config/database");
 
 const usersRouter = require("./src/routes/userRoutes");
 const postRoutes = require("./src/routes/postRoutes");
@@ -25,7 +23,6 @@ const rentalRoutes = require("./src/routes/rentalRoutes");
 const paymentRoutes = require("./src/routes/paymentRoutes");
 const mateRoutes = require("./src/routes/mateRoutes");
 const mentorRoutes = require("./src/routes/MentorRoutes");
-const activityMapRoutes = require("./src/routes/mypageRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const accommodationRoutes = require("./src/routes/accommodationRoutes");
@@ -48,8 +45,6 @@ app.set("view engine", "html");
 // 서버 인스턴스 생성
 const server = http.createServer(app); // 추가
 const io = socketIO(server); // server 객체를 socket.io와 연결
-
-new DbConnection(); //몽구스를 통해 몽고디비에 연결
 
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));

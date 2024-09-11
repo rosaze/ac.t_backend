@@ -48,9 +48,17 @@ class BadgeService {
       (visit) => visit.region === region
     ).length;
 
+    console.log(
+      `Visit count for user ${userId} in region ${region}: ${visitCount}`
+    );
+
     if (visitCount >= 5) {
-      const badgeName = `${region} 매니아`; // 동적으로 장소 이름 포함
+      const badgeName = `${region} 매니아`;
       await this.awardBadge(userId, badgeName);
+    } else {
+      console.log(
+        `User ${userId} has not visited ${region} enough times. Visit count: ${visitCount}`
+      );
     }
   }
 

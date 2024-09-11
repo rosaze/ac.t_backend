@@ -4,32 +4,16 @@ const dotenv = require('dotenv');
 // Load environment variables from the .env file
 dotenv.config();
 
-class DbConnection {
-  constructor() {
-    this.connect();
-  }
+// MongoDB 연결 설정
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB 연결에 성공하였습니다.'))
+  .catch((error) => console.log('MongoDB 연결에 실패하였습니다.', error));
 
-  async connect() {
-    try {
-      const uri = process.env.MONGO_URI;
+const db = mongoose.connection;
 
-      // Check if the URI is defined
-      if (!uri) {
-        throw new Error(
-          'MONGO_URI is not defined. Please add it to your .env file.'
-        );
-      }
+// 에러 핸들링
+db.on('error', console.error.bind(console, 'connection error:'));
 
-      await mongoose.connect(uri);
-
-      console.log('MongoDB connected');
-    } catch (err) {
-      console.error(err.message);
-      process.exit(1);
-    }
-  }
-
-  // Additional database functions can be added here if necessary
-}
-
-module.exports = DbConnection;
+// MongoDB 연결 객체를 내보냅니다
+module.exports = db;

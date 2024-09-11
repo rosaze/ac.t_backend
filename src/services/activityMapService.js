@@ -17,6 +17,10 @@ class ActivityMapService {
       region: activityMapData.region,
     });
 
+    console.log(
+      `User ${activityMapData.user} visit count for region ${activityMapData.region}: ${visitCount}`
+    );
+
     // 특정 활동에 따른 활동 횟수 추적
     const activityCount = await ActivityMap.countDocuments({
       user: activityMapData.user,
