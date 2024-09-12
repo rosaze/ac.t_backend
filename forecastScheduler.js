@@ -18,7 +18,6 @@ const baseUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService";
 
 // Define region codes for 시군구 in 강원도
 const cities = [
-  { name: "대관령", code: "11D20201", region: "영동" },
   { name: "태백", code: "11D20301", region: "영동" },
   { name: "속초", code: "11D20401", region: "영동", seaRegion: "12C30000" }, // 동해북부
   { name: "고성", code: "11D20402", region: "영동", seaRegion: "12C30000" }, // 동해북부

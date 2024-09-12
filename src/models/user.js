@@ -138,6 +138,15 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
 
+  // activities 필드 추가
+  activities: [
+    {
+      name: { type: String, required: true }, // 활동명
+      date: { type: Date, default: Date.now }, // 활동 날짜
+      location: { type: String }, // 활동 장소 (선택사항)
+    },
+  ],
+
   preference: preferenceSchema, // 선호도 필드 추가
   certificates: [certificateSchema], // 자격증 필드 추가
   badges: [userBadgeSchema], // 사용자 배지 필드 추가
