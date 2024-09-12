@@ -1,77 +1,89 @@
 const User = require('../models/user'); // 유저 모델
 const Badge = require('../models/badge'); // 유저 모델
 const Post = require('../models/Posts');
+const ActivityMap = require('../models/activityMap'); // ActivityMap 모델 불러오기
 
 class BadgeService {
-  // 배지 지급 (특정 기준 충족 시)
+  // 실제 배지를 지급하는 함수
   async awardBadge(userId, badgeName) {
-    try {
-      const user = await User.findById(userId);
-      if (!user) throw new Error('User not found');
+    console.log(`Awarding badge: ${badgeName} to user ${userId}`);
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
 
-      let badge = await Badge.findOne({ name: badgeName });
-      if (!badge) {
-        badge = new Badge({
-          name: badgeName,
-          description: `Badge for ${badgeName}`,
-          icon_url: 'default_icon_url',
-        });
-        await badge.save();
-      }
+    let badge = await Badge.findOne({ name: badgeName });
+    if (!badge) {
+      badge = new Badge({
+        name: badgeName,
+        description: `Badge for ${badgeName}`,
+        icon_url: 'default_icon_url',
+      });
+      await badge.save();
+    }
 
-      const hasBadge = user.badges.some(
-        (userBadge) => userBadge.badge.toString() === badge._id.toString()
-      );
+    const hasBadge = user.badges.some(
+      (userBadge) => userBadge.badge.toString() === badge._id.toString()
+    );
 
-      if (!hasBadge) {
-        user.badges.push({
-          badge: badge._id,
-          awarded_at: new Date(),
-        });
-        await user.save();
-        console.log(`Awarded badge: ${badgeName} to user: ${userId}`);
-        return `Badge ${badgeName} awarded to user ${userId}`;
-      } else {
-        console.log(`User already has this badge: ${badgeName}`);
-        return 'User already has this badge';
-      }
-    } catch (error) {
-      console.error('Error awarding badge:', error.message);
-      throw new Error('Failed to award badge');
+    if (!hasBadge) {
+      user.badges.push({
+        badge: badge._id,
+        awarded_at: new Date(),
+      });
+      await user.save();
+      console.log(`Badge ${badgeName} successfully awarded to user ${userId}`);
+    } else {
+      console.log(`User already has this badge: ${badgeName}`);
     }
   }
 
-  // 시군 방문에 따른 배지 지급 (장소 이름 + 매니아)
+  // 시군 방문에 따른 배지 지급
   async awardBadgeForVisit(userId, region) {
-    const user = await User.findById(userId);
-    const visitCount = user.visits.filter(
-      (visit) => visit.region === region
-    ).length;
+    console.log(`사용자 ${userId}에게 ${region} 방문 배지 지급 호출됨`);
 
-    console.log(
-      `Visit count for user ${userId} in region ${region}: ${visitCount}`
-    );
+    const visitCount = await ActivityMap.countDocuments({
+      user: userId,
+      region: region,
+    });
 
     if (visitCount >= 5) {
       const badgeName = `${region} 매니아`;
       await this.awardBadge(userId, badgeName);
+      console.log(`사용자 ${userId}에게 ${region} 방문 배지가 지급되었습니다.`);
     } else {
       console.log(
-        `User ${userId} has not visited ${region} enough times. Visit count: ${visitCount}`
+        `사용자 ${userId}는 ${region}을(를) 충분히 방문하지 않았습니다.`
       );
     }
   }
 
-  // 액티비티 수행에 따른 배지 지급 (활동명 + 매니아)
   async awardBadgeForActivity(userId, activityName) {
-    const user = await User.findById(userId);
-    const activityCount = user.activities.filter(
-      (activity) => activity.name === activityName
-    ).length;
+    console.log(`사용자 ${userId}에게 ${activityName} 활동 배지 지급 호출됨`);
 
-    if (activityCount >= 5) {
-      const badgeName = `${activityName} 매니아`; // 동적으로 활동명 포함
-      await this.awardBadge(userId, badgeName);
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error(`사용자 ${userId}를 찾을 수 없습니다.`);
+
+      const activityCount = await ActivityMap.countDocuments({
+        user: userId,
+        activityTag: activityName,
+      });
+
+      console.log(
+        `사용자 ${userId}의 ${activityName} 활동 횟수: ${activityCount}`
+      );
+
+      if (activityCount >= 5) {
+        const badgeName = `${activityName} 매니아`;
+        await this.awardBadge(userId, badgeName);
+        console.log(`사용자 ${userId}에게 ${badgeName} 배지가 지급되었습니다.`);
+      } else {
+        console.log(
+          `사용자 ${userId}는 ${activityName} 활동을 ${activityCount}번 수행했습니다. 배지 지급 기준(5회)에 도달하지 않았습니다.`
+        );
+      }
+    } catch (error) {
+      console.error(`배지 지급 중 오류 발생: ${error.message}`);
+      throw error;
     }
   }
 

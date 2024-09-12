@@ -1,9 +1,10 @@
 const ActivityMap = require('../models/activityMap');
 const User = require('../models/user');
 const HashtagService = require('./HashtagService');
-const BadgeService = require('./badgeService'); // 배지 서비스 추가
 const locations = require('../utils/location'); // 시군 리스트
 const Posts = require('../models/Posts'); // 추가
+const BadgeService = require('../services/badgeService');
+const badgeServiceInstance = new BadgeService(); // 인스턴스 생성
 
 class ActivityMapService {
   // 활동 기록 추가, 사용자 활동 저장, 배지 지급
@@ -17,10 +18,6 @@ class ActivityMapService {
       region: activityMapData.region,
     });
 
-    console.log(
-      `User ${activityMapData.user} visit count for region ${activityMapData.region}: ${visitCount}`
-    );
-
     // 특정 활동에 따른 활동 횟수 추적
     const activityCount = await ActivityMap.countDocuments({
       user: activityMapData.user,
@@ -29,18 +26,44 @@ class ActivityMapService {
 
     // 시군 방문에 따른 배지 지급
     if (visitCount + 1 >= 5) {
-      await BadgeService.awardBadge(
-        activityMapData.user,
-        `${activityMapData.region} 매니아`
+      console.log(
+        `사용자 ${activityMapData.user}에게 ${activityMapData.region} 방문 배지 지급 시도 중`
       );
+      try {
+        await badgeServiceInstance.awardBadgeForVisit(
+          activityMapData.user,
+          activityMapData.region
+        );
+        console.log(
+          `사용자 ${activityMapData.user}에게 ${activityMapData.region} 방문 배지를 성공적으로 지급함`
+        );
+      } catch (error) {
+        console.error(
+          `사용자 ${activityMapData.user}에게 ${activityMapData.region} 방문 배지 지급 중 오류:`,
+          error.message
+        );
+      }
     }
 
-    // 활동 횟수에 따른 배지 지급
+    // 활동 수행에 따른 배지 지급
     if (activityCount + 1 >= 5) {
-      await BadgeService.awardBadge(
-        activityMapData.user,
-        `${activityMapData.activityTag} 매니아`
+      console.log(
+        `사용자 ${activityMapData.user}에게 활동 ${activityMapData.activityTag} 배지 지급 시도 중`
       );
+      try {
+        await badgeServiceInstance.awardBadgeForActivity(
+          activityMapData.user,
+          activityMapData.activityTag
+        );
+        console.log(
+          `사용자 ${activityMapData.user}에게 활동 ${activityMapData.activityTag} 배지를 성공적으로 지급함`
+        );
+      } catch (error) {
+        console.error(
+          `사용자 ${activityMapData.user}에게 활동 ${activityMapData.activityTag} 배지 지급 중 오류:`,
+          error.message
+        );
+      }
     }
 
     // 활동 기록 추가

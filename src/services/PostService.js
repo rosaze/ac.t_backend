@@ -2,6 +2,7 @@ const Post = require('../models/Posts');
 const UserActivity = require('../models/UserActivities');
 const WeatherService = require('./weatherService');
 const ShortWeatherData = require('../models/shortweatherData');
+const ActivityMapService = require('../services/activityMapService');
 
 class PostService {
   constructor(badgeService) {
@@ -44,9 +45,11 @@ class PostService {
           activity_date: postData.date, // 활동 날짜
           activityTag: postData.activityTag, // 활동 태그
         };
+        //액티비티 맵에 저장
         const activityMap = await ActivityMapService.addActivityMap(
           activityMapData
         );
+
         console.log('Activity map saved successfully:', activityMap);
       } catch (error) {
         console.error('Error saving activity map:', error.message);

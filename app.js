@@ -5,8 +5,9 @@ const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
 const cors = require("cors");
-const http = require("http"); // 추가
+const https = require("https"); // 추가
 const socketIO = require("socket.io"); // 소켓 추가
+const fs = require("fs");
 
 require("dotenv").config(); //에러 수정
 
@@ -33,7 +34,6 @@ require("./src/services/dailyShortWeatherService");
 
 const app = express();
 app.use(cors()); // 모든 요청에 대해 CORS를 허용합니다.
-app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 
 nunjucks.configure(path.join(__dirname, "src/views"), {
@@ -43,9 +43,25 @@ nunjucks.configure(path.join(__dirname, "src/views"), {
 
 app.set("view engine", "html");
 
+// 인증서 경로 설정
+const privateKey = fs.readFileSync(
+  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/key.pem",
+  "utf8"
+);
+const certificate = fs.readFileSync(
+  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/crt.pem",
+  "utf8"
+);
+const ca = fs.readFileSync(
+  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/csr.pem",
+  "utf8"
+); // 필요한 경우에만 사용
+
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
 // 서버 인스턴스 생성
-const server = http.createServer(app); // 추가
-const io = socketIO(server); // server 객체를 socket.io와 연결
+const httpsServer = https.createServer(credentials, app);
+const io = socketIO(httpsServer); // server 객체를 socket.io와 연결
 
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -124,8 +140,7 @@ app.use((err, req, res, next) => {
   res.render("error");
 });
 
-//서버 실행
-//app.listen 대신 server.listen으르 사용하여 서버 실행.
-server.listen(app.get("port"), () => {
-  console.log(app.get("port"), "번 포트에서 대기 중");
+// 서버 시작
+httpsServer.listen(443, () => {
+  console.log("HTTPS 서버가 443 포트에서 실행 중입니다.");
 });
