@@ -8,6 +8,10 @@ const accommodationSchema = new mongoose.Schema({
   // 기타 필요한 필드들...
 });
 
-const Accommodation = mongoose.model('Accommodation', accommodationSchema);
+const Accommodation = mongoose.model(
+  'Accommodation',
+  accommodationSchema,
+  'Accommodation'
+);
 
 module.exports = Accommodation;

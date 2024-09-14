@@ -244,6 +244,18 @@ class VendorService {
       throw error;
     }
   }
+  async getVendorDetailsWithAccommodations(vendorId) {
+    const vendorDetails = await this.getVendorDetailsAndSentiments(vendorId);
+    const accommodationCounts =
+      await AccommodationService.getAccommodationInfoBySigungu(
+        vendorDetails.vendor.sigunguname
+      );
+
+    return {
+      ...vendorDetails,
+      accommodationCounts,
+    };
+  }
 }
 
 module.exports = new VendorService();

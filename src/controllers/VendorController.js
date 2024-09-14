@@ -1,6 +1,7 @@
 //사용자가 해시태그 입력시 해당 입력에 따라 자동으로 업체명 검색, 새롭게 추가
 const mongoose = require('mongoose'); // Add this line at the top
 const VendorService = require('../services/VendorService');
+const AccommodationService = require('../services/AccommodationService');
 
 class VendorController {
   async addVendor(req, res) {
@@ -33,14 +34,21 @@ class VendorController {
       });
     }
   }
-  // 특정 장소의 상세 정보 및 감정 분석 결과 제공
+  // 특정 장소의 상세 정보 및 감정 분석 결과 제공 + 숙박 메서드 추가
   async getVendorDetails(req, res) {
     const { id } = req.params;
 
     try {
       const result = await VendorService.getVendorDetailsAndSentiments(id);
+      const accommodationCounts =
+        await AccommodationService.getAccommodationInfoBySigungu(
+          vendorDetails.vendor.sigunguname
+        );
 
-      res.status(200).json(result);
+      res.status(200).json({
+        ...vendorDetails,
+        accommodationCounts,
+      });
     } catch (error) {
       res.status(500).json({
         message: '업체 정보를 불러오는 중 오류가 발생했습니다.',
@@ -99,7 +107,7 @@ class VendorController {
       });
     }
   }
-
+  /*기존 getvendorDetails 존재
   // 특정 장소의 상세 정보 및 감정 분석 결과 제공
   async getVendorDetails(req, res) {
     const { id } = req.params;
@@ -115,6 +123,7 @@ class VendorController {
       });
     }
   }
+    */
 
   // 특정 시군의 장소(업체) 리스트를 반환
   async getVendorsByCategoryAndRegion(req, res) {
@@ -174,6 +183,22 @@ class VendorController {
       res.status(200).json(history);
     } catch (err) {
       res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getAccommodationInfo(req, res) {
+    const { sigungu } = req.params;
+
+    try {
+      const accommodationCounts =
+        await AccommodationService.getAccommodationInfoBySigungu(sigungu);
+
+      res.status(200).json({ accommodationCounts });
+    } catch (error) {
+      res.status(500).json({
+        message: '숙박 시설 정보를 불러오는 중 오류가 발생했습니다.',
+        error: error.message,
+      });
     }
   }
 }

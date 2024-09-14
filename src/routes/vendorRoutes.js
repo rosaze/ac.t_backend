@@ -23,6 +23,7 @@ router.get(
   '/custom-vendors/:userId',
   VendorController.getCustomVendorsByRegion
 ); //ok
+
 // Route to get 사용자  recent search history
 router.get('/:userId/history', VendorController.getSearchHistory); //Ok
 
@@ -33,10 +34,16 @@ router.get(
   VendorController.getVendorsByCategoryAndRegion
 ); // 검토해보기
 
+//숙박을 위해 새로 추가:vendorsdetails 업데이트
+router.get('/vendors/:id', authorize, vendorController.getVendorDetails);
+router.get(
+  '/accommodation/:sigungu',
+  authorize,
+  vendorController.getAccommodationInfo
+);
 // 찜 기능 라우트
-
 router.post('/wishlist', authorize, WishlistController.addToWishlist); // 찜 추가 OK
-router.get('/wishlist', authorize, WishlistController.getWishlist); // 찜 목록 조회
-router.delete('/wishlist', authorize, WishlistController.removeFromWishlist); // 찜 제거
+router.get('/wishlist', authorize, WishlistController.getWishlist); // 찜 목록 조회 ok
+router.delete('/wishlist', authorize, WishlistController.removeFromWishlist); // 찜 제거 ok
 
 module.exports = router;
