@@ -201,6 +201,32 @@ class VendorController {
       });
     }
   }
+  async getAccommodationDetails(req, res) {
+    const { sigungu } = req.params;
+    const { category } = req.query;
+
+    try {
+      let result;
+      if (category) {
+        result =
+          await AccommodationService.getAccommodationDetailsBySigunguAndCategory(
+            sigungu,
+            category
+          );
+      } else {
+        result = await AccommodationService.getAllAccommodationDetailsBySigungu(
+          sigungu
+        );
+      }
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({
+        message: '숙박 시설 상세 정보를 불러오는 중 오류가 발생했습니다.',
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new VendorController();

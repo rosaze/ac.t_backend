@@ -35,12 +35,18 @@ router.get(
 ); // 검토해보기
 
 //숙박을 위해 새로 추가:vendorsdetails 업데이트
-router.get('/vendors/:id', authorize, vendorController.getVendorDetails);
+router.get('/vendors/:id', authorize, VendorController.getVendorDetails);
 router.get(
   '/accommodation/:sigungu',
   authorize,
-  vendorController.getAccommodationInfo
-);
+  VendorController.getAccommodationInfo
+); //ok
+router.get(
+  '/accommodation/:sigungu/details',
+  authorize,
+  VendorController.getAccommodationDetails
+); //ok
+
 // 찜 기능 라우트
 router.post('/wishlist', authorize, WishlistController.addToWishlist); // 찜 추가 OK
 router.get('/wishlist', authorize, WishlistController.getWishlist); // 찜 목록 조회 ok

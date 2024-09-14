@@ -26,7 +26,6 @@ const mateRoutes = require("./src/routes/mateRoutes");
 const mentorRoutes = require("./src/routes/MentorRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
-const accommodationRoutes = require("./src/routes/accommodationRoutes");
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
 // Import the forecast scheduler to ensure it runs daily
 require("./forecastScheduler"); // This will trigger the scheduler to run every day at midnight
@@ -90,7 +89,7 @@ app.use(passport.session());
 //라우터설정 (추가)
 app.use("/api/users", usersRouter); //서빈//테스트 완료
 app.use("/api/posts", postRoutes); //지원//테스트 중(일부기능만)
-app.use("/api/auth", authRouter); //서빈 //테스트 완료 - 카카오로그인은 프론트애서 태스트
+app.use("/api/auth", authRouter); //서빈 //테스트 완료 - 카카오로그인은 프론트에서 태스트
 app.use("/api/chats", chatRoutes); //지원//테스트완료
 app.use("/api/events", eventRoutes); //지원
 app.use("/api/store", productRoutes); //서빈 // 스토어 라우트 설정
@@ -100,11 +99,10 @@ app.use("/api/store/cart", cartRoutes); //지원
 app.use("/api/preference", preferenceRoutes); //서빈
 
 //지원
-app.use("/api/mates", mateRoutes); //지원
+app.use("/api/mates", mateRoutes); //지원//테스트완료
 app.use("/api/mentor", mentorRoutes); //
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈 //테스트 완료
-app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원
-app.use("/api", accommodationRoutes); //숙박 라우트
+app.use("/api", vendorRoutes); // 업체명 라우트 추가 //지원 (테스트중!ㅆㅂ!)
 
 //socket.io 연결
 io.on("connection", (socket) => {
