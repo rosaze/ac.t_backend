@@ -152,7 +152,7 @@ class VendorController {
       res.status(500).json({ message: err.message });
     }
   }
-
+  /*
   // 사용자 맞춤형 추천과 검색 기록 제공
   async getInitialSearchData(req, res) {
     const userId = req.params.id; // 사용자의 ID (로그인된 사용자 기준)
@@ -174,6 +174,7 @@ class VendorController {
         .json({ message: 'Failed to load search data', error: error.message });
     }
   }
+    */
 
   // 사용자 검색 기록을 조회
   async getSearchHistory(req, res) {

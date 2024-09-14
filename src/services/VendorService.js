@@ -8,6 +8,7 @@ const ActivityRecommendationService = require('./activityRecommendationService')
 const locations = require('../utils/location');
 const User = require('../models/user');
 const activities = require('../utils/activity.json').activities;
+const AccommodationService = require('./AccommodationService');
 
 function safeStringify(obj, indent = 2) {
   let cache = [];
@@ -255,6 +256,12 @@ class VendorService {
       ...vendorDetails,
       accommodationCounts,
     };
+  }
+  catch(error) {
+    console.error('Error in getVendorDetailsWithAccommodations:', error);
+    throw new Error(
+      '업체 상세 정보 및 숙박 정보를 가져오는 중 오류가 발생했습니다.'
+    );
   }
 }
 
