@@ -43,21 +43,25 @@ nunjucks.configure(path.join(__dirname, "src/views"), {
 
 app.set("view engine", "html");
 
-// 인증서 경로 설정
+// 서빈 인증서 경로 설정
+//const privateKey = fs.readFileSync("/opt/homebrew/Cellar/openssl@1.1/1.1.1w/key.pem","utf8");
+//const certificate = fs.readFileSync("/opt/homebrew/Cellar/openssl@1.1/1.1.1w/crt.pem","utf8");
+//const ca = fs.readFileSync("/opt/homebrew/Cellar/openssl@1.1/1.1.1w/csr.pem","utf8"); // 필요한 경우에만 사용
+
+// 지원 인증서 경로 설정
 const privateKey = fs.readFileSync(
-  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/key.pem",
+  path.join(__dirname, "certs", "server.key"),
   "utf8"
 );
 const certificate = fs.readFileSync(
-  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/crt.pem",
+  path.join(__dirname, "certs", "server.cert"),
   "utf8"
 );
-const ca = fs.readFileSync(
-  "/opt/homebrew/Cellar/openssl@1.1/1.1.1w/csr.pem",
-  "utf8"
-); // 필요한 경우에만 사용
 
-const credentials = { key: privateKey, cert: certificate, ca: ca };
+//서빈
+//const credentials = { key: privateKey, cert: certificate, ca: ca };
+//지원
+const credentials = { key: privateKey, cert: certificate };
 
 // 서버 인스턴스 생성
 const httpsServer = https.createServer(credentials, app);

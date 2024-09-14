@@ -51,20 +51,7 @@ class VendorService {
       throw error;
     }
   }
-  // 시군별 숙박시설 검색 + 숙박 유형 필터링
-  async getAccommodationsByRegion(region, category = null) {
-    const query = {
-      sigunguname: region, // 시군구 필드로 필터링
-      contenttype: '숙박', // 숙박시설로 한정
-    };
-    if (category) {
-      query['category3'] = category; // 특정 숙박 유형으로 필터링 (모텔, 펜션 등)
-    }
 
-    return await Vendor.find(query)
-      .select('title addr1 firstimage description tel category3')
-      .exec();
-  }
   // 키워드를 통해 장소 검색
   async searchActivitiesByKeyword(keyword) {
     return await Vendor.find({
@@ -93,16 +80,6 @@ class VendorService {
     };
   }
 
-  /*
-  // 사용자 기반 추천 장소 제공
-  async getRecommendedVendors(userId) {
-    const user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-  }
-    */
   // ------------------------------------------------------------------------------
   // 사용자 선호도 분석한 결과 바탕 --> 특정 시군에서의 장소 집계하여 반환
   // ActivityAnalysisService 사용 :특정 사용자에 대한 맞춤형 추천 장소를 시군별로 집계
@@ -149,7 +126,6 @@ class VendorService {
           { category1: { $regex: new RegExp(category, 'i') } },
           { category2: { $regex: new RegExp(category, 'i') } },
           { category3: { $regex: new RegExp(category, 'i') } },
-          { contenttype: { $regex: new RegExp(category, 'i') } },
         ],
       };
 
@@ -210,10 +186,7 @@ class VendorService {
     let query = {
       $or: [
         { title: { $regex: keyword, $options: 'i' } },
-        { addr1: { $regex: keyword, $options: 'i' } },
         { sigunguname: { $regex: keyword, $options: 'i' } },
-        { contenttype: { $regex: keyword, $options: 'i' } },
-        { category1: { $regex: keyword, $options: 'i' } },
         { category2: { $regex: keyword, $options: 'i' } },
         { category3: { $regex: keyword, $options: 'i' } },
       ],
