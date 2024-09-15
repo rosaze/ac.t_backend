@@ -74,11 +74,22 @@ class VendorService {
       throw new Error('Vendor not found');
     }
     // PostService를 이용하여 감정 분석을 수행
-    const sentimentAnalysis = await PostService.analyzeSentiments(vendor.title);
+    let sentimentAnalysis;
+    try {
+      sentimentAnalysis = await PostService.analyzeSentiments(vendor.title);
+    } catch (error) {
+      console.error('Error analyzing sentiments:', error);
+      sentimentAnalysis = { error: 'Failed to analyze sentiments' };
+    }
+
     return {
       vendor,
       sentimentAnalysis,
     };
+  }
+  catch(error) {
+    console.error('Error in getVendorDetailsAndSentiments:', error);
+    throw error;
   }
 
   // ------------------------------------------------------------------------------

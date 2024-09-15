@@ -39,7 +39,9 @@ class VendorController {
     const { id } = req.params;
 
     try {
-      const result = await VendorService.getVendorDetailsAndSentiments(id);
+      const vendorDetails = await VendorService.getVendorDetailsAndSentiments(
+        id
+      );
       const accommodationCounts =
         await AccommodationService.getAccommodationInfoBySigungu(
           vendorDetails.vendor.sigungu
@@ -69,7 +71,6 @@ class VendorController {
         isCustomRecommendation,
         userId,
       });
-
 
       if (!keyword) {
         return res.status(400).json({ message: 'Keyword required' });
