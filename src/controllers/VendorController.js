@@ -70,6 +70,7 @@ class VendorController {
         userId,
       });
 
+
       if (!keyword) {
         return res.status(400).json({ message: 'Keyword required' });
       }
