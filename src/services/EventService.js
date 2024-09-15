@@ -2,6 +2,9 @@ const Event = require('../models/Event');
 const BadgeService = require('./badgeService');
 
 class EventService {
+  constructor() {
+    this.badgeService = new BadgeService();
+  }
   // 이벤트 생성
   async createEvent(data) {
     const event = new Event(data);
@@ -41,7 +44,10 @@ class EventService {
     // 좋아요가 가장 많은 참가자에게 배지 지급
     const topParticipant = this.getTopParticipant(event);
     if (topParticipant.user.toString() === participant.user.toString()) {
-      await BadgeService.awardBadge(participant.user, `${event.title} Winner`);
+      await this.badgeService.awardBadgeForEventWinner(
+        participant.user,
+        event.title
+      );
     }
     return participant;
   }

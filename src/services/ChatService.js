@@ -3,6 +3,9 @@ const Message = require('../models/Messages');
 const BadgeService = require('./badgeService'); // 배지 서비스를 가져옵니다.
 
 class ChatService {
+  constructor() {
+    this.badgeService = new BadgeService();
+  }
   // 채팅방 생성
   async createChatRoom(
     name,
@@ -22,8 +25,7 @@ class ChatService {
 
     // 메이트 채팅방이 새로 생성된 경우 배지 지급
     if (mateId) {
-      const badgeName = `${name} 리더`; // 채팅방 제목 + 리더로 배지 이름
-      await BadgeService.awardBadge(creatorId, badgeName);
+      await this.badgeService.awardBadgeForChatLeader(creatorId, name);
     }
 
     return saveChatRoom;

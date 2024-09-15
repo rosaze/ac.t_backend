@@ -60,20 +60,31 @@ class VendorController {
   //검색 결과 저장 + 키워드 검색 처리
   async searchActivitiesByKeyword(req, res) {
     try {
-      console.log('req.user:', req.user);
-
       const keyword = req.query.keyword;
-      const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
-      const userId = req.user?.userId;
+      const isCustomRecommendation = req.query.custom === 'true';
+      const userId = req.user?.id;
+
+      console.log('검색 파라미터:', {
+        keyword,
+        isCustomRecommendation,
+        userId,
+      });
 
       if (!keyword) {
         return res.status(400).json({ message: 'Keyword required' });
       }
-      const vendors = await VendorService.searchActivitiesByKeyword(
-        keyword,
-        userId,
-        isCustomRecommendation
-      );
+
+      let vendors;
+      if (isCustomRecommendation) {
+        vendors =
+          await VendorService.searchActivitiesByKeywordWithRecommendation(
+            keyword,
+            userId
+          );
+      } else {
+        vendors = await VendorService.searchActivitiesByKeyword(keyword);
+      }
+
       if (vendors.length === 0) {
         return res
           .status(404)
@@ -81,6 +92,7 @@ class VendorController {
       }
       res.status(200).json(vendors);
     } catch (err) {
+      console.error('searchActivitiesByKeyword 오류:', err);
       res.status(500).json({ message: err.message });
     }
   }

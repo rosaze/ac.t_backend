@@ -77,10 +77,15 @@ class ActivityRecommendationService {
   // 사용자 활동 기록을 반영하지 않고 선호도만을 고려한 추천
   async recommendActivitiesByPreference(userId) {
     try {
+      console.log('사용자 ID로 추천 시작:', userId);
       const user = await User.findById(userId);
-      if (!user) throw new Error('User not found');
+      if (!user) {
+        console.log('사용자를 찾을 수 없음:', userId);
+        throw new Error('User not found');
+      }
 
-      // 사용자 선호도 기반 추천, 'both' 옵션 반영
+      console.log('사용자 선호도:', user.preference);
+
       const preferredActivities = activities.filter((activity) => {
         return (
           (activity.location === user.preference.location ||
@@ -90,6 +95,7 @@ class ActivityRecommendationService {
           (activity.group === user.preference.group ||
             user.preference.group === 'both') &&
           (activity.season === user.preference.season ||
+            activity.season === 'both' ||
             user.preference.season === 'both')
         );
       });
@@ -97,23 +103,13 @@ class ActivityRecommendationService {
       const recommendations = preferredActivities.map(
         (activity) => activity.name
       );
-
-      if (recommendations.length === 0) {
-        throw new Error(
-          'No recommendations available based on user preferences.'
-        );
-      }
+      console.log('추천된 활동:', recommendations);
 
       return recommendations;
     } catch (error) {
-      console.error(
-        `Error recommending activities by preference: ${error.message}`
-      );
-      throw new Error(
-        'Failed to generate activity recommendations based on preferences.'
-      );
+      console.error(`활동 추천 중 오류 발생:`, error);
+      throw new Error('선호도 기반 활동 추천 생성에 실패했습니다.');
     }
   }
 }
-
 module.exports = new ActivityRecommendationService();

@@ -36,7 +36,7 @@ class BadgeService {
     }
   }
 
-  // 시군 방문에 따른 배지 지급
+  // 시군 방문에 따른 배지 지급 //확인 완료
   async awardBadgeForVisit(userId, region) {
     console.log(`사용자 ${userId}에게 ${region} 방문 배지 지급 호출됨`);
 
@@ -56,6 +56,7 @@ class BadgeService {
     }
   }
 
+  //확인 완료
   async awardBadgeForActivity(userId, activityName) {
     console.log(`사용자 ${userId}에게 ${activityName} 활동 배지 지급 호출됨`);
 
@@ -99,7 +100,7 @@ class BadgeService {
     await this.awardBadge(userId, badgeName);
   }
 
-  // 자격증 등록에 따른 배지 지급 (종류 + 마스터)
+  // 자격증 등록에 따른 배지 지급 (종류 + 마스터) // 확인 완료
   async awardBadgeForCertificate(userId, certificateTitle) {
     try {
       console.log(
@@ -118,7 +119,7 @@ class BadgeService {
     }
   }
 
-  // 게시글 등록에 따른 배지 지급
+  // 게시글 등록에 따른 배지 지급 //확인 완료
   async awardBadgeForPost(userId) {
     try {
       const userPosts = await Post.countDocuments({ author: userId });
