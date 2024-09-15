@@ -215,6 +215,46 @@ class VendorService {
     return await Vendor.find(query).exec();
   }
 
+  async searchActivitiesByKeywordWithRecommendation(keyword, userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const recommendedActivities =
+        await ActivityRecommendationService.recommendActivitiesByPreference(
+          userId
+        );
+
+      return await Vendor.find({
+        $and: [
+          {
+            $or: [
+              { title: { $regex: keyword, $options: 'i' } },
+              { sigungu: { $regex: keyword, $options: 'i' } },
+              { category2: { $regex: keyword, $options: 'i' } },
+              { category3: { $regex: keyword, $options: 'i' } },
+            ],
+          },
+          {
+            $or: recommendedActivities.map((activity) => ({
+              $or: [
+                { category1: { $regex: activity, $options: 'i' } },
+                { category2: { $regex: activity, $options: 'i' } },
+                { category3: { $regex: activity, $options: 'i' } },
+                { contenttype: { $regex: activity, $options: 'i' } },
+              ],
+            })),
+          },
+        ],
+      }).exec();
+    } catch (error) {
+      console.error('searchActivitiesByKeywordWithRecommendation 오류:', error);
+      throw error;
+    }
+  }
+
   // 사용자의 최근 검색 기록 가져오기
   async getSearchHistory(userId) {
     return await SearchHistory.find({ user: userId })

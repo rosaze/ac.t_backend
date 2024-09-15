@@ -15,6 +15,7 @@ const passport = require("./src/passport/passport");
 
 const usersRouter = require("./src/routes/userRoutes");
 const postRoutes = require("./src/routes/postRoutes");
+const hashtagRoutes = require("./src/routes/hashtagRoutes");
 const authRouter = require("./src/routes/auth");
 const chatRoutes = require("./src/routes/chatRoutes");
 const eventRoutes = require("./src/routes/eventRoutes");
@@ -27,6 +28,7 @@ const mentorRoutes = require("./src/routes/MentorRoutes");
 const vendorRoutes = require("./src/routes/vendorRoutes"); //업체명 저장 DB
 const preferenceRoutes = require("./src/routes/preferenceRoutes");
 const mypageRoutes = require("./src/routes/mypageRoutes"); // 마이페이지 라우트 추가
+
 // Import the forecast scheduler to ensure it runs daily
 require("./forecastScheduler"); // This will trigger the scheduler to run every day at midnight
 require("./src/services/dailyShortWeatherService");
@@ -97,8 +99,7 @@ app.use("/api/store/payments", paymentRoutes); //서빈
 app.use("/api/store/rental", rentalRoutes); //서빈
 app.use("/api/store/cart", cartRoutes); //지원
 app.use("/api/preference", preferenceRoutes); //서빈
-
-//지원
+app.use("/api", hashtagRoutes);
 app.use("/api/mates", mateRoutes); //지원//테스트완료
 app.use("/api/mentor", mentorRoutes); //
 app.use("/api/mypage", mypageRoutes); // 마이페이지 라우트 통합 //서빈 //테스트 완료
