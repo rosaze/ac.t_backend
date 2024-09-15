@@ -9,10 +9,6 @@ automatic_scaling:
 
 # 애플리케이션이 실행될 기본 핸들러
 handlers:
-  - url: / # 아직 안 정함
-    static_files: public/index.html
-    upload: public/index.html
-
   - url: /public
     static_dir: public
 

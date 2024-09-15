@@ -42,7 +42,7 @@ class VendorController {
       const result = await VendorService.getVendorDetailsAndSentiments(id);
       const accommodationCounts =
         await AccommodationService.getAccommodationInfoBySigungu(
-          vendorDetails.vendor.sigunguname
+          vendorDetails.vendor.sigungu
         );
 
       res.status(200).json({

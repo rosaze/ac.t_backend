@@ -59,8 +59,8 @@ class VendorService {
       $or: [
         { title: { $regex: keyword, $options: 'i' } },
         { addr1: { $regex: keyword, $options: 'i' } },
-        { sigunguname: { $regex: keyword, $options: 'i' } },
-        { contentype: { $regex: keyword, $options: 'i' } },
+        { sigungu: { $regex: keyword, $options: 'i' } },
+        { contenttype: { $regex: keyword, $options: 'i' } },
         { category1: { $regex: keyword, $options: 'i' } },
         { category2: { $regex: keyword, $options: 'i' } },
         { category3: { $regex: keyword, $options: 'i' } },
@@ -105,7 +105,7 @@ class VendorService {
     // 시군별 장소 집계
     const pipeline = [
       { $match: query },
-      { $group: { _id: '$sigunguname', count: { $sum: 1 } } }, // 시군별로 장소 수 집계
+      { $group: { _id: '$sigungu', count: { $sum: 1 } } }, // 시군별로 장소 수 집계
       { $match: { _id: { $in: locations } } }, // 강원도 내 시군구와 매칭
       { $sort: { count: -1 } }, // 결과를 장소 수에 따라 내림차순 정렬
     ];
@@ -122,7 +122,7 @@ class VendorService {
     try {
       // 기본 검색 조건
       let query = {
-        sigunguname: { $regex: new RegExp(region, 'i') },
+        sigungu: { $regex: new RegExp(region, 'i') },
         $or: [
           { category1: { $regex: new RegExp(category, 'i') } },
           { category2: { $regex: new RegExp(category, 'i') } },
@@ -187,7 +187,7 @@ class VendorService {
     let query = {
       $or: [
         { title: { $regex: keyword, $options: 'i' } },
-        { sigunguname: { $regex: keyword, $options: 'i' } },
+        { sigungu: { $regex: keyword, $options: 'i' } },
         { category2: { $regex: keyword, $options: 'i' } },
         { category3: { $regex: keyword, $options: 'i' } },
       ],
@@ -249,7 +249,7 @@ class VendorService {
     const vendorDetails = await this.getVendorDetailsAndSentiments(vendorId);
     const accommodationCounts =
       await AccommodationService.getAccommodationInfoBySigungu(
-        vendorDetails.vendor.sigunguname
+        vendorDetails.vendor.sigungu
       );
 
     return {
