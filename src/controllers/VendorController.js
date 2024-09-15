@@ -64,7 +64,12 @@ class VendorController {
 
       const keyword = req.query.keyword;
       const isCustomRecommendation = req.query.custom === 'true'; // 맞춤형 추천 여부 확인
-      const userId = req.user?.userId;
+      const userId = req.user.id; // error avoid: authorize 미들웨어에서 설정된 user 객체 사용
+      if (!userId) {
+        return res
+          .status(400)
+          .json({ message: 'User ID is required for custom recommendations' });
+      }
 
       if (!keyword) {
         return res.status(400).json({ message: 'Keyword required' });

@@ -8,9 +8,9 @@ const VendorSchema = new mongoose.Schema({
   category2: { type: String }, // 중분류
   category3: { type: String }, // 소분류
   createdtime: { type: Date, default: Date.now }, // 생성 시간
-  firstimage: { type: String }, // 이미지 URL
-  mapx: { type: Number }, // 지도 X좌표
-  mapy: { type: Number }, // 지도 Y좌표
+  //firstimage: { type: String }, // 이미지 URL
+  //mapx: { type: Number }, // 지도 X좌표
+  //mapy: { type: Number }, // 지도 Y좌표
   modifiedtime: { type: Date }, // 수정 시간
 });
 
