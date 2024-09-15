@@ -9,6 +9,7 @@ const locations = require('../utils/location');
 const User = require('../models/user');
 const activities = require('../utils/activity.json').activities;
 const AccommodationService = require('./AccommodationService');
+const postService = new PostService(); // Instantiate PostService
 
 function safeStringify(obj, indent = 2) {
   let cache = [];
@@ -76,7 +77,7 @@ class VendorService {
     // PostService를 이용하여 감정 분석을 수행
     let sentimentAnalysis;
     try {
-      sentimentAnalysis = await PostService.analyzeSentiments(vendor.title);
+      sentimentAnalysis = await postService.analyzeSentiments(vendor.title);
     } catch (error) {
       console.error('Error analyzing sentiments:', error);
       sentimentAnalysis = { error: 'Failed to analyze sentiments' };

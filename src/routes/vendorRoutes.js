@@ -34,7 +34,7 @@ router.get(
   VendorController.getVendorsByCategoryAndRegion
 ); // 검토해보기
 
-//숙박을 위해 새로 추가:vendorsdetails 업데이트
+//숙박을 위해 새로 추가:vendorsdetails 업데이트 (테스트완료)
 router.get('/vendors/:id', authorize, VendorController.getVendorDetails);
 router.get(
   '/accommodation/:sigungu',
