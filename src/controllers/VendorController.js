@@ -14,7 +14,7 @@ class VendorController {
     }
   }
   // 장소 검색 기능
-  async searchActivities(req, res) {
+  /*async searchActivities(req, res) {
     const { keyword } = req.query;
 
     try {
@@ -33,12 +33,29 @@ class VendorController {
         error: error.message,
       });
     }
-  }
-  // 특정 장소의 상세 정보 및 감정 분석 결과 제공 + 숙박 메서드 추가
+  }*/
+
   async getVendorDetails(req, res) {
     const { id } = req.params;
 
     try {
+      if (id === 'search') {
+        // Handle the search case
+        const { keyword, location, custom } = req.query;
+        const isCustomRecommendation = custom === 'true';
+        const userId = req.user?.id;
+
+        const results = await VendorService.searchActivities(
+          keyword,
+          location,
+          userId,
+          isCustomRecommendation
+        );
+
+        return res.status(200).json(results);
+      }
+
+      // Original vendor details logic
       const vendorDetails = await VendorService.getVendorDetailsAndSentiments(
         id
       );
@@ -59,43 +76,34 @@ class VendorController {
     }
   }
 
-  //검색 결과 저장 + 키워드 검색 처리
+  //키워드로 검색
+  //키워드 : 장소 (sigungu) / 활동 (activity)
   async searchActivitiesByKeyword(req, res) {
+    const { keyword, custom } = req.query;
+    const userId = req.user?.id;
+    const isCustomRecommendation = custom === 'true';
+
+    console.log(
+      'Search request - Keyword:',
+      keyword,
+      'Custom:',
+      isCustomRecommendation,
+      'UserId:',
+      userId
+    );
+    console.log('req.user:', req.user);
+
     try {
-      const keyword = req.query.keyword;
-      const isCustomRecommendation = req.query.custom === 'true';
-      const userId = req.user?.id;
-
-      console.log('검색 파라미터:', {
+      const results = await VendorService.searchActivities(
         keyword,
-        isCustomRecommendation,
         userId,
-      });
-
-      if (!keyword) {
-        return res.status(400).json({ message: 'Keyword required' });
-      }
-
-      let vendors;
-      if (isCustomRecommendation) {
-        vendors =
-          await VendorService.searchActivitiesByKeywordWithRecommendation(
-            keyword,
-            userId
-          );
-      } else {
-        vendors = await VendorService.searchActivitiesByKeyword(keyword);
-      }
-
-      if (vendors.length === 0) {
-        return res
-          .status(404)
-          .json({ message: 'No results found for the given keyword.' });
-      }
-      res.status(200).json(vendors);
-    } catch (err) {
-      console.error('searchActivitiesByKeyword 오류:', err);
-      res.status(500).json({ message: err.message });
+        isCustomRecommendation
+      );
+      console.log('Search results count:', results.length);
+      res.json(results);
+    } catch (error) {
+      console.error('Error in searchActivitiesByKeyword:', error);
+      res.status(500).json({ error: error.message });
     }
   }
 

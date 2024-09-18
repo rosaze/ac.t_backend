@@ -3,13 +3,35 @@ const apiClient = require('../utils/apiClient');
 class WeatherRecommendationService {
   async getRecommendationByLocation(location) {
     try {
+      console.log(`Requesting recommendation for location: ${location}`);
       const response = await apiClient.post('/recommend/by_location', {
         location,
       });
+      console.log(`Received recommendation:`, response.data);
       return response.data;
     } catch (error) {
-      console.error('Error getting recommendation by location:', error);
-      throw error;
+      console.error(
+        'Error getting recommendation by location:',
+        error.response?.data || error.message
+      );
+      return { recommended_activities: [] };
+    }
+  }
+
+  async getRecommendationByActivity(activity) {
+    try {
+      console.log(`Requesting recommendation for activity: ${activity}`);
+      const response = await apiClient.post('/recommend/by_activity', {
+        activity,
+      });
+      console.log(`Received recommendation:`, response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        'Error getting recommendation by activity:',
+        error.response?.data || error.message
+      );
+      return { recommended_activities: [] };
     }
   }
 
@@ -80,16 +102,12 @@ class WeatherRecommendationService {
     }
   }
 
-  async getRecommendationByAll(keyword, location, date) {
+  async getRecommendationAll() {
     try {
-      const response = await apiClient.post('/recommend/by_all', {
-        keyword,
-        location,
-        date,
-      });
+      const response = await apiClient.get('/recommend/all');
       return response.data;
     } catch (error) {
-      console.error('Error getting recommendation by all parameters:', error);
+      console.error('Error getting all recommendations:', error);
       throw error;
     }
   }
