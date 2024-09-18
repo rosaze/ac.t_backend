@@ -246,6 +246,14 @@ class VendorService {
     // 날씨 기반 추천 활동으로 정렬
     result = this.sortVendorsByRecommendation(result, recommendedActivities);
 
+    // 각 vendor에 대한 추천 날짜 정보 추가
+    for (let vendor of result) {
+      vendor.recommendedDates = await this.getRecommendedDatesForActivity(
+        vendor.sigungu,
+        vendor.category3 || vendor.category2 || vendor.contenttype
+      );
+    }
+
     console.log('최종 결과:', result.length);
     console.log('정렬된 추천 활동:', recommendedActivities);
 
@@ -368,6 +376,29 @@ class VendorService {
           contenttype: vendor.contenttype,
           category3: vendor.category3,
         }));
+  }
+
+  async getRecommendedDatesForActivity(location, activity) {
+    let weatherRecommendation;
+    if (this.isLocation(location)) {
+      weatherRecommendation =
+        await WeatherRecommendationService.getRecommendationByLocation(
+          location
+        );
+    } else {
+      weatherRecommendation =
+        await WeatherRecommendationService.getRecommendationByActivity(
+          activity
+        );
+    }
+
+    const recommendedDates = weatherRecommendation.recommended_dates[activity];
+
+    if (recommendedDates) {
+      return recommendedDates.sort((a, b) => b.score - a.score);
+    } else {
+      return [];
+    }
   }
 
   //vendorController에서 안쓰이고 있음
