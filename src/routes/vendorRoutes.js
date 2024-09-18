@@ -13,7 +13,7 @@ router.get(
   '/activities/search',
   authorize,
   VendorController.searchActivitiesByKeyword
-); // OK
+); // OK맞춤형도 ok https://localhost/api/activities/search?keyword=&custom=true
 
 // Route to get details and sentiment analysis of a specific vendor
 router.get('/:id/details', authorize, VendorController.getVendorDetails); //OK다만 감정분석결과는 안 보임
@@ -34,7 +34,7 @@ router.get(
   VendorController.getVendorsByCategoryAndRegion
 ); // 검토해보기
 
-//숙박을 위해 새로 추가:vendorsdetails 업데이트
+//숙박을 위해 새로 추가:vendorsdetails 업데이트 (테스트완료)
 router.get('/vendors/:id', authorize, VendorController.getVendorDetails);
 router.get(
   '/accommodation/:sigungu',

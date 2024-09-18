@@ -1,0 +1,18 @@
+version: "3.4"
+
+services:
+  actbackend:
+    image: actbackend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./certs:/usr/src/app/certs:ro
+    ports:
+      - 443:443
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "app.js"]
