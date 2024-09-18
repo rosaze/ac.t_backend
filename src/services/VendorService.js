@@ -9,6 +9,7 @@ const locations = require('../utils/location');
 const User = require('../models/user');
 const activities = require('../utils/activity.json').activities;
 const AccommodationService = require('./AccommodationService');
+const WeatherRecommendationService = require('./WeatherRecommendationService');
 
 function safeStringify(obj, indent = 2) {
   let cache = [];
