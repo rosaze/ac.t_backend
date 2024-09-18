@@ -9,6 +9,7 @@ const locations = require('../utils/location');
 const User = require('../models/user');
 const activities = require('../utils/activity.json').activities;
 const AccommodationService = require('./AccommodationService');
+const WeatherRecommendationService = require('./WeatherRecommendationService');
 const postService = new PostService(); // Instantiate PostService
 
 function safeStringify(obj, indent = 2) {
@@ -27,6 +28,11 @@ function safeStringify(obj, indent = 2) {
   );
   cache = null;
   return retVal;
+}
+
+function normalizeLocationName(name) {
+  if (!name) return ''; // 빈 문자열 반환
+  return name.replace(/(시|군)$/, '');
 }
 
 //검색 기능 추가
@@ -54,20 +60,6 @@ class VendorService {
     }
   }
 
-  // 키워드를 통해 장소 검색
-  async searchActivitiesByKeyword(keyword) {
-    return await Vendor.find({
-      $or: [
-        { title: { $regex: keyword, $options: 'i' } },
-        { addr1: { $regex: keyword, $options: 'i' } },
-        { sigungu: { $regex: keyword, $options: 'i' } },
-        { contenttype: { $regex: keyword, $options: 'i' } },
-        { category1: { $regex: keyword, $options: 'i' } },
-        { category2: { $regex: keyword, $options: 'i' } },
-        { category3: { $regex: keyword, $options: 'i' } },
-      ],
-    }).exec();
-  }
   // 특정 장소에 대한 감정 분석 결과를 가져옴
   async getVendorDetailsAndSentiments(vendorId) {
     const vendor = await Vendor.findById(vendorId).exec();
@@ -125,9 +117,9 @@ class VendorService {
     return await Vendor.aggregate(pipeline).exec();
   }
 
-  async getVendorsByCategoryAndRegion(
-    category,
-    region,
+  async getVendorsByCategoryAndRegion( // 날짜 추천 추가
+    category, // 액티비티
+    region, //시군구
     userId,
     isCustomRecommendation
   ) {
@@ -193,41 +185,193 @@ class VendorService {
     }
   }
 
-  // 키워드를 통해 장소 검색 (토글 기능 적용)
-  async searchActivitiesByKeyword(keyword, userId, isCustomRecommendation) {
-    // 기본 검색 조건: 키워드로 장소 검색
-    let query = {
-      $or: [
-        { title: { $regex: keyword, $options: 'i' } },
-        { sigungu: { $regex: keyword, $options: 'i' } },
-        { category2: { $regex: keyword, $options: 'i' } },
-        { category3: { $regex: keyword, $options: 'i' } },
-      ],
-    };
+  async searchActivities(keyword, userId, isCustomRecommendation = false) {
+    console.log(
+      'searchActivities 시작 - 키워드:',
+      keyword,
+      '사용자 ID:',
+      userId,
+      '맞춤 추천 여부:',
+      isCustomRecommendation
+    );
 
-    // 맞춤형 추천이 활성화된 경우, 사용자 선호도를 기반으로 필터링
-    if (isCustomRecommendation) {
-      // 사용자 선호도에 따른 추천 활동을 가져옴 (활동 기록 무시)
-      const recommendedActivities =
+    const isLocationSearch = this.isLocation(keyword);
+    console.log('isLocationSearch:', isLocationSearch);
+    let query = this.buildBaseQuery(keyword, isLocationSearch);
+    console.log('생성된 쿼리:', query);
+
+    let weatherRecommendation;
+    if (isLocationSearch) {
+      console.log('Requesting location-based recommendation');
+      weatherRecommendation =
+        await WeatherRecommendationService.getRecommendationByLocation(keyword);
+    } else {
+      console.log('Requesting activity-based recommendation');
+      weatherRecommendation =
+        await WeatherRecommendationService.getRecommendationByActivity(keyword);
+    }
+
+    let recommendedActivities =
+      weatherRecommendation.recommended_activities.map((a) => a.activity);
+    console.log('날씨 기반 추천 액티비티:', recommendedActivities);
+
+    if (isCustomRecommendation && userId) {
+      console.log('Applying custom recommendations for user:', userId);
+      const userPreferences =
         await ActivityRecommendationService.recommendActivitiesByPreference(
           userId
         );
-
-      // 추천된 활동에 맞는 장소로 필터링
-      if (recommendedActivities.length > 0) {
-        query.contenttype = {
-          $in: recommendedActivities.map((item) => item.name), // 선호도 기반 활동 필터링
-        };
-      }
+      recommendedActivities = this.filterActivitiesByUserPreference(
+        weatherRecommendation.recommended_activities,
+        userPreferences
+      );
+      query = this.addPreferenceFilter(query, recommendedActivities);
+    } else {
+      console.log('No custom recommendations applied');
     }
 
-    // 검색 기록 저장 (키워드로 검색한 경우)
-    //await this.saveSearchHistory(userId, keyword, 'keyword');
+    const vendors = await Vendor.find(query).exec();
+    console.log('검색된 장소들:', vendors.length);
 
-    return await Vendor.find(query).exec();
+    let result = vendors;
+
+    // 위치 검색일 경우 단일 위치에 대한 필터링 적용
+    if (isLocationSearch) {
+      const normalizedKeyword = normalizeLocationName(keyword);
+      result = result.filter(
+        (vendor) => normalizeLocationName(vendor.sigungu) === normalizedKeyword
+      );
+    }
+
+    // 날씨 기반 추천 활동으로 정렬
+    result = this.sortVendorsByRecommendation(result, recommendedActivities);
+
+    console.log('최종 결과:', result.length);
+    console.log('정렬된 추천 활동:', recommendedActivities);
+
+    return result;
   }
 
-  async searchActivitiesByKeywordWithRecommendation(keyword, userId) {
+  sortVendorsByRecommendation(vendors, recommendedActivities) {
+    const activityOrder = recommendedActivities.reduce(
+      (acc, activity, index) => {
+        acc[activity.toLowerCase()] = index;
+        return acc;
+      },
+      {}
+    );
+
+    return vendors.sort((a, b) => {
+      const orderA =
+        activityOrder[(a.category3 || '').toLowerCase()] ?? Infinity;
+      const orderB =
+        activityOrder[(b.category3 || '').toLowerCase()] ?? Infinity;
+      return orderA - orderB;
+    });
+  }
+
+  filterActivitiesByUserPreference(activities, userPreferences) {
+    console.log('Filtering activities by user preference');
+
+    const activityScores = activities.reduce((acc, activity) => {
+      acc[activity.activity.toLowerCase()] = activity.score;
+      return acc;
+    }, {});
+
+    // 사용자 선호도를 날씨 기반 점수로 정렬
+    return userPreferences
+      .map((pref) => ({
+        activity: pref,
+        score: activityScores[pref.toLowerCase()] || -Infinity,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.activity);
+  }
+
+  addPreferenceFilter(query, userPreferences) {
+    console.log('Adding preference filter to query');
+    return {
+      ...query,
+      $or: [
+        ...(query.$or || []),
+        { category3: { $in: userPreferences } },
+        { category2: { $in: userPreferences } },
+        { contenttype: { $in: userPreferences } },
+      ],
+    };
+  }
+
+  isLocation(keyword) {
+    return locations.includes(keyword);
+  }
+
+  buildBaseQuery(keyword, isLocationSearch) {
+    if (isLocationSearch) {
+      return { sigungu: keyword };
+    } else {
+      return {
+        $or: [
+          { category3: { $regex: keyword, $options: 'i' } },
+          { category2: { $regex: keyword, $options: 'i' } },
+          { category1: { $regex: keyword, $options: 'i' } },
+          { contenttype: { $regex: keyword, $options: 'i' } },
+        ],
+      };
+    }
+  }
+
+  combineResultsWithRecommendation(
+    vendors,
+    recommendedActivities,
+    isLocationSearch,
+    keyword
+  ) {
+    if (recommendedActivities.length === 0) {
+      return vendors.map((vendor) => ({
+        id: vendor._id,
+        title: vendor.title,
+        sigungu: vendor.sigungu,
+        contenttype: vendor.contenttype,
+        category3: vendor.category3,
+      }));
+    }
+
+    const result = [];
+    for (const activity of recommendedActivities) {
+      const matchingVendors = vendors.filter((vendor) =>
+        isLocationSearch
+          ? vendor.category3 === activity ||
+            vendor.category2 === activity ||
+            vendor.contenttype === activity
+          : vendor.sigungu === keyword
+      );
+
+      if (matchingVendors.length > 0) {
+        result.push({
+          activity: activity,
+          vendors: matchingVendors.map((vendor) => ({
+            id: vendor._id,
+            title: vendor.title,
+            sigungu: vendor.sigungu,
+            contenttype: vendor.contenttype,
+            category3: vendor.category3,
+          })),
+        });
+      }
+    }
+    return result.length > 0
+      ? result
+      : vendors.map((vendor) => ({
+          id: vendor._id,
+          title: vendor.title,
+          sigungu: vendor.sigungu,
+          contenttype: vendor.contenttype,
+          category3: vendor.category3,
+        }));
+  }
+
+  //vendorController에서 안쓰이고 있음
+  /* async searchActivitiesByKeywordWithRecommendation(keyword, userId) {
     try {
       const user = await User.findById(userId);
       if (!user) {
@@ -265,7 +409,7 @@ class VendorService {
       console.error('searchActivitiesByKeywordWithRecommendation 오류:', error);
       throw error;
     }
-  }
+  }*/
 
   // 사용자의 최근 검색 기록 가져오기
   async getSearchHistory(userId) {
