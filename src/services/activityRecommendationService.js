@@ -1,6 +1,6 @@
 const { activities } = require('../utils/activity.json');
 const ActivityMap = require('../models/activityMap');
-const User = require('../models/user');
+const User = require('../models/User');
 
 class ActivityRecommendationService {
   // 사용자가 얼마나 자주 특정 activity를 했는지 해시태그를 통해 통계 정보를 계산

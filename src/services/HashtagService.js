@@ -1,7 +1,7 @@
 const Post = require('../models/Posts');
 const BadgeService = require('./badgeService');
 const Hashtag = require('../models/Hashtags');
-const User = require('../models/user');
+const User = require('../models/User');
 
 class HashtagService {
   constructor() {

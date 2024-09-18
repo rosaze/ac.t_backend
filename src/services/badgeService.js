@@ -1,4 +1,4 @@
-const User = require('../models/user'); // 유저 모델
+const User = require('../models/User'); // 유저 모델
 const Badge = require('../models/badge'); // 유저 모델
 const Post = require('../models/Posts');
 const ActivityMap = require('../models/activityMap'); // ActivityMap 모델 불러오기
