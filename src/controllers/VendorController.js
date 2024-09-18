@@ -174,6 +174,20 @@ class VendorController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  async getRecommendedDatesForActivity(req, res) {
+    const { location, activity } = req.query;
+
+    try {
+      const recommendedDates =
+        await VendorService.getRecommendedDatesForActivity(location, activity);
+      res.json(recommendedDates);
+    } catch (error) {
+      console.error('Error in getRecommendedDatesForActivity:', error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   /*
   // 사용자 맞춤형 추천과 검색 기록 제공
   async getInitialSearchData(req, res) {
