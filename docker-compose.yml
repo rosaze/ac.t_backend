@@ -9,7 +9,7 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - .:/usr/src/app
+      - ./:/usr/src/app
       - /usr/src/app/node_modules
       - ./certs:/usr/src/app/certs:ro
     ports:

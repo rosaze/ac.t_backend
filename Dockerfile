@@ -1,15 +1,26 @@
 FROM node:lts-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
 
+# Set environment to production
+ENV NODE_ENV=production
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy package.json and install dependencies
+COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+RUN npm install --production --silent
+
+# Copy the rest of the application code
 COPY . .
 
-# 환경 변수 설정
-ENV NODE_ENV=production
-
+# Expose necessary ports
 EXPOSE 443
+
+# Set permissions for node user
 RUN chown -R node /usr/src/app
+
+# Use node user to run the application
 USER node
+
+# Start the application
 CMD ["npm", "start"]
