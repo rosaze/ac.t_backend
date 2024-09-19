@@ -175,7 +175,6 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-// 모델 정의
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 module.exports = User;
