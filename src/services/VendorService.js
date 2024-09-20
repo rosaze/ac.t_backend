@@ -11,6 +11,7 @@ const activities = require('../utils/activity.json').activities;
 const AccommodationService = require('./AccommodationService');
 const WeatherRecommendationService = require('./WeatherRecommendationService');
 const postService = new PostService(); // Instantiate PostService
+const apiClient = require('../utils/apiClient');
 
 function safeStringify(obj, indent = 2) {
   let cache = [];
@@ -117,22 +118,62 @@ class VendorService {
     return await Vendor.aggregate(pipeline).exec();
   }
 
-  async getVendorsByCategoryAndRegion( // 날짜 추천 추가
-    category, // 액티비티
-    region, //시군구
+  async getVendorsByCategoryAndRegion(
+    category,
+    region,
     userId,
     isCustomRecommendation
   ) {
     try {
-      // 기본 검색 조건
-      let query = {
-        sigungu: { $regex: new RegExp(region, 'i') },
-        $or: [
-          { category1: { $regex: new RegExp(category, 'i') } },
-          { category2: { $regex: new RegExp(category, 'i') } },
-          { category3: { $regex: new RegExp(category, 'i') } },
-        ],
-      };
+      let query = {};
+      let recommendedActivities = [];
+
+      console.log(
+        `getVendorsByCategoryAndRegion called with: category=${category}, region=${region}, userId=${userId}, isCustomRecommendation=${isCustomRecommendation}`
+      );
+
+      if (!category && region) {
+        // 지역만 선택된 경우
+        console.log(`Requesting recommendation for location: ${region}`);
+        const response = await apiClient.post('/recommend/by_location', {
+          location: region,
+        });
+        recommendedActivities = response.data.recommended_activities;
+        console.log(`Received recommended activities:`, recommendedActivities);
+        query = { sigungu: { $regex: new RegExp(region, 'i') } };
+      } else if (category) {
+        // 카테고리가 선택된 경우 (지역 선택 여부 상관없음)
+        query = {
+          ...(region && { sigungu: { $regex: new RegExp(region, 'i') } }),
+          $or: [
+            { category1: { $regex: new RegExp(category, 'i') } },
+            { category2: { $regex: new RegExp(category, 'i') } },
+            { category3: { $regex: new RegExp(category, 'i') } },
+          ],
+        };
+      } else if (!category && region) {
+        // 지역만 선택된 경우
+        console.log(`Requesting recommendation for location: ${region}`);
+        const response = await apiClient.post('/recommend/by_location', {
+          location: region,
+        });
+        recommendedItems = response.data.recommended_activities;
+        console.log(`Received recommended activities:`, recommendedItems);
+        query = { sigungu: { $regex: new RegExp(region, 'i') } };
+      } else if (category && region) {
+        // 카테고리와 지역 모두 선택된 경우
+        console.log(
+          `Both category and region selected. No weather recommendation requested.`
+        );
+        query = {
+          sigungu: { $regex: new RegExp(region, 'i') },
+          $or: [
+            { category1: { $regex: new RegExp(category, 'i') } },
+            { category2: { $regex: new RegExp(category, 'i') } },
+            { category3: { $regex: new RegExp(category, 'i') } },
+          ],
+        };
+      }
 
       if (isCustomRecommendation) {
         const user = await User.findById(userId);
@@ -177,12 +218,35 @@ class VendorService {
 
       console.log('Query:', safeStringify(query));
       const results = await Vendor.find(query).exec();
-      console.log('Results:', results.length);
-      return results;
+      console.log('Results before sorting:', results.length);
+
+      // 날씨 추천 순으로 정렬
+      if (recommendedActivities.length > 0) {
+        console.log('Sorting results based on weather recommendations');
+        const sortedResults = results.sort((a, b) => {
+          const scoreA = this.getRecommendationScore(a, recommendedActivities);
+          const scoreB = this.getRecommendationScore(b, recommendedActivities);
+          return scoreB - scoreA;
+        });
+        console.log('Results after sorting:', sortedResults.length);
+        return sortedResults;
+      } else {
+        console.log(
+          'No weather recommendations available. Returning unsorted results.'
+        );
+        return results;
+      }
     } catch (error) {
       console.error('Error in getVendorsByCategoryAndRegion:', error);
       throw error;
     }
+  }
+
+  getRecommendationScore(vendor, recommendedActivities) {
+    const matchingActivity = recommendedActivities.find(
+      (item) => item.activity.toLowerCase() === vendor.category3.toLowerCase()
+    );
+    return matchingActivity ? matchingActivity.score : -Infinity;
   }
 
   async searchActivities(keyword, userId, isCustomRecommendation = false) {
