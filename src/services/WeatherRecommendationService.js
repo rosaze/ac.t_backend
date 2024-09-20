@@ -102,13 +102,33 @@ class WeatherRecommendationService {
     }
   }
 
-  async getRecommendationAll() {
+  async getRecommendedDatesForActivityAndLocation(activity, location) {
     try {
-      const response = await apiClient.get('/recommend/all');
-      return response.data;
+      const response = await apiClient.post(
+        '/recommend/by_activity_and_location',
+        {
+          activity,
+          location,
+        }
+      );
+
+      const recommendedDates = response.data.recommended_dates.map((date) => {
+        // 문자열에서 날짜와 점수 추출
+        const [dateStr, scoreStr] = date.slice(1, -1).split(', ');
+        return {
+          date: dateStr.slice(1, -1), // 따옴표 제거
+          score: parseFloat(scoreStr),
+        };
+      });
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const currentScore =
+        recommendedDates.find((date) => date.date === currentDate)?.score || 0;
+
+      return { recommendedDates, currentScore };
     } catch (error) {
-      console.error('Error getting all recommendations:', error);
-      throw error;
+      console.error('Error getting recommended dates:', error);
+      return { recommendedDates: [], currentScore: 0 };
     }
   }
 }

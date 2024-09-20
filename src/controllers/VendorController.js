@@ -148,16 +148,17 @@ class VendorController {
     */
 
   // 특정 시군의 장소(업체) 리스트를 반환
+
   async getVendorsByCategoryAndRegion(req, res) {
     try {
       const { category, region } = req.query;
       const userId = req.params.userId;
       const isCustomRecommendation = req.query.custom === 'true';
 
-      if (!category || !region) {
+      if (!category && !region) {
         return res
           .status(400)
-          .json({ message: 'Category and region are required' });
+          .json({ message: 'Either category or region (or both) is required' });
       }
 
       const vendors = await VendorService.getVendorsByCategoryAndRegion(
