@@ -16,3 +16,18 @@ services:
       - 443:443
       - 9229:9229
     command: ["node", "--inspect=0.0.0.0:9229", "app.js"]
+  #서빈's 날씨 모델 추가
+weather_model:
+  image: weather_model
+  build:
+    context: ./weather_model
+    dockerfile: ./Dockerfile
+  environment:
+    - FLASK_ENV=production
+  ports:
+    - "5004:5004"
+  command: ["gunicorn", "-b", "0.0.0.0:5004", "app:app"]
+
+networks:
+  default:
+    name: act_network

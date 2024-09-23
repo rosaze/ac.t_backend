@@ -6,7 +6,7 @@ const authorize = require('../middleware/authorize');
 const router = express.Router();
 
 // 장바구니 조회
-router.get('/', authorize, CartController.getCart);
+router.get('/', authorize, CartController.getCart); //ok
 
 // 장바구니에 상품 추가
 router.post('/add', authorize, CartController.addItemToCart);
