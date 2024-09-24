@@ -443,28 +443,50 @@ class VendorService {
   }
 
   async getRecommendedDatesForActivity(location, activity) {
-    let weatherRecommendation;
-    if (this.isLocation(location)) {
-      weatherRecommendation =
-        await WeatherRecommendationService.getRecommendationByLocation(
-          location
-        );
-    } else {
-      weatherRecommendation =
-        await WeatherRecommendationService.getRecommendationByActivity(
-          activity
-        );
-    }
+    try {
+      let weatherRecommendation;
+      if (this.isLocation(location)) {
+        weatherRecommendation =
+          await WeatherRecommendationService.getRecommendationByLocation(
+            location
+          );
+      } else {
+        weatherRecommendation =
+          await WeatherRecommendationService.getRecommendationByActivity(
+            activity
+          );
+      }
 
-    const recommendedDates = weatherRecommendation.recommended_dates[activity];
+      // 응답 구조 확인
+      console.log(
+        'Weather recommendation:',
+        JSON.stringify(weatherRecommendation, null, 2)
+      );
 
-    if (recommendedDates) {
-      return recommendedDates.sort((a, b) => b.score - a.score);
-    } else {
+      let recommendedDates;
+      if (this.isLocation(location)) {
+        // 위치 기반 추천의 경우
+        recommendedDates = weatherRecommendation.recommended_activities.find(
+          (act) => act.activity.toLowerCase() === activity.toLowerCase()
+        )?.recommended_dates;
+      } else {
+        // 활동 기반 추천의 경우
+        recommendedDates = weatherRecommendation.recommended_dates?.[activity];
+      }
+
+      if (Array.isArray(recommendedDates)) {
+        return recommendedDates.sort((a, b) => b.score - a.score);
+      } else {
+        console.log(
+          `No recommended dates found for ${activity} in ${location}`
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in getRecommendedDatesForActivity:', error);
       return [];
     }
   }
-
   //vendorController에서 안쓰이고 있음
   /* async searchActivitiesByKeywordWithRecommendation(keyword, userId) {
     try {
