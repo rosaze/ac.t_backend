@@ -265,7 +265,7 @@ class VendorService {
     console.log('생성된 쿼리:', query);
 
     let weatherRecommendation;
-    if (isLocationSearch) {
+    if (isLocationSearch && isCustomRecommendation && userId) {
       console.log('Requesting location-based recommendation');
       weatherRecommendation =
         await WeatherRecommendationService.getRecommendationByLocation(keyword);
