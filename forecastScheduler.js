@@ -1,8 +1,7 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
-const schedule = require("node-schedule"); // Import node-schedule for scheduling the job
-//중기 날씨 밤 12시마다 fetch 하는 코드
-require("dotenv").config(); // Load environment variables from .env file
+const schedule = require("node-schedule");
+require("dotenv").config();
 
 // MongoDB connection
 mongoose
@@ -19,12 +18,12 @@ const baseUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService";
 // Define region codes for 시군구 in 강원도
 const cities = [
   { name: "태백", code: "11D20301", region: "영동" },
-  { name: "속초", code: "11D20401", region: "영동", seaRegion: "12C30000" }, // 동해북부
-  { name: "고성", code: "11D20402", region: "영동", seaRegion: "12C30000" }, // 동해북부
-  { name: "양양", code: "11D20403", region: "영동", seaRegion: "12C30000" }, // 동해북부
-  { name: "강릉", code: "11D20501", region: "영동", seaRegion: "12C20000" }, // 동해중부
-  { name: "동해", code: "11D20601", region: "영동", seaRegion: "12C20000" }, // 동해중부
-  { name: "삼척", code: "11D20602", region: "영동", seaRegion: "12C20000" }, // 동해중부
+  { name: "속초", code: "11D20401", region: "영동", seaRegion: "12C30000" },
+  { name: "고성", code: "11D20402", region: "영동", seaRegion: "12C30000" },
+  { name: "양양", code: "11D20403", region: "영동", seaRegion: "12C30000" },
+  { name: "강릉", code: "11D20501", region: "영동", seaRegion: "12C20000" },
+  { name: "동해", code: "11D20601", region: "영동", seaRegion: "12C20000" },
+  { name: "삼척", code: "11D20602", region: "영동", seaRegion: "12C20000" },
   { name: "철원", code: "11D10101", region: "영서" },
   { name: "화천", code: "11D10102", region: "영서" },
   { name: "인제", code: "11D10201", region: "영서" },
@@ -45,22 +44,21 @@ const forecastSchema = new mongoose.Schema({
   landForecast: Array,
   seaForecast: Array,
   updatedAt: { type: Date, default: Date.now },
+  version: { type: Number, default: 1 },
 });
 
 const Forecast = mongoose.model("Forecast", forecastSchema);
 
-// Get the latest available forecast time (either 06:00 or 18:00)
 function getLatestForecastTime() {
   const now = new Date();
   const hours = now.getHours();
-  const forecastHour = hours >= 18 ? "1800" : "0600"; // Use 18:00 or 06:00
+  const forecastHour = hours >= 18 ? "1800" : "0600";
   const forecastDate = now.toISOString().split("T")[0].replace(/-/g, "");
   return `${forecastDate}${forecastHour}`;
 }
 
-const tmFc = getLatestForecastTime(); // Get the forecast timestamp
+const tmFc = getLatestForecastTime();
 
-// Fetch 중기 육상 예보 조회 (Mid-term Land Forecast) for 영동 and 영서
 async function fetchLandForecast(regionCode) {
   const landParams = {
     serviceKey: serviceKey,
@@ -148,7 +146,6 @@ async function fetchLandForecast(regionCode) {
   }
 }
 
-// Fetch 중기 기온 조회 (Mid-term Temperature Forecast) for each city
 async function fetchTemperatureForecast(city) {
   const tempParams = {
     serviceKey: serviceKey,
@@ -191,7 +188,6 @@ async function fetchTemperatureForecast(city) {
   }
 }
 
-// Fetch 중기 해상 예보 조회 (Mid-term Sea Forecast) for the sea region
 async function fetchSeaForecast(seaRegionCode) {
   const seaParams = {
     serviceKey: serviceKey,
@@ -234,51 +230,62 @@ async function fetchSeaForecast(seaRegionCode) {
   }
 }
 
-// Fetch and save the forecasts into a JSON file
 async function fetchAndSaveForecasts() {
-  let resultData = [];
-
-  // Fetch land forecast for 영동 and 영서 regions once
   const landForecasts = {
     영동: await fetchLandForecast("11D20000"),
     영서: await fetchLandForecast("11D10000"),
   };
 
-  // For each city, fetch temperature and sea forecast (if applicable), and combine with land forecast
   for (const city of cities) {
-    console.log(`Fetching data for ${city.name} (${city.code})...`);
+    try {
+      console.log(`Fetching data for ${city.name} (${city.code})...`);
 
-    // Fetch temperature forecast for the city
-    const temperatureData = await fetchTemperatureForecast(city);
+      const temperatureData = await fetchTemperatureForecast(city);
+      const landForecast = landForecasts[city.region];
+      let seaForecast = [];
+      if (city.seaRegion) {
+        seaForecast = await fetchSeaForecast(city.seaRegion);
+      }
 
-    // Get the corresponding land forecast based on the region (영동 or 영서)
-    const landForecast = landForecasts[city.region];
+      const cityData = {
+        city: city.name,
+        temperature: temperatureData,
+        landForecast: landForecast,
+        seaForecast: seaForecast.length > 0 ? seaForecast : null,
+        updatedAt: new Date(),
+      };
 
-    // Fetch sea forecast if the city belongs to a sea region
-    let seaForecast = [];
-    if (city.seaRegion) {
-      seaForecast = await fetchSeaForecast(city.seaRegion);
+      console.log(`Attempting to save data for city: ${city.name}`);
+      console.log(`Data: ${JSON.stringify(cityData)}`);
+
+      const updatedForecast = await Forecast.findOneAndReplace(
+        { city: city.name },
+        { ...cityData, $inc: { version: 1 } },
+        { upsert: true, new: true }
+      );
+
+      console.log(`Updated forecast for ${city.name}:`, updatedForecast);
+    } catch (error) {
+      console.error(`Error processing forecast for ${city.name}:`, error);
     }
-
-    // Combine all data for this city
-    let cityData = {
-      city: city.name,
-      temperature: temperatureData,
-      landForecast: landForecast,
-      seaForecast: seaForecast.length > 0 ? seaForecast : null,
-    };
-    // Save or update the forecast in MongoDB
-    await Forecast.findOneAndUpdate(
-      { city: city.name }, // Search by city name
-      cityData, // Data to insert/update
-      { upsert: true, new: true } // Insert if it doesn't exist, update if it does
-    );
-
-    resultData.push(cityData);
   }
   console.log("Weather data has been saved to MongoDB.");
 }
-// Set up a scheduler to run the job every day at 12:00 AM (midnight)
+
+async function reconnectMongoDB() {
+  try {
+    await mongoose.disconnect();
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("MongoDB reconnected");
+  } catch (error) {
+    console.error("Error reconnecting to MongoDB:", error);
+  }
+}
+
+// 매일 자정에 날씨 데이터 업데이트
 schedule.scheduleJob("0 0 * * *", async () => {
   console.log("Scheduled job running: Fetching and saving weather data...");
   try {
@@ -288,3 +295,9 @@ schedule.scheduleJob("0 0 * * *", async () => {
     console.error("Error during scheduled weather update:", error);
   }
 });
+
+// 매일 오전 1시에 MongoDB 재연결
+schedule.scheduleJob("0 1 * * *", reconnectMongoDB);
+
+// 초기 실행
+fetchAndSaveForecasts().catch(console.error);
