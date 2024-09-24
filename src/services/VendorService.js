@@ -264,19 +264,17 @@ class VendorService {
     let query = this.buildBaseQuery(keyword, isLocationSearch);
     console.log('생성된 쿼리:', query);
 
-    let weatherRecommendation;
-    if (isLocationSearch && isCustomRecommendation && userId) {
-      console.log('Requesting location-based recommendation');
-      weatherRecommendation =
-        await WeatherRecommendationService.getRecommendationByLocation(keyword);
-    } else {
-      console.log('Requesting activity-based recommendation');
-      weatherRecommendation =
-        await WeatherRecommendationService.getRecommendationByActivity(keyword);
-    }
+    // 날씨 추천 정보를 한 번만 가져옵니다.
+    const weatherRecommendation = isLocationSearch
+      ? await WeatherRecommendationService.getRecommendationByLocation(keyword)
+      : await WeatherRecommendationService.getRecommendationByActivity(keyword);
 
-    let recommendedActivities =
-      weatherRecommendation.recommended_activities.map((a) => a.activity);
+    let recommendedActivities = [];
+    if (weatherRecommendation && weatherRecommendation.recommended_activities) {
+      recommendedActivities = weatherRecommendation.recommended_activities.map(
+        (a) => a.activity
+      );
+    }
     console.log('날씨 기반 추천 액티비티:', recommendedActivities);
 
     if (isCustomRecommendation && userId) {
@@ -310,18 +308,39 @@ class VendorService {
     // 날씨 기반 추천 활동으로 정렬
     result = this.sortVendorsByRecommendation(result, recommendedActivities);
 
-    // 각 vendor에 대한 추천 날짜 정보 추가
-    for (let vendor of result) {
-      vendor.recommendedDates = await this.getRecommendedDatesForActivity(
-        vendor.sigungu,
-        vendor.category3 || vendor.category2 || vendor.contenttype
-      );
-    }
+    // 각 vendor에 대한 추천 날짜 정보를 한 번에 가져옵니다.
+    const activities = result.map(
+      (vendor) => vendor.category3 || vendor.category2 || vendor.contenttype
+    );
+    const recommendedDates = await this.getRecommendedDatesForActivities(
+      keyword,
+      activities
+    );
+
+    result.forEach((vendor) => {
+      const activity =
+        vendor.category3 || vendor.category2 || vendor.contenttype;
+      vendor.recommendedDates = recommendedDates[activity] || [];
+    });
 
     console.log('최종 결과:', result.length);
     console.log('정렬된 추천 활동:', recommendedActivities);
 
     return result;
+  }
+
+  async getRecommendedDatesForActivities(location, activities) {
+    const uniqueActivities = [...new Set(activities)];
+    const weatherRecommendation =
+      await WeatherRecommendationService.getRecommendationByLocation(location);
+
+    const recommendedDates = {};
+    uniqueActivities.forEach((activity) => {
+      recommendedDates[activity] =
+        weatherRecommendation.recommended_dates[activity] || [];
+    });
+
+    return recommendedDates;
   }
 
   sortVendorsByRecommendation(vendors, recommendedActivities) {
@@ -456,7 +475,8 @@ class VendorService {
         );
     }
 
-    const recommendedDates = weatherRecommendation.recommended_dates[activity];
+    const recommendedDates =
+      weatherRecommendation.recommended_dates?.[activity] || [];
 
     if (recommendedDates) {
       return recommendedDates.sort((a, b) => b.score - a.score);
