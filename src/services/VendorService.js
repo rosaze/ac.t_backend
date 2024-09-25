@@ -5,13 +5,15 @@ const Vendor = require('../models/Vendor');
 const PostService = require('./PostService'); // 감정 분석 서비스를 가져옵니다.
 const SearchHistory = require('../models/SearchHistory'); // 검색 기록 모델 (필요시 생성)
 const ActivityRecommendationService = require('./activityRecommendationService');
-const locations = require('../utils/location');
 const User = require('../models/User');
-const activities = require('../utils/activity.json').activities;
 const AccommodationService = require('./AccommodationService');
 const WeatherRecommendationService = require('./WeatherRecommendationService');
 const postService = new PostService(); // Instantiate PostService
 const apiClient = require('../utils/apiClient');
+const locations = require('../utils/location');
+const activities = require('../utils/activity.json').activities.map(
+  (a) => a.name
+);
 
 function safeStringify(obj, indent = 2) {
   let cache = [];
@@ -270,12 +272,21 @@ class VendorService {
       : await WeatherRecommendationService.getRecommendationByActivity(keyword);
 
     let recommendedActivities = [];
-    if (weatherRecommendation && weatherRecommendation.recommended_activities) {
-      recommendedActivities = weatherRecommendation.recommended_activities.map(
-        (a) => a.activity
-      );
+    let recommendedLocations = [];
+
+    if (weatherRecommendation) {
+      if (weatherRecommendation.recommended_activities) {
+        recommendedActivities =
+          weatherRecommendation.recommended_activities.map((a) => a.activity);
+      }
+
+      if (weatherRecommendation.recommended_locations) {
+        recommendedLocations = weatherRecommendation.recommended_locations;
+      }
     }
+
     console.log('날씨 기반 추천 액티비티:', recommendedActivities);
+    console.log('날씨 기반 추천 위치:', recommendedLocations);
 
     if (isCustomRecommendation && userId) {
       console.log('Applying custom recommendations for user:', userId);
@@ -305,8 +316,12 @@ class VendorService {
       );
     }
 
-    // 날씨 기반 추천 활동으로 정렬
-    result = this.sortVendorsByRecommendation(result, recommendedActivities);
+    // 날씨 기반 추천 활동과 위치로 정렬
+    result = this.sortVendorsByRecommendation(
+      result,
+      recommendedActivities,
+      recommendedLocations
+    );
 
     // 각 vendor에 대한 추천 날짜 정보를 한 번에 가져옵니다.
     const activities = result.map(
@@ -343,7 +358,12 @@ class VendorService {
     return recommendedDates;
   }
 
-  sortVendorsByRecommendation(vendors, recommendedActivities) {
+  sortVendorsByRecommendation(
+    vendors,
+    recommendedActivities = [],
+    recommendedLocations = []
+  ) {
+    // recommendedActivities가 정의되지 않았을 때 빈 배열로 처리
     const activityOrder = recommendedActivities.reduce(
       (acc, activity, index) => {
         acc[activity.toLowerCase()] = index;
@@ -352,12 +372,38 @@ class VendorService {
       {}
     );
 
+    // recommendedLocations가 정의되지 않았을 때 빈 배열로 처리
+    const locationScores = recommendedLocations.reduce((acc, loc) => {
+      acc[normalizeLocationName(loc.location.toLowerCase())] = loc.score;
+      return acc;
+    }, {});
+
+    // vendors 정렬
     return vendors.sort((a, b) => {
+      // 활동 정렬 기준
       const orderA =
-        activityOrder[(a.category3 || '').toLowerCase()] ?? Infinity;
+        activityOrder[
+          (a.category3 || a.category2 || a.contenttype || '').toLowerCase()
+        ] ?? Infinity;
       const orderB =
-        activityOrder[(b.category3 || '').toLowerCase()] ?? Infinity;
-      return orderA - orderB;
+        activityOrder[
+          (b.category3 || b.category2 || b.contenttype || '').toLowerCase()
+        ] ?? Infinity;
+
+      // 활동 우선 정렬, 같으면 위치 점수로 정렬
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+
+      // 위치 점수 정렬 기준
+      const scoreA =
+        locationScores[normalizeLocationName(a.sigungu || '').toLowerCase()] ||
+        -Infinity;
+      const scoreB =
+        locationScores[normalizeLocationName(b.sigungu || '').toLowerCase()] ||
+        -Infinity;
+
+      return scoreB - scoreA; // 점수 높은 순으로 정렬
     });
   }
 
@@ -394,6 +440,9 @@ class VendorService {
 
   isLocation(keyword) {
     return locations.includes(keyword);
+  }
+  isActivity(keyword) {
+    return activities.includes(keyword);
   }
 
   buildBaseQuery(keyword, isLocationSearch) {
