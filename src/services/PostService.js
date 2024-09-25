@@ -97,11 +97,16 @@ class PostService {
   }
 
   async searchPosts(keyword) {
+    const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedKeyword, 'i');
     return await Post.find({
       $or: [
-        { hashtags: new RegExp(keyword, 'i') },
-        { title: new RegExp(keyword, 'i') },
-        { content: new RegExp(keyword, 'i') },
+        { hashtags: regex },
+        { title: regex },
+        { content: regex },
+        { locationTag: regex },
+        { activityTag: regex },
+        { vendorTag: regex },
       ],
     }).exec();
   }
