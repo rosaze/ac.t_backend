@@ -6,6 +6,20 @@ const BadgeService = require('../services/badgeService');
 class PostController {
   constructor() {
     this.postService = new PostService(new BadgeService());
+    // Bind methods to ensure 'this' context is retained
+    this.createPost = this.createPost.bind(this);
+    this.getTrendingPosts = this.getTrendingPosts.bind(this);
+    this.getPostsByType = this.getPostsByType.bind(this);
+    this.getPostsByCategory = this.getPostsByCategory.bind(this);
+    this.getPostsByTag = this.getPostsByTag.bind(this);
+    this.getPostsSortedBy = this.getPostsSortedBy.bind(this);
+    this.getFilteredPosts = this.getFilteredPosts.bind(this);
+    this.searchPosts = this.searchPosts.bind(this);
+    this.getPostById = this.getPostById.bind(this);
+    this.updatePost = this.updatePost.bind(this);
+    this.deletePost = this.deletePost.bind(this);
+    this.summarizePost = this.summarizePost.bind(this);
+    this.analyzeSentiments = this.analyzeSentiments.bind(this);
   }
 
   async createPost(req, res) {

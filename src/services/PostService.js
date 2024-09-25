@@ -1,25 +1,20 @@
 const Post = require('../models/Posts');
 const UserActivity = require('../models/UserActivities');
 const WeatherService = require('./weatherService');
-const ShortWeatherData = require('../models/shortweatherData');
 const ActivityMapService = require('../services/activityMapService');
+const axios = require('axios');
 
 class PostService {
   constructor(badgeService) {
-    this.badgeService = badgeService; // badgeService를 외부에서 주입받음
+    this.badgeService = badgeService;
   }
 
   async createPost(userId, data) {
     try {
       const post = new Post(data);
       await post.save();
-
-      console.log('생성된 게시글 ID:', post._id);
-      console.log('저장된 게시글 데이터:', post);
-
-      // 게시글 작성 시 배지 지급
       await this.badgeService.awardBadgeForPost(userId);
-
+      await this.saveWeatherDataAndActivity(data, post.id);
       return post;
     } catch (error) {
       console.error('게시글 저장 중 오류:', error.message);
@@ -37,25 +32,15 @@ class PostService {
         throw new Error('Failed to retrieve weather data');
       }
 
-      try {
-        const activityMapData = {
-          user: postData.author,
-          post: postId,
-          region: postData.locationTag, // 시군 정보
-          activity_date: postData.date, // 활동 날짜
-          activityTag: postData.activityTag, // 활동 태그
-        };
-        //액티비티 맵에 저장
-        const activityMap = await ActivityMapService.addActivityMap(
-          activityMapData
-        );
+      const activityMapData = {
+        user: postData.author,
+        post: postId,
+        region: postData.locationTag,
+        activity_date: postData.date,
+        activityTag: postData.activityTag,
+      };
+      await ActivityMapService.addActivityMap(activityMapData);
 
-        console.log('Activity map saved successfully:', activityMap);
-      } catch (error) {
-        console.error('Error saving activity map:', error.message);
-      }
-
-      // UserActivity에 날씨 데이터 저장
       const userActivity = new UserActivity({
         postId,
         location: postData.locationTag,
@@ -65,7 +50,6 @@ class PostService {
       });
 
       await userActivity.save();
-      console.log('User activity saved successfully:', userActivity);
     } catch (error) {
       console.error('Error saving user activity:', error);
       throw error;
@@ -93,6 +77,25 @@ class PostService {
     return await Post.find({}).sort(sortOption).exec();
   }
 
+  async getSortedPosts(sortBy) {
+    // Implement sorting logic based on sortBy parameter
+    let sortOption = {};
+    if (sortBy === 'likes') {
+      sortOption = { likes: -1 };
+    } else if (sortBy === 'date') {
+      sortOption = { createdAt: -1 };
+    }
+    return await Post.find().sort(sortOption).exec();
+  }
+
+  async getFilteredPosts(filters) {
+    const query = {};
+    if (filters.location) query.locationTag = filters.location;
+    if (filters.activity) query.activityTag = filters.activity;
+    if (filters.vendor) query.vendorTag = filters.vendor;
+    return await Post.find(query).exec();
+  }
+
   async searchPosts(keyword) {
     return await Post.find({
       $or: [
@@ -101,6 +104,11 @@ class PostService {
         { content: new RegExp(keyword, 'i') },
       ],
     }).exec();
+  }
+
+  async getPosts(type) {
+    const query = type ? { type } : {};
+    return await Post.find(query).populate('author').exec();
   }
 
   async getPostById(id) {
@@ -115,7 +123,6 @@ class PostService {
     return await Post.findByIdAndDelete(id).exec();
   }
 
-  // KoGPT를 사용하여 게시글 내용 요약
   async summarizePostContent(postId) {
     const post = await this.getPostById(postId);
     const summary = await this.summarizeContent(post.content);
@@ -125,11 +132,8 @@ class PostService {
     };
   }
 
-  // 요약 로직
   async summarizeContent(content) {
-    const REST_API_KEY = process.env.KAKAO_CLIENT_ID; // 환경 변수에서 REST API 키를 가져옴
-
-    // 주어진 프롬프트 형식에 맞춰 수정
+    const REST_API_KEY = process.env.KAKAO_CLIENT_ID;
     const prompt = `'''${content}'''\n\n한줄 요약:`;
 
     try {
@@ -137,8 +141,8 @@ class PostService {
         'https://api.kakaobrain.com/v1/inference/kogpt/generation',
         {
           prompt: prompt,
-          max_tokens: 64, // 요약이 한 줄에 수렴할 수 있도록 토큰 수 설정
-          temperature: 0.5, // 적절한 다양성을 유지하면서 정확성을 높임
+          max_tokens: 64,
+          temperature: 0.5,
           top_p: 0.9,
           n: 1,
         },
@@ -152,7 +156,6 @@ class PostService {
 
       const generatedText = response.data.generations[0].text.trim();
 
-      // 요약이 예상치 못한 결과를 줄 경우 처리
       if (generatedText && generatedText.length > 0) {
         return generatedText;
       } else {
@@ -164,8 +167,6 @@ class PostService {
     }
   }
 
-  // 장소, 활동, 업체 해시태그를 통해 후기 데이터베이스 가져와 각 게시물의 내용을 analyzeSentiment 메서드로 전달하여 감정을 분석
-  // 분석 결과에 따라 긍정/부정 게시물의 수 집계
   async analyzeSentiments(locationTag, activityTag, vendorTag) {
     const posts = await Post.find({
       locationTag,
@@ -195,10 +196,10 @@ class PostService {
     const finalSentiment = positiveCount >= negativeCount ? '긍정' : '부정';
 
     return {
-      finalSentiment, // 집계 결과
-      positiveCount, // 긍정 게시물 개수
-      negativeCount, // 부정 게시물 개수
-      totalPosts: posts.length, // 총 게시물 수
+      finalSentiment,
+      positiveCount,
+      negativeCount,
+      totalPosts: posts.length,
       details: sentiments,
     };
   }
