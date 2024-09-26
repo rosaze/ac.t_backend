@@ -32,7 +32,7 @@ router.get(
   '/vendors/list/:userId',
   authorize,
   VendorController.getVendorsByCategoryAndRegion
-); // 검토해보기
+); //테스트완료
 
 router.get(
   '/recommended-dates',

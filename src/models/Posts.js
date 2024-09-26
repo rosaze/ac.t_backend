@@ -19,6 +19,8 @@ const PostSchema = new mongoose.Schema(
     activityTag: { type: String, required: true },
     vendorTag: { type: String, required: true },
     date: { type: Date, required: true },
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     //weather: Object, // 날씨 데이터를 저장할 필드
   },
   { timestamps: true }

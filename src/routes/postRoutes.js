@@ -21,10 +21,10 @@ router.get('/posts/sorted', authorize, PostController.getSortedPosts);
 // 좋아요순/최신순 드롭다운
 router.get('/posts/dropdown', authorize, PostController.getPostsSortedBy);
 
-// 필터링된 게시물 가져오기
+// 필터링된 게시물 가져오기 //ok
 router.get('/posts/filtered', authorize, PostController.getFilteredPosts);
 
-// 게시물 검색
+// 게시물 검색 //ok
 router.get('/posts/search', authorize, PostController.searchPosts);
 
 // 게시물 ID로 게시물 가져오기
