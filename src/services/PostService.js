@@ -237,6 +237,39 @@ class PostService {
       throw new Error('Failed to analyze sentiment using KoGPT');
     }
   }
+  async likePost(postId, userId) {
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    if (post.likedBy.includes(userId)) {
+      throw new Error('User already liked this post');
+    }
+
+    post.likes += 1;
+    post.likedBy.push(userId);
+    await post.save();
+    return post;
+  }
+
+  async unlikePost(postId, userId) {
+    const post = await Post.findById(postId);
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    if (!post.likedBy.includes(userId)) {
+      throw new Error('User has not liked this post');
+    }
+
+    post.likes -= 1;
+    post.likedBy = post.likedBy.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+    await post.save();
+    return post;
+  }
 }
 
 module.exports = PostService;
