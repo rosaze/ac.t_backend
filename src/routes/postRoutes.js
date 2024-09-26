@@ -57,5 +57,9 @@ router.get(
   '/posts/sentiment/:locationTag/:activityTag/:vendorTag',
   PostController.analyzeSentiments
 );
+// 좋아요 추가
+router.post('/posts/:id/like', authorize, PostController.likePost);
 
+// 좋아요 취소
+router.post('/posts/:id/unlike', authorize, PostController.unlikePost);
 module.exports = router;
