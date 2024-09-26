@@ -20,6 +20,8 @@ class PostController {
     this.deletePost = this.deletePost.bind(this);
     this.summarizePost = this.summarizePost.bind(this);
     this.analyzeSentiments = this.analyzeSentiments.bind(this);
+    this.likePost = this.likePost.bind(this);
+    this.unlikePost = this.unlikePost.bind(this);
   }
 
   async createPost(req, res) {
