@@ -84,7 +84,8 @@ class PostController {
       res.status(500).json({ message: err.message });
     }
   }
-
+  //최신순이 아니면 자동으로좋아요 순 기준으로 정렬
+  //최신순인 경우 생성일 기준 내림차순, 그 외에는 좋아요 수 기준 내림차순
   async getPostsSortedBy(req, res) {
     try {
       const sortOption = req.query.sort;

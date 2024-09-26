@@ -3,7 +3,13 @@ const ProductService = require('../services/ProductService');
 class ProductController {
   async createProduct(req, res) {
     try {
-      const productData = { ...req.body, seller: req.user._id };
+      if (!req.user.isDeveloper && !req.user.isAdmin) {
+        return res
+          .status(403)
+          .json({ message: 'Only developers can create products' });
+      }
+
+      const productData = { ...req.body, seller: req.user.id };
       const product = await ProductService.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {

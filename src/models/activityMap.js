@@ -6,6 +6,7 @@ const activityMapSchema = new mongoose.Schema({
   region: { type: String, required: true },
   activity_date: { type: Date, required: true },
   activityTag: { type: String, required: true }, // activityTag 필드 추가
+  color: { type: String, required: true },
 });
 
 module.exports = mongoose.model('ActivityMap', activityMapSchema);

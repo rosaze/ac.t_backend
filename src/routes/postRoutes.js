@@ -15,7 +15,7 @@ router.get('/posts', authorize, PostController.getPosts);
 // 인기 게시물 가져오기
 router.get('/posts/trending', authorize, PostController.getTrendingPosts);
 
-// 정렬된 게시물 가져오기 (시군별, 액티비티, 좋아요수)
+// 정렬된 게시물 가져오기 (시군별, 액티비티, 좋아요수) 컨트롤러 확인 !
 router.get('/posts/sorted', authorize, PostController.getSortedPosts);
 
 // 좋아요순/최신순 드롭다운

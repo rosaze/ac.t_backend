@@ -45,6 +45,7 @@ const authorize = async (req, res, next) => {
       id: decoded.id,
       email: decoded.email,
       isAdmin: isAdmin,
+      isDeveloper: user.isDeveloper,
     };
 
     console.log('req.user set to:', req.user);

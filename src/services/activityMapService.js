@@ -23,6 +23,8 @@ class ActivityMapService {
       user: activityMapData.user,
       activityTag: activityMapData.activityTag,
     });
+    // Log the activityMapData here to check what is being passed
+    console.log('Activity Map Data:', activityMapData); // << Add this log here
 
     // 시군 방문에 따른 배지 지급
     if (visitCount + 1 >= 5) {
