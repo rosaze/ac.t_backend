@@ -206,6 +206,29 @@ class PostController {
       res.status(500).json({ message: err.message });
     }
   }
+  async likePost(req, res) {
+    try {
+      const postId = req.params.id;
+      const userId = req.user.id;
+      const updatedPost = await this.postService.likePost(postId, userId);
+      res.status(200).json(updatedPost);
+    } catch (err) {
+      console.error('Error in likePost:', err.message);
+      res.status(400).json({ message: err.message });
+    }
+  }
+
+  async unlikePost(req, res) {
+    try {
+      const postId = req.params.id;
+      const userId = req.user.id;
+      const updatedPost = await this.postService.unlikePost(postId, userId);
+      res.status(200).json(updatedPost);
+    } catch (err) {
+      console.error('Error in unlikePost:', err.message);
+      res.status(400).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new PostController();
