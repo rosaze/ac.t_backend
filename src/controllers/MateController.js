@@ -15,7 +15,12 @@ class MateController {
       let chatRoom = await ChatService.findChatRoomByMateId(mateId);
       if (!chatRoom) {
         // 채팅방이 없으면 새로 생성
-        chatRoom = await ChatService.createChatRoom(`Mate 채팅방`, [userId]);
+        chatRoom = await ChatService.createChatRoom(
+          matePost.title,
+          [userId],
+          creatorId,
+          mateId
+        );
       } else {
         // 이미 존재하는 채팅방에 유저 추가
         await ChatService.addUserToChatRoom(chatRoom._id, userId);
@@ -26,15 +31,25 @@ class MateController {
       res.status(500).json({ message: err.message });
     }
   }
+
   async createMatePost(req, res) {
     try {
+      console.log('Creating mate post with data:', req.body); // 요청 데이터 로그
+      console.log('User ID:', req.user.id); // 사용자 ID 로그
+
       const matePost = await MateService.createMatePost({
         ...req.body,
-        author: req.user.id, //현재 로그인된 사용자의 ID를 포함
+        author: req.user.id,
       });
+      console.log('Created mate post:', matePost); // 생성된 게시물 로그
       res.status(201).json(matePost);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error('Error creating mate post:', err);
+      res.status(500).json({
+        message: 'Error creating mate post',
+        error: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      });
     }
   }
   //모집게시글필터링
@@ -48,8 +63,9 @@ class MateController {
         personal_preferences: req.query.personal_preferences,
       };
       const matePosts = await MateService.getMatePosts(filters);
-      res.status(200).jsonc(matePosts);
+      res.status(200).json(matePosts); // jsonc를 json으로 변경
     } catch (err) {
+      console.error('Error in getMatePosts:', err); // 에러 로깅 추가
       res.status(500).json({ message: err.message });
     }
   }

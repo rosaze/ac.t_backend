@@ -172,12 +172,22 @@ class PostService {
     }
   }
 
+  // PostService.js
   async analyzeSentiments(locationTag, activityTag, vendorTag) {
-    const posts = await Post.find({
+    console.log('Analyzing sentiments for:', {
       locationTag,
       activityTag,
       vendorTag,
-    }).exec();
+    });
+
+    const query = {};
+    if (locationTag) query.locationTag = locationTag;
+    if (activityTag) query.activityTag = activityTag;
+    if (vendorTag) query.vendorTag = vendorTag;
+    console.log('Query:', query);
+
+    const posts = await Post.find(query).exec();
+    console.log(`Found ${posts.length} posts`);
 
     if (posts.length === 0) {
       return { message: '해당 장소, 활동, 업체에 대한 게시물이 없습니다.' };
@@ -189,24 +199,28 @@ class PostService {
     const sentiments = await Promise.all(
       posts.map(async (post) => {
         const sentiment = await this.analyzeSentiment(post.content);
+        console.log(`Post ${post._id}: ${sentiment}`);
         if (sentiment === '긍정') {
           positiveCount++;
         } else if (sentiment === '부정') {
           negativeCount++;
         }
-        return { postId: post._id, sentiment };
+        return { postId: post.id, sentiment };
       })
     );
 
     const finalSentiment = positiveCount >= negativeCount ? '긍정' : '부정';
 
-    return {
+    const result = {
       finalSentiment,
       positiveCount,
       negativeCount,
       totalPosts: posts.length,
       details: sentiments,
     };
+    console.log('Final analysis result:', result);
+
+    return result;
   }
 
   async analyzeSentiment(content) {
@@ -231,7 +245,9 @@ class PostService {
         }
       );
 
-      return response.data.generations[0].text.trim();
+      const result = response.data.generations[0].text.trim();
+      console.log('KoGPT sentiment analysis result:', result);
+      return result;
     } catch (error) {
       console.error('Error analyzing sentiment using KoGPT:', error.message);
       throw new Error('Failed to analyze sentiment using KoGPT');

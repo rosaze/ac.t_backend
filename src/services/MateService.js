@@ -6,8 +6,39 @@ const PreferenceService = require('./preferenceService');
 //새로운 메이트 게시글 생성할 때, User모델에서 해당 사용자의 선호도 정보를 가져와 이를 Mate모델에 포함시킴
 class MateService {
   async createMatePost(data) {
-    const mate = new Mate(data);
-    return await mate.save();
+    try {
+      const user = await User.findById(data.author);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      console.log('User preferences:', user.preference); // 디버깅을 위한 로그
+
+      if (!user.preference) {
+        throw new Error('User preferences not found');
+      }
+
+      const personal_preferences = `${
+        user.preference.location || 'undefined'
+      }_${user.preference.environment || 'undefined'}_${
+        user.preference.group || 'undefined'
+      }_${user.preference.season || 'undefined'}`;
+
+      console.log('Generated personal_preferences:', personal_preferences); // 디버깅을 위한 로그
+
+      const mate = new Mate({
+        ...data,
+        personal_preferences,
+      });
+
+      const savedMate = await mate.save();
+      console.log('Saved mate post:', savedMate); // 디버깅을 위한 로그
+
+      return savedMate;
+    } catch (error) {
+      console.error('Error in createMatePost:', error);
+      throw error;
+    }
   }
 
   // 필터링 기능 추가 --> 조건으로 게시글 필터링 ( 활동/장소/날짜)
